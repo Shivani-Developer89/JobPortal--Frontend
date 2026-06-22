@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 pages/
 ├── Login.jsx
 ├── Register.jsx
@@ -13,3 +14,6 @@ src/
  │    └── authService.js
  ├── routes/
  └── components/
+=======
+# JobPortal--Frontend
+>>>>>>> d1b393528f3c3db4c8598ab33a04e2d6db598064

@@ -1,12 +1,49 @@
 
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { loginUser } from "../services/authService";
+import { loginUser } from "../services/AuthService";
 function Login() {
   const[email,setEmail] =useState("");
   const[password,setPassword]= useState("");
   const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!email || !password) {
+        alert("Email and Password are required");
+        return;
+    }
+
+    try {
+
+        const response = await loginUser({
+            email,
+            password
+        });
+
+        localStorage.setItem(
+            "token",
+            response.data.token
+        );
+
+        alert("Login Successful");
+
+       navigate("/jobs");
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            error.response?.data ||
+            error.response?.data?.message ||
+            "Invalid Credentials"
+        );
+    }
+};
   return (
+    <form onSubmit={handleSubmit}>
     <div className="container mt-5">
       <div className="row justify-content-center">
         <div className="col-md-4">
@@ -23,6 +60,8 @@ function Login() {
                 <input
                   type="email"
                   className="form-control"
+                     value={email}
+                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
 
@@ -31,6 +70,8 @@ function Login() {
                 <input
                   type="password"
                   className="form-control"
+                     value={password}
+                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
 
@@ -50,7 +91,7 @@ function Login() {
       </div>
 
     </div>
-    
+    </form>
   );
 }
 
