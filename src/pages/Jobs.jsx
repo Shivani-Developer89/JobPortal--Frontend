@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { getAllJobs } from "../services/jobService";
+import { useNavigate } from "react-router-dom";
 
 function Jobs() {
 
     const [jobs, setJobs] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
 
@@ -11,20 +13,22 @@ function Jobs() {
 
     }, []);
 
-    const loadJobs = async () => {
+  const loadJobs = async () => {
 
-        try {
+    try {
 
-            const response = await getAllJobs();
+        const response = await getAllJobs();
 
-            setJobs(response.data);
+        console.log(response.data);
 
-        } catch (error) {
+        setJobs(response.data.content);
 
-            console.error(error);
+    } catch (error) {
 
-        }
-    };
+        console.error(error);
+
+    }
+};
 
     return (
         <div className="container mt-5">
@@ -54,6 +58,12 @@ function Jobs() {
                                 <strong>Salary:</strong>{" "}
                                 ₹{job.salary}
                             </p>
+                            <button
+                         className="btn btn-primary"
+                        onClick={() => navigate(`/jobs/${job.id}`)}
+                            >
+                          View Details
+                             </button>
 
                         </div>
                     </div>
