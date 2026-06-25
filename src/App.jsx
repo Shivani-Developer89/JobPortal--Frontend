@@ -3,6 +3,8 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Jobs from "./pages/Jobs";
 import JobDetails from "./pages/JobDetails";
+import UploadResume from "./pages/UploadResume";
+import MyApplications from "./pages/MyApplications";
 
 function App() {
   return (
@@ -13,6 +15,8 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/jobs" element={<Jobs />} />
         <Route   path="/jobs/:id" element={<JobDetails />}/>
+        <Route path="/resume/upload"element={<UploadResume />}/>
+      <Route path="/applications"element={<MyApplications />}/>
       </Routes>
     </BrowserRouter>
   );

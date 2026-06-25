@@ -3,6 +3,7 @@ import axios from "axios";
 const API_URL = "http://localhost:81/job";
 
 export const getAllJobs = () => {
+  
 
     const token = localStorage.getItem("token");
      console.log("TOKEN:", token);

@@ -16,3 +16,33 @@ export const applyJob = (jobId) => {
 );
 
 };
+
+export const getMyApplications = () => {
+
+    const token = localStorage.getItem("token");
+
+    return axios.get(
+        `${API_URL}/my`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+};
+
+export const withdrawApplication = (applicationId) => {
+
+    const token = localStorage.getItem("token");
+
+    return axios.put(
+        `${API_URL}/${applicationId}/withdraw`,
+        {},
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+};
