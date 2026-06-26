@@ -1,8 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-    getMyApplications,
-    withdrawApplication
-} from "../services/ApplicationService";
+import {getMyApplications,withdrawApplication} from "../services/ApplicationService";
 
 function MyApplications() {
 
@@ -11,6 +8,27 @@ function MyApplications() {
     useEffect(() => {
         loadApplications();
     }, []);
+    const getBadgeClass = (status) => {
+    switch (status) {
+        case "APPLIED":
+            return "bg-primary";
+
+        case "SHORTLISTED":
+            return "bg-warning text-dark";
+
+        case "REJECTED":
+            return "bg-danger";
+
+        case "SELECTED":
+            return "bg-success";
+
+        case "WITHDRAWN":
+            return "bg-secondary";
+
+        default:
+            return "bg-dark";
+    }
+};
 
     const loadApplications = async () => {
 
@@ -27,74 +45,84 @@ function MyApplications() {
         }
     };
 
-    const handleWithdraw = async (id) => {
+   const handleWithdraw = async (applicationId) => {
 
-        try {
+    const confirmWithdraw = window.confirm(
+        "Are you sure you want to withdraw this application?"
+    );
 
-            await withdrawApplication(id);
+    if (!confirmWithdraw) return;
 
-            alert("Application Withdrawn");
+    try {
 
-            loadApplications();
+        await withdrawApplication(applicationId);
 
-        } catch (error) {
+        alert("Application withdrawn successfully.");
 
-            alert(
-                error.response?.data ||
-                "Withdraw Failed"
-            );
-        }
-    };
+        loadApplications();
 
-    return (
-        <div className="container mt-5">
+    } catch (error) {
 
-            <h2>My Applications</h2>
+        alert(
+            error.response?.data ||
+            error.message
+        );
+    }
+};
 
-            {applications.length === 0 ? (
+   return (
+    <div className="container mt-5">
 
-                <p>No Applications Found</p>
+        <h2 className="mb-4">My Applications</h2>
 
-            ) : (
+        {applications.map((app) => (
 
-                applications.map((app) => (
+            <div
+                key={app.id}
+                className="card mb-3 shadow-sm"
+            >
+                <div className="card-body d-flex justify-content-between align-items-center">
 
-                    <div
-                        key={app.id}
-                        className="card mb-3"
-                    >
-                        <div className="card-body">
+                    <div>
 
-                            <h5>
-                                {app.jobTitle}
-                            </h5>
+                        <h5>{app.jobTitle}</h5>
 
-                            <p>
-                                <strong>Status:</strong>{" "}
+                        <p className="mb-1">
+                            <strong>Status:</strong>{" "}
+                            <span className={`badge ${getBadgeClass(app.status)}`}>
                                 {app.status}
-                            </p>
+                            </span>
+                        </p>
 
-                            {app.status === "PENDING" && (
+                        <p className="text-muted">
+                            Applied on{" "}
+                            {new Date(app.appliedAt).toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric"
+})}
+                        </p>
 
-                                <button
-                                    className="btn btn-danger"
-                                    onClick={() =>
-                                        handleWithdraw(app.id)
-                                    }
-                                >
-                                    Withdraw
-                                </button>
-
-                            )}
-
-                        </div>
                     </div>
 
-                ))
-            )}
+                    {app.status === "APPLIED" && (
 
-        </div>
-    );
+                        <button
+                            className="btn btn-outline-danger"
+                            onClick={() => handleWithdraw(app.id)}
+                        >
+                            Withdraw
+                        </button>
+
+                    )}
+
+                </div>
+            </div>
+
+        ))}
+
+    </div>
+);
 }
 
 export default MyApplications;
