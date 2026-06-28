@@ -46,3 +46,42 @@ export const withdrawApplication = (applicationId) => {
     );
 
 };
+export const getRecruiterDashboard = () => {
+
+    const token = localStorage.getItem("token");
+
+    return axios.get(
+        `${API_URL}/recruiterDashboard`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+};
+export const getRecentApplications = () => {
+
+    const token = localStorage.getItem("token");
+
+    return axios.get(
+        `${API_URL}/recruiter/recent`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+};
+export const downloadResume = (applicationId) => {
+    const token = localStorage.getItem("token");
+
+    return axios.get(
+        `http://localhost:81/applications/${applicationId}/resume`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            },
+            responseType: "blob"
+        }
+    );
+};
