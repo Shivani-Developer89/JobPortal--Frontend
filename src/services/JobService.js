@@ -28,3 +28,29 @@ export const getJobById = (id) => {
         }
     );
 };
+export const getMyJobs = () => {
+
+    const token = localStorage.getItem("token");
+
+    return axios.get(
+        "http://localhost:81/job/my",
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+};
+export const viewApplicants = (jobId) => {
+
+    const token = localStorage.getItem("token");
+
+    return axios.get(
+        `http://localhost:81/applications/job/${jobId}`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+};

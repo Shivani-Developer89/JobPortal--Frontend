@@ -6,6 +6,8 @@ import JobDetails from "./pages/JobDetails";
 import UploadResume from "./pages/UploadResume";
 import MyApplications from "./pages/MyApplications";
 import RecruiterDashboard from "./pages/RecruiterDashboard";
+import RecruiterJobs from "./pages/RecruiterJobs";
+import ViewApplicants from "./pages/ViewApplicants";
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
         <Route path="/resume/upload"element={<UploadResume />}/>
       <Route path="/applications"element={<MyApplications />}/>
       <Route path="/recruiterDashboard"element={<RecruiterDashboard />}/>
+      <Route path="/recruiter/jobs" element={<RecruiterJobs />} />
+      <Route path="/recruiter/jobs/:jobId/applicants"element={<ViewApplicants />}/>
       </Routes>
     </BrowserRouter>
   );
