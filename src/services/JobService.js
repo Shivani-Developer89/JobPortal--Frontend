@@ -42,11 +42,10 @@ export const getMyJobs = () => {
     );
 };
 export const viewApplicants = (jobId) => {
-
     const token = localStorage.getItem("token");
 
     return axios.get(
-        `http://localhost:81/applications/job/${jobId}`,
+        `http://localhost:81/applications/job/${jobId}/applicants`,
         {
             headers: {
                 Authorization: `Bearer ${token}`
