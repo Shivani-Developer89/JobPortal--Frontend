@@ -53,3 +53,19 @@ export const viewApplicants = (jobId) => {
         }
     );
 };
+export const updateApplicationStatus = (applicationId, status) => {
+
+    const token = localStorage.getItem("token");
+
+    return axios.put(
+        `http://localhost:81/applications/${applicationId}/status`,
+        {
+            status: status
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+};
