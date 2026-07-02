@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { viewApplicants } from "../services/JobService";
+import { viewApplicants,updateApplicationStatus } from "../services/JobService";
+import { downloadResume } from "../services/ApplicationService";
 
 
 function ViewApplicants() {
@@ -25,6 +26,36 @@ const loadApplicants = async () => {
         console.error(error);
     }
 };
+const handleStatusChange = async (applicationId, status) => {
+
+    try {
+
+        await updateApplicationStatus(applicationId, status);
+
+        loadApplicants();
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
+};
+const handleViewResume = async (applicationId) => {
+    try {
+        const response = await downloadResume(applicationId);
+
+        const file = new Blob([response.data], {
+            type: "application/pdf",
+        });
+
+        const fileURL = URL.createObjectURL(file);
+
+        window.open(fileURL, "_blank");
+    } catch (error) {
+        console.error(error);
+    }
+};
 
 return (
     <div className="container mt-5">
@@ -45,15 +76,40 @@ return (
 
                             <p>{app.candidateEmail}</p>
 
-                            <span className="badge bg-primary">
-                                {app.status}
-                            </span>
+                         <select
+                            className="form-select mt-2"
+                            value={app.status}
+                            onChange={(e) =>
+                                handleStatusChange(
+                                    app.applicationId,
+                                    e.target.value
+                                )
+                            }
+                        >
+
+                            <option value="APPLIED">Applied</option>
+                            <option value="SHORTLISTED">Shortlisted</option>
+                            <option value="HIRED">Hired</option>
+                            <option value="REJECTED">Rejected</option>
+
+                        </select>
 
                         </div>
+                          <div className="mt-6 d-flex gap-2 p-3">
+
+                        <button
+                            className="btn btn-success"
+                            onClick={() => handleViewResume(app.applicationId)}
+                        >
+                            View Resume
+                        </button>
 
                     </div>
 
-                </div>
+                    </div>
+           
+ </div>
+                
 
             ))}
 
