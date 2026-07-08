@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getMyProfile, saveProfile } from "../services/CandidateProfileService";
 import EducationSection from "../components/EducationSection";
+import SkillsSection from "../components/SkillsSection";
 
 function CandidateProfile() {
 
@@ -39,6 +40,7 @@ function CandidateProfile() {
     postYear: "",
     postCgpa: ""
 });
+const [skills, setSkills] = useState([]);
 
     useEffect(() => {
         loadProfile();
@@ -76,7 +78,45 @@ function CandidateProfile() {
 
         try {
 
-            await saveProfile(profile);
+           const educationText = `
+========== 10th ==========
+School: ${education.tenthSchool}
+Board: ${education.tenthBoard}
+Passing Year: ${education.tenthYear}
+${education.tenthGradingType}: ${education.tenthScore}
+
+========== 12th ==========
+School: ${education.twelfthSchool}
+Board: ${education.twelfthBoard}
+Stream: ${education.twelfthStream}
+Passing Year: ${education.twelfthYear}
+${education.twelfthGradingType}: ${education.twelfthScore}
+
+========== Graduation ==========
+Degree: ${education.graduationDegree}
+Branch: ${education.graduationBranch}
+College: ${education.graduationCollege}
+University: ${education.graduationUniversity}
+Passing Year: ${education.graduationYear}
+${education.graduationGradingType}: ${education.graduationScore}
+
+========== Post Graduation ==========
+Degree: ${education.postDegree}
+Branch: ${education.postBranch}
+College: ${education.postCollege}
+University: ${education.postUniversity}
+Passing Year: ${education.postYear}
+${education.postGradingType}: ${education.postScore}
+`;
+await saveProfile({
+
+    ...profile,
+
+    education: educationText,
+
+    skills: skills.join("|")
+
+});
 
             alert("Profile saved successfully.");
 
@@ -179,14 +219,10 @@ return (
                                 <label className="form-label">
                                     Skills
                                 </label>
-
-                                <textarea
-                                    className="form-control"
-                                    rows="3"
-                                    name="skills"
-                                    value={profile.skills}
-                                    onChange={handleChange}
-                                />
+                                    <SkillsSection
+                                        skills={skills}
+                                        setSkills={setSkills}
+                                    />
 
                             </div>
 
