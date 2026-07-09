@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getMyProfile, saveProfile } from "../services/CandidateProfileService";
 import EducationSection from "../components/EducationSection";
 import SkillsSection from "../components/SkillsSection";
+import ExperienceSection from "../components/ExperienceSection";
 
 function CandidateProfile() {
 
@@ -39,6 +40,23 @@ function CandidateProfile() {
     postUniversity: "",
     postYear: "",
     postCgpa: ""
+});
+const [experience, setExperience] = useState({
+    type: "FRESHER",
+
+    about: "",
+    projects: "",
+    internships: "",
+    certifications: "",
+
+    company: "",
+    jobTitle: "",
+    employmentType: "",
+    location: "",
+    yearsOfExperience: "",
+
+    responsibilities: "",
+    achievements: ""
 });
 const [skills, setSkills] = useState([]);
 
@@ -226,21 +244,11 @@ return (
 
                             </div>
 
-                            <div className="mb-3">
+                            <ExperienceSection 
+                                    experience={experience}
+                                    setExperience={setExperience}
 
-                                <label className="form-label">
-                                    Experience
-                                </label>
-
-                                <textarea
-                                    className="form-control"
-                                    rows="4"
-                                    name="experience"
-                                    value={profile.experience}
-                                    onChange={handleChange}
-                                />
-
-                            </div>
+                            />
 
                             {/* Social Links */}
 
