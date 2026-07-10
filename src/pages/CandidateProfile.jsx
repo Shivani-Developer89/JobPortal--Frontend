@@ -3,18 +3,26 @@ import { getMyProfile, saveProfile } from "../services/CandidateProfileService";
 import EducationSection from "../components/EducationSection";
 import SkillsSection from "../components/SkillsSection";
 import ExperienceSection from "../components/ExperienceSection";
+import SocialLinksSection from "../components/SocialLinksSection";
 
 function CandidateProfile() {
 
-    const [profile, setProfile] = useState({
-        phone: "",
-        location: "",
-        education: "",
-        skills: "",
-        experience: "",
-        github: "",
-        linkedin: ""
-    });
+ const [profile, setProfile] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    location: "",
+    education: "",
+    skills: "",
+    experience: "",
+
+    github: "",
+    linkedin: "",
+    portfolio: "",
+    leetcode: "",
+    hackerrank: ""
+
+});
     const [education, setEducation] = useState({
     tenthSchool: "",
     tenthBoard: "",
@@ -49,15 +57,19 @@ const [experience, setExperience] = useState({
     internships: "",
     certifications: "",
 
-    company: "",
-    jobTitle: "",
-    employmentType: "",
-    location: "",
-    yearsOfExperience: "",
-
-    responsibilities: "",
-    achievements: ""
+    experiences: [
+        {
+            company: "",
+            jobTitle: "",
+            employmentType: "",
+            location: "",
+            yearsOfExperience: "",
+            responsibilities: "",
+            achievements: ""
+        }
+    ]
 });
+
 const [skills, setSkills] = useState([]);
 
     useEffect(() => {
@@ -171,45 +183,81 @@ return (
 
                             {/* Personal Information */}
 
-                            <h5 className="mb-3 border-bottom pb-2">
-                                Personal Information
-                            </h5>
+                          <h5 className="mb-3 border-bottom pb-2">
+    Personal Information
+</h5>
 
-                            <div className="row">
+<div className="row">
 
-                                <div className="col-md-6 mb-3">
+    <div className="col-md-6 mb-3">
 
-                                    <label className="form-label">
-                                        Phone
-                                    </label>
+        <label className="form-label">
+            Full Name
+        </label>
 
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        name="phone"
-                                        value={profile.phone}
-                                        onChange={handleChange}
-                                    />
+        <input
+            type="text"
+            className="form-control bg-light"
+            value={profile.name}
+            readOnly
+        />
 
-                                </div>
+    </div>
 
-                                <div className="col-md-6 mb-3">
+    <div className="col-md-6 mb-3">
 
-                                    <label className="form-label">
-                                        Location
-                                    </label>
+        <label className="form-label">
+            Email Address
+        </label>
 
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        name="location"
-                                        value={profile.location}
-                                        onChange={handleChange}
-                                    />
+        <input
+            type="email"
+            className="form-control bg-light"
+            value={profile.email}
+            readOnly
+        />
 
-                                </div>
+    </div>
 
-                            </div>
+</div>
+
+<div className="row">
+
+    <div className="col-md-6 mb-3">
+
+        <label className="form-label">
+            Phone Number
+        </label>
+
+        <input
+            type="text"
+            className="form-control"
+            name="phone"
+            value={profile.phone}
+            onChange={handleChange}
+            placeholder="Enter phone number"
+        />
+
+    </div>
+
+    <div className="col-md-6 mb-3">
+
+        <label className="form-label">
+            Current Location
+        </label>
+
+        <input
+            type="text"
+            className="form-control"
+            name="location"
+            value={profile.location}
+            onChange={handleChange}
+            placeholder="Enter your location"
+        />
+
+    </div>
+
+</div>
 
                             {/* Education */}
 
@@ -252,45 +300,10 @@ return (
 
                             {/* Social Links */}
 
-                            <h5 className="mt-4 mb-3 border-bottom pb-2">
-                                Social Links
-                            </h5>
-
-                            <div className="row">
-
-                                <div className="col-md-6 mb-3">
-
-                                    <label className="form-label">
-                                        GitHub
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        name="github"
-                                        value={profile.github}
-                                        onChange={handleChange}
-                                    />
-
-                                </div>
-
-                                <div className="col-md-6 mb-3">
-
-                                    <label className="form-label">
-                                        LinkedIn
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        name="linkedin"
-                                        value={profile.linkedin}
-                                        onChange={handleChange}
-                                    />
-
-                                </div>
-
-                            </div>
+                         <SocialLinksSection
+    profile={profile}
+    handleChange={handleChange}
+/>
 
                             <div className="text-center mt-4">
 
