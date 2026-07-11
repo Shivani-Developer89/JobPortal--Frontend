@@ -4,6 +4,7 @@ import EducationSection from "../components/EducationSection";
 import SkillsSection from "../components/SkillsSection";
 import ExperienceSection from "../components/ExperienceSection";
 import SocialLinksSection from "../components/SocialLinksSection";
+import ResumeSection from "../components/ResumeSection";
 
 function CandidateProfile() {
 
@@ -71,6 +72,8 @@ const [experience, setExperience] = useState({
 });
 
 const [skills, setSkills] = useState([]);
+const [resume, setResume] = useState(null);
+
 
     useEffect(() => {
         loadProfile();
@@ -296,6 +299,12 @@ return (
                                     experience={experience}
                                     setExperience={setExperience}
 
+                            />
+                             <h5 className="mb-0">Resume</h5>
+
+                            <ResumeSection
+                                resume={resume}
+                                setResume={setResume}
                             />
 
                             {/* Social Links */}
