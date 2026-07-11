@@ -55,23 +55,7 @@ function SocialLinksSection({
 
                     </div>
 
-                    <div className="col-md-6 mb-3">
-
-                        <label className="form-label">
-                            <i className="bi bi-globe me-2"></i>
-                            Portfolio
-                        </label>
-
-                        <input
-                            type="url"
-                            className="form-control"
-                            name="portfolio"
-                            placeholder="https://yourportfolio.com"
-                            value={profile.portfolio}
-                            onChange={handleChange}
-                        />
-
-                    </div>
+                    
 
                     <div className="col-md-6 mb-3">
 
@@ -91,23 +75,7 @@ function SocialLinksSection({
 
                     </div>
 
-                    <div className="col-md-6 mb-3">
-
-                        <label className="form-label">
-                            <i className="bi bi-trophy me-2"></i>
-                            HackerRank
-                        </label>
-
-                        <input
-                            type="url"
-                            className="form-control"
-                            name="hackerrank"
-                            placeholder="https://hackerrank.com/profile/username"
-                            value={profile.hackerrank}
-                            onChange={handleChange}
-                        />
-
-                    </div>
+                    
 
                 </div>
 
