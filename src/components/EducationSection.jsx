@@ -41,13 +41,20 @@ function EducationSection({
                                 Board
                             </label>
 
-                            <input
-                                type="text"
-                                className="form-control"
-                                name="tenthBoard"
-                                value={education.tenthBoard}
-                                onChange={handleEducationChange}
-                            />
+                   
+                            <select
+                    className="form-select"
+                    name="tenthBoard"
+                    value={education.tenthBoard}
+                    onChange={handleEducationChange}
+                >
+                    <option value="">Select Board</option>
+                    <option value="CBSE">CBSE</option>
+                    <option value="ICSE">ICSE</option>
+                    <option value="State Board">State Board</option>
+                    <option value="NIOS">NIOS</option>
+                    <option value="Other">Other</option>
+                </select>
 
                         </div>
 
