@@ -8,99 +8,176 @@ import ResumeSection from "../components/ResumeSection";
 
 function CandidateProfile() {
 
- const [profile, setProfile] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    location: "",
-    education: "",
-    skills: "",
-    experience: "",
+    const [profile, setProfile] = useState({
+        name: "",
+        email: "",
+        phone: "",
+        location: "",
 
-    github: "",
-    linkedin: "",
-    portfolio: "",
-    leetcode: "",
-    hackerrank: ""
+        github: "",
+        linkedin: "",
+        portfolio: "",
+        leetcode: "",
+        hackerrank: ""
+    });
 
-});
     const [education, setEducation] = useState({
-    tenthSchool: "",
-    tenthBoard: "",
-    tenthYear: "",
-    tenthPercentage: "",
 
-    twelfthSchool: "",
-    twelfthBoard: "",
-    twelfthStream: "",
-    twelfthYear: "",
-    twelfthPercentage: "",
+        tenthSchool: "",
+        tenthBoard: "",
+        tenthYear: "",
+        tenthGradingType: "",
+        tenthScore: "",
 
-    graduationDegree: "",
-    graduationBranch: "",
-    graduationCollege: "",
-    graduationUniversity: "",
-    graduationYear: "",
-    graduationCgpa: "",
+        twelfthSchool: "",
+        twelfthBoard: "",
+        twelfthStream: "",
+        twelfthYear: "",
+        twelfthGradingType: "",
+        twelfthScore: "",
 
-    postDegree: "",
-    postBranch: "",
-    postCollege: "",
-    postUniversity: "",
-    postYear: "",
-    postCgpa: ""
-});
-const [experience, setExperience] = useState({
-    type: "FRESHER",
+        graduationDegree: "",
+        graduationBranch: "",
+        graduationCollege: "",
+        graduationUniversity: "",
+        graduationYear: "",
+        graduationGradingType: "",
+        graduationScore: "",
 
-    about: "",
-    projects: "",
-    internships: "",
-    certifications: "",
+        postDegree: "",
+        postBranch: "",
+        postCollege: "",
+        postUniversity: "",
+        postYear: "",
+        postGradingType: "",
+        postScore: ""
+    });
 
-    experiences: [
-        {
-            company: "",
-            jobTitle: "",
-            employmentType: "",
-            location: "",
-            yearsOfExperience: "",
-            responsibilities: "",
-            achievements: ""
-        }
-    ]
-});
+    const [experience, setExperience] = useState({
 
-const [skills, setSkills] = useState([]);
-const [resume, setResume] = useState(null);
+        type: "FRESHER",
+
+        about: "",
+        projects: "",
+        internships: "",
+        certifications: "",
+
+        experiences: [
+            {
+                company: "",
+                jobTitle: "",
+                employmentType: "",
+                location: "",
+                yearsOfExperience: "",
+                responsibilities: "",
+                achievements: ""
+            }
+        ]
+
+    });
+
+    const [skills, setSkills] = useState([]);
+
+    const [resume, setResume] = useState(null);
 
 
+
+   const loadProfile = async () => {
+    try {
+        const response = await getMyProfile();
+
+        // Personal Details
+        setProfile(response.data);
+
+        // Education Mapping
+        const tenth = response.data.education.find(
+            e => e.level === "10TH"
+        );
+
+        const twelfth = response.data.education.find(
+            e => e.level === "12TH"
+        );
+
+        const graduation = response.data.education.find(
+            e => e.level === "GRADUATION"
+        );
+
+        const post = response.data.education.find(
+            e => e.level === "POST_GRADUATION"
+        );
+
+        setEducation({
+            tenthSchool: tenth?.school || "",
+            tenthBoard: tenth?.board || "",
+            tenthYear: tenth?.passingYear || "",
+            tenthGradingType: tenth?.gradingType || "",
+            tenthScore: tenth?.score || "",
+
+            twelfthSchool: twelfth?.school || "",
+            twelfthBoard: twelfth?.board || "",
+            twelfthStream: twelfth?.stream || "",
+            twelfthYear: twelfth?.passingYear || "",
+            twelfthGradingType: twelfth?.gradingType || "",
+            twelfthScore: twelfth?.score || "",
+
+            graduationDegree: graduation?.degree || "",
+            graduationBranch: graduation?.branch || "",
+            graduationCollege: graduation?.college || "",
+            graduationUniversity: graduation?.university || "",
+            graduationYear: graduation?.passingYear || "",
+            graduationGradingType: graduation?.gradingType || "",
+            graduationScore: graduation?.score || "",
+
+            postDegree: post?.degree || "",
+            postBranch: post?.branch || "",
+            postCollege: post?.college || "",
+            postUniversity: post?.university || "",
+            postYear: post?.passingYear || "",
+            postGradingType: post?.gradingType || "",
+            postScore: post?.score || ""
+        });
+
+        // Skills
+        setSkills(
+            response.data.skills
+                ? response.data.skills.split("|")
+                : []
+        );
+
+        // Experience
+        setExperience(response.data.experience || "");
+
+        // Resume
+        setResume(response.data.resumePath || "");
+
+    } catch (err) {
+        console.error(err);
+    }
+};
     useEffect(() => {
         loadProfile();
     }, []);
 
-
-    const loadProfile = async () => {
-
-        try {
-
-            const response = await getMyProfile();
-
-            setProfile(response.data);
-
-        } catch (error) {
-
-            console.log("No profile yet.");
-
-        }
-
-    };
-
     const handleChange = (e) => {
 
         setProfile({
+
             ...profile,
+
             [e.target.name]: e.target.value
+
+        });
+
+    };
+
+    const handleEducationChange = (e) => {
+
+        setEducation({
+
+            ...education,
+
+            [e.target.name]: e.target.value
+
         });
 
     };
@@ -111,45 +188,58 @@ const [resume, setResume] = useState(null);
 
         try {
 
-           const educationText = `
-========== 10th ==========
-School: ${education.tenthSchool}
-Board: ${education.tenthBoard}
-Passing Year: ${education.tenthYear}
-${education.tenthGradingType}: ${education.tenthScore}
+            await saveProfile({
 
-========== 12th ==========
-School: ${education.twelfthSchool}
-Board: ${education.twelfthBoard}
-Stream: ${education.twelfthStream}
-Passing Year: ${education.twelfthYear}
-${education.twelfthGradingType}: ${education.twelfthScore}
+                ...profile,
 
-========== Graduation ==========
-Degree: ${education.graduationDegree}
-Branch: ${education.graduationBranch}
-College: ${education.graduationCollege}
-University: ${education.graduationUniversity}
-Passing Year: ${education.graduationYear}
-${education.graduationGradingType}: ${education.graduationScore}
+                education: [
 
-========== Post Graduation ==========
-Degree: ${education.postDegree}
-Branch: ${education.postBranch}
-College: ${education.postCollege}
-University: ${education.postUniversity}
-Passing Year: ${education.postYear}
-${education.postGradingType}: ${education.postScore}
-`;
-await saveProfile({
+                    {
+                        level: "10TH",
+                        school: education.tenthSchool,
+                        board: education.tenthBoard,
+                        passingYear: education.tenthYear,
+                        gradingType: education.tenthGradingType,
+                        score: education.tenthScore
+                    },
 
-    ...profile,
+                    {
+                        level: "12TH",
+                        school: education.twelfthSchool,
+                        board: education.twelfthBoard,
+                        stream: education.twelfthStream,
+                        passingYear: education.twelfthYear,
+                        gradingType: education.twelfthGradingType,
+                        score: education.twelfthScore
+                    },
 
-    education: educationText,
+                    {
+                        level: "GRADUATION",
+                        degree: education.graduationDegree,
+                        branch: education.graduationBranch,
+                        college: education.graduationCollege,
+                        university: education.graduationUniversity,
+                        passingYear: education.graduationYear,
+                        gradingType: education.graduationGradingType,
+                        score: education.graduationScore
+                    },
 
-    skills: skills.join("|")
+                    {
+                        level: "POST_GRADUATION",
+                        degree: education.postDegree,
+                        branch: education.postBranch,
+                        college: education.postCollege,
+                        university: education.postUniversity,
+                        passingYear: education.postYear,
+                        gradingType: education.postGradingType,
+                        score: education.postScore
+                    }
 
-});
+                ],
+
+                skills: skills.join("|")
+
+            });
 
             alert("Profile saved successfully.");
 
@@ -157,17 +247,13 @@ await saveProfile({
 
             console.error(error);
 
+            alert("Failed to save profile.");
+
         }
 
     };
-    const handleEducationChange = (e) => {
-    setEducation({
-        ...education,
-        [e.target.name]: e.target.value
-    });
-};
+    return (
 
-return (
     <div className="container py-5">
 
         <div className="row justify-content-center">
@@ -186,81 +272,81 @@ return (
 
                             {/* Personal Information */}
 
-                          <h5 className="mb-3 border-bottom pb-2">
-    Personal Information
-</h5>
+                            <h5 className="mb-3 border-bottom pb-2">
+                                Personal Information
+                            </h5>
 
-<div className="row">
+                            <div className="row">
 
-    <div className="col-md-6 mb-3">
+                                <div className="col-md-6 mb-3">
 
-        <label className="form-label">
-            Full Name
-        </label>
+                                    <label className="form-label">
+                                        Full Name
+                                    </label>
 
-        <input
-            type="text"
-            className="form-control bg-light"
-            value={profile.name}
-            readOnly
-        />
+                                    <input
+                                        type="text"
+                                        className="form-control bg-light"
+                                        value={profile.name}
+                                        readOnly
+                                    />
 
-    </div>
+                                </div>
 
-    <div className="col-md-6 mb-3">
+                                <div className="col-md-6 mb-3">
 
-        <label className="form-label">
-            Email Address
-        </label>
+                                    <label className="form-label">
+                                        Email Address
+                                    </label>
 
-        <input
-            type="email"
-            className="form-control bg-light"
-            value={profile.email}
-            readOnly
-        />
+                                    <input
+                                        type="email"
+                                        className="form-control bg-light"
+                                        value={profile.email}
+                                        readOnly
+                                    />
 
-    </div>
+                                </div>
 
-</div>
+                            </div>
 
-<div className="row">
+                            <div className="row">
 
-    <div className="col-md-6 mb-3">
+                                <div className="col-md-6 mb-3">
 
-        <label className="form-label">
-            Phone Number
-        </label>
+                                    <label className="form-label">
+                                        Phone Number
+                                    </label>
 
-        <input
-            type="text"
-            className="form-control"
-            name="phone"
-            value={profile.phone}
-            onChange={handleChange}
-            placeholder="Enter phone number"
-        />
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        name="phone"
+                                        value={profile.phone}
+                                        onChange={handleChange}
+                                        placeholder="Enter phone number"
+                                    />
 
-    </div>
+                                </div>
 
-    <div className="col-md-6 mb-3">
+                                <div className="col-md-6 mb-3">
 
-        <label className="form-label">
-            Current Location
-        </label>
+                                    <label className="form-label">
+                                        Current Location
+                                    </label>
 
-        <input
-            type="text"
-            className="form-control"
-            name="location"
-            value={profile.location}
-            onChange={handleChange}
-            placeholder="Enter your location"
-        />
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        name="location"
+                                        value={profile.location}
+                                        onChange={handleChange}
+                                        placeholder="Enter your location"
+                                    />
 
-    </div>
+                                </div>
 
-</div>
+                            </div>
 
                             {/* Education */}
 
@@ -268,14 +354,10 @@ return (
                                 Education
                             </h5>
 
-                            <div className="mb-3">
-
-                       <EducationSection
-                            education={education}
-                            handleEducationChange={handleEducationChange}
-                        />
-
-                            </div>
+                            <EducationSection
+                                education={education}
+                                handleEducationChange={handleEducationChange}
+                            />
 
                             {/* Professional Details */}
 
@@ -283,42 +365,33 @@ return (
                                 Professional Details
                             </h5>
 
-                            <div className="mb-3">
-
-                                <label className="form-label">
-                                    Skills
-                                </label>
-                                    <SkillsSection
-                                        skills={skills}
-                                        setSkills={setSkills}
-                                    />
-
-                            </div>
-
-                            <ExperienceSection 
-                                    experience={experience}
-                                    setExperience={setExperience}
-
+                            <SkillsSection
+                                skills={skills}
+                                setSkills={setSkills}
                             />
-                             <h5 className="mb-0">Resume</h5>
+
+                            <ExperienceSection
+                                experience={experience}
+                                setExperience={setExperience}
+                            />
 
                             <ResumeSection
                                 resume={resume}
                                 setResume={setResume}
                             />
 
-                            {/* Social Links */}
+                                                        {/* Social Links */}
 
-                         <SocialLinksSection
-    profile={profile}
-    handleChange={handleChange}
-/>
+                            <SocialLinksSection
+                                profile={profile}
+                                handleChange={handleChange}
+                            />
 
                             <div className="text-center mt-4">
 
                                 <button
-                                    className="btn btn-primary px-5"
                                     type="submit"
+                                    className="btn btn-primary px-5"
                                 >
                                     Save Profile
                                 </button>
@@ -336,6 +409,7 @@ return (
         </div>
 
     </div>
+
 );
 
 }

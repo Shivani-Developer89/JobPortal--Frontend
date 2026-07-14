@@ -66,8 +66,8 @@ function EducationSection({
 
                                <select
     className="form-select"
-    name="graduationYear"
-    value={education.graduationYear}
+     name="tenthYear"
+    value={education.tenthYear}
     onChange={handleEducationChange}
 >
     <option value="">Select Year</option>
@@ -209,8 +209,8 @@ function EducationSection({
 
            <select
     className="form-select"
-    name="graduationYear"
-    value={education.graduationYear}
+    name="twelfthYear"
+    value={education.twelfthYear}
     onChange={handleEducationChange}
 >
     <option value="">Select Year</option>
@@ -567,8 +567,8 @@ function EducationSection({
                 <input
                     type="text"
                     className="form-control"
-                    name="Percentage"
-                    value={education.Percentage}
+                    name="postScore"
+                    value={education.postScore}
                     onChange={handleEducationChange}
                     placeholder={
                         education.postGradingType === "CGPA"
