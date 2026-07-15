@@ -1,31 +1,48 @@
+import {
+    uploadResume,
+    downloadResume
+} from "../services/ResumeService";
+
 function ResumeSection({
     resume,
     setResume
 }) {
+     console.log("Resume selected");
+   const handleResumeChange = async (e) => {
 
-    const handleResumeChange = (e) => {
+    const file = e.target.files[0];
 
-        const file = e.target.files[0];
+    if (!file) return;
 
-        if (!file) return;
+    if (file.type !== "application/pdf") {
+        alert("Only PDF files are allowed.");
+        return;
+    }
 
-        // Allow only PDF
-        if (file.type !== "application/pdf") {
-            alert("Only PDF files are allowed.");
-            return;
-        }
+    if (file.size > 5 * 1024 * 1024) {
+        alert("Maximum file size is 5 MB.");
+        return;
+    }
 
-        // Max Size 5 MB
-        if (file.size > 5 * 1024 * 1024) {
-            alert("Maximum file size is 5 MB.");
-            return;
-        }
+    try {
+
+        await uploadResume(file);
 
         setResume({
-            file: file,
+            file,
             uploadedAt: new Date().toLocaleDateString("en-GB")
         });
-    };
+
+        alert("Resume uploaded successfully.");
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert("Resume upload failed.");
+
+    }
+};
 
     return (
 
@@ -93,11 +110,15 @@ function ResumeSection({
                                 <div>
 
                                     <h5 className="mb-1">
-                                        {resume.file.name}
+                                      {resume.file?.name || resume.fileName}
                                     </h5>
 
                                     <small className="text-muted d-block">
-                                        PDF • {(resume.file.size / 1024 / 1024).toFixed(2)} MB
+                                        {
+                                        resume.file
+                                            ? `PDF • ${(resume.file.size / 1024 / 1024).toFixed(2)} MB`
+                                            : "PDF"
+                                    }
                                     </small>
 
                                     <small className="text-muted">
@@ -117,12 +138,30 @@ function ResumeSection({
                                 <button
                                     className="btn btn-outline-primary"
                                     type="button"
-                                    onClick={() =>
-                                        window.open(
-                                            URL.createObjectURL(resume.file),
-                                            "_blank"
-                                        )
-                                    }
+                                    onClick={async () => {
+
+                                        if (resume.file) {
+
+                                            window.open(
+                                                URL.createObjectURL(resume.file),
+                                                "_blank"
+                                            );
+
+                                        } else {
+
+                                       const response = await downloadResume();
+
+const blob = new Blob([response.data], {
+    type: "application/pdf"
+});
+
+const url = URL.createObjectURL(blob);
+
+window.open(url, "_blank");
+
+                                        }
+
+                                    }}
                                 >
                                     <i className="bi bi-eye me-2"></i>
                                     View

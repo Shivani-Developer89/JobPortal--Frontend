@@ -82,31 +82,51 @@ function CandidateProfile() {
 
 
 
-   const loadProfile = async () => {
+  const loadProfile = async () => {
+
     try {
+
         const response = await getMyProfile();
 
-        // Personal Details
         setProfile(response.data);
+        if (response.data.resumePath) {
 
-        // Education Mapping
-        const tenth = response.data.education.find(
+    setResume({
+        fileName: response.data.resumePath
+    .split(/[/\\]/)
+    .pop()
+    .split("_")
+    .slice(1)
+    .join("_"),
+        uploadedAt: ""
+    });
+
+}
+
+        // -------------------------
+        // Education
+        // -------------------------
+
+        const educationList = response.data.education || [];
+
+        const tenth = educationList.find(
             e => e.level === "10TH"
         );
 
-        const twelfth = response.data.education.find(
+        const twelfth = educationList.find(
             e => e.level === "12TH"
         );
 
-        const graduation = response.data.education.find(
+        const graduation = educationList.find(
             e => e.level === "GRADUATION"
         );
 
-        const post = response.data.education.find(
+        const post = educationList.find(
             e => e.level === "POST_GRADUATION"
         );
 
         setEducation({
+
             tenthSchool: tenth?.school || "",
             tenthBoard: tenth?.board || "",
             tenthYear: tenth?.passingYear || "",
@@ -135,123 +155,182 @@ function CandidateProfile() {
             postYear: post?.passingYear || "",
             postGradingType: post?.gradingType || "",
             postScore: post?.score || ""
+
         });
 
+        // -------------------------
+        // Experience
+        // -------------------------
+
+        const experienceList = response.data.experience || [];
+
+        if (experienceList.length > 0) {
+
+            setExperience({
+
+                type: "EXPERIENCED",
+
+                about: "",
+                projects: "",
+                internships: "",
+                certifications: "",
+
+                experiences: experienceList
+
+            });
+
+        } else {
+
+            setExperience({
+
+                type: "FRESHER",
+
+                about: "",
+                projects: "",
+                internships: "",
+                certifications: "",
+
+                experiences: [
+                    {
+                        company: "",
+                        jobTitle: "",
+                        employmentType: "",
+                        location: "",
+                        yearsOfExperience: "",
+                        responsibilities: "",
+                        achievements: ""
+                    }
+                ]
+
+            });
+
+        }
+
+        // -------------------------
         // Skills
+        // -------------------------
+
         setSkills(
             response.data.skills
                 ? response.data.skills.split("|")
                 : []
         );
 
-        // Experience
-        setExperience(response.data.experience || "");
+    } catch (error) {
 
-        // Resume
-        setResume(response.data.resumePath || "");
+        console.error("Failed to load profile", error);
 
-    } catch (err) {
-        console.error(err);
     }
+
 };
-    useEffect(() => {
-        loadProfile();
-    }, []);
 
-    const handleChange = (e) => {
+useEffect(() => {
 
-        setProfile({
+    loadProfile();
+
+}, []);
+
+const handleChange = (e) => {
+
+    setProfile({
+
+        ...profile,
+
+        [e.target.name]: e.target.value
+
+    });
+
+};
+
+const handleEducationChange = (e) => {
+
+    setEducation({
+
+        ...education,
+
+        [e.target.name]: e.target.value
+
+    });
+
+};
+
+const handleSubmit = async (e) => {
+
+    e.preventDefault();
+
+    try {
+
+        await saveProfile({
 
             ...profile,
 
-            [e.target.name]: e.target.value
+            education: [
+
+                {
+                    level: "10TH",
+                    school: education.tenthSchool,
+                    board: education.tenthBoard,
+                    passingYear: education.tenthYear,
+                    gradingType: education.tenthGradingType,
+                    score: education.tenthScore
+                },
+
+                {
+                    level: "12TH",
+                    school: education.twelfthSchool,
+                    board: education.twelfthBoard,
+                    stream: education.twelfthStream,
+                    passingYear: education.twelfthYear,
+                    gradingType: education.twelfthGradingType,
+                    score: education.twelfthScore
+                },
+
+                {
+                    level: "GRADUATION",
+                    degree: education.graduationDegree,
+                    branch: education.graduationBranch,
+                    college: education.graduationCollege,
+                    university: education.graduationUniversity,
+                    passingYear: education.graduationYear,
+                    gradingType: education.graduationGradingType,
+                    score: education.graduationScore
+                },
+
+                {
+                    level: "POST_GRADUATION",
+                    degree: education.postDegree,
+                    branch: education.postBranch,
+                    college: education.postCollege,
+                    university: education.postUniversity,
+                    passingYear: education.postYear,
+                    gradingType: education.postGradingType,
+                    score: education.postScore
+                }
+
+            ],
+
+            experience:
+                experience.type === "EXPERIENCED"
+                    ? experience.experiences
+                    : [],
+
+            skills: skills.join("|")
 
         });
 
-    };
+        alert("Profile saved successfully.");
 
-    const handleEducationChange = (e) => {
+        loadProfile();
 
-        setEducation({
+    } catch (error) {
 
-            ...education,
+        console.error(error);
 
-            [e.target.name]: e.target.value
+        alert("Failed to save profile.");
 
-        });
+    }
 
-    };
-
-    const handleSubmit = async (e) => {
-
-        e.preventDefault();
-
-        try {
-
-            await saveProfile({
-
-                ...profile,
-
-                education: [
-
-                    {
-                        level: "10TH",
-                        school: education.tenthSchool,
-                        board: education.tenthBoard,
-                        passingYear: education.tenthYear,
-                        gradingType: education.tenthGradingType,
-                        score: education.tenthScore
-                    },
-
-                    {
-                        level: "12TH",
-                        school: education.twelfthSchool,
-                        board: education.twelfthBoard,
-                        stream: education.twelfthStream,
-                        passingYear: education.twelfthYear,
-                        gradingType: education.twelfthGradingType,
-                        score: education.twelfthScore
-                    },
-
-                    {
-                        level: "GRADUATION",
-                        degree: education.graduationDegree,
-                        branch: education.graduationBranch,
-                        college: education.graduationCollege,
-                        university: education.graduationUniversity,
-                        passingYear: education.graduationYear,
-                        gradingType: education.graduationGradingType,
-                        score: education.graduationScore
-                    },
-
-                    {
-                        level: "POST_GRADUATION",
-                        degree: education.postDegree,
-                        branch: education.postBranch,
-                        college: education.postCollege,
-                        university: education.postUniversity,
-                        passingYear: education.postYear,
-                        gradingType: education.postGradingType,
-                        score: education.postScore
-                    }
-
-                ],
-
-                skills: skills.join("|")
-
-            });
-
-            alert("Profile saved successfully.");
-
-        } catch (error) {
-
-            console.error(error);
-
-            alert("Failed to save profile.");
-
-        }
-
-    };
+};
     return (
 
     <div className="container py-5">
