@@ -122,8 +122,7 @@ function ResumeSection({
                                     </small>
 
                                     <small className="text-muted">
-                                        Uploaded :
-                                        {" "}
+                                        Uploaded :{" "}
                                         {resume.uploadedAt}
                                     </small>
 

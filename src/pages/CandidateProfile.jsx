@@ -98,7 +98,9 @@ function CandidateProfile() {
     .split("_")
     .slice(1)
     .join("_"),
-        uploadedAt: ""
+    uploadedAt: response.data.resumeUploadedAt
+    ? new Date(response.data.resumeUploadedAt).toLocaleDateString("en-GB")
+    : ""
     });
 
 }
