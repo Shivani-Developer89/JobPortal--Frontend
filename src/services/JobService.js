@@ -69,3 +69,17 @@ export const updateApplicationStatus = (applicationId, status) => {
         }
     );
 };
+
+export const getFeaturedJobs = () => {
+
+    const token = localStorage.getItem("token");
+
+    return axios.get(
+        `${API_URL}/all?page=0&size=6&sort=createdAt`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+};
