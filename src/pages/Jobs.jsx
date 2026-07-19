@@ -23,11 +23,21 @@ function Jobs() {
 
         setJobs(response.data.content);
 
-    } catch (error) {
+    }catch (error) {
 
-        console.error(error);
+    if (
+        error.response?.status === 401 ||
+        error.response?.status === 403
+    ) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
 
+        window.location.href = "/login";
+        return;
     }
+
+    console.error(error);
+}
 };
 
     return (
