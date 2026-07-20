@@ -1,19 +1,20 @@
-import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const navigate = useNavigate();
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [role, setRole] = useState("");
+  const location = useLocation();
 
-  useEffect(() => {
+useEffect(() => {
     const token = localStorage.getItem("token");
     const userRole = localStorage.getItem("role");
 
     setIsLoggedIn(!!token);
-    setRole(userRole);
-  }, []);
+    setRole(userRole || "");
+}, [location]);
 
   const handleLogout = () => {
     localStorage.clear();

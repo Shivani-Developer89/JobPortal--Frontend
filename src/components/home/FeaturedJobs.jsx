@@ -11,18 +11,27 @@ function FeaturedJobs() {
     }, []);
 
     const loadJobs = async () => {
+try {
 
-        try {
+    const response = await getFeaturedJobs();
 
-            const response = await getFeaturedJobs();
+    setJobs(response.data.content);
 
-            setJobs(response.data.content);
+} catch (error) {
 
-        } catch (error) {
+    if (
+        error.response?.status === 401 ||
+        error.response?.status === 403
+    ) {
 
-            console.error(error);
+        localStorage.clear();
 
-        }
+        setJobs([]);   // Show no featured jobs (or switch to a public endpoint)
+        return;
+    }
+
+    console.error(error);
+}
     };
 
     return (
