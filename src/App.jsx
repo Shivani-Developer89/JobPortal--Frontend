@@ -10,6 +10,7 @@ import RecruiterJobs from "./pages/RecruiterJobs";
 import ViewApplicants from "./pages/ViewApplicants";
 import CandidateProfile from "./pages/CandidateProfile";
 import LandingPage from "./pages/LandingPage";
+import CandidateDashboard from "./pages/CandidateDashboard";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route   path="/jobs/:id" element={<JobDetails />}/>
         <Route path="/resume/upload"element={<UploadResume />}/>
       <Route path="/applications"element={<MyApplications />}/>
+      <Route path="/candidateDashboard"element={<CandidateDashboard />}/>
       <Route path="/recruiterDashboard"element={<RecruiterDashboard />}/>
       <Route path="/recruiter/jobs" element={<RecruiterJobs />} />
       <Route path="/recruiter/jobs/:jobId/applicants"element={<ViewApplicants />}/>

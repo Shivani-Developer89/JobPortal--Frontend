@@ -85,3 +85,18 @@ export const downloadResume = (applicationId) => {
         }
     );
 };
+
+export const getCandidateDashboard = () => {
+
+    const token = localStorage.getItem("token");
+
+    return axios.get(
+        `${API_URL}/candidateDashboard`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+};
+

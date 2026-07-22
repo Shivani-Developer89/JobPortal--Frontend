@@ -24,6 +24,7 @@ const handleApply = async () => {
 
         alert("Application Submitted Successfully");
 
+        
     } catch (error) {
 
     if (
