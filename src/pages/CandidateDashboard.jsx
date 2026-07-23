@@ -4,6 +4,9 @@ import {
     getMyApplications
 } from "../services/applicationService";
 import { useNavigate } from "react-router-dom";
+import { withdrawApplication } from "../services/applicationService";
+import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 
 const CandidateDashboard = () => {
 
@@ -21,28 +24,37 @@ const handleViewJob = (jobId) => {
 };
 const handleWithdraw = async (applicationId) => {
 
-    const confirmWithdraw = window.confirm(
-        "Are you sure you want to withdraw this application?"
-    );
+const result = await Swal.fire({
+    title: "Withdraw Application?",
+    text: "Are you sure you want to withdraw this application?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#6c757d",
+    confirmButtonText: "Yes, Withdraw",
+    cancelButtonText: "Cancel"
+});
 
-    if (!confirmWithdraw) {
-        return;
-    }
+if (!result.isConfirmed) {
+    return;
+}
 
     try {
 
         await withdrawApplication(applicationId);
 
-        alert("Application withdrawn successfully.");
+        toast.success("Application withdrawn successfully!");
 
         loadDashboard();
 
     } catch (error) {
 
-        alert(
-            error.response?.data?.message ||
-            "Failed to withdraw application."
-        );
+        
+        toast.error(
+        error.response?.data?.message ||
+        "Failed to withdraw application."
+    );
+        
     }
 };
 
@@ -141,7 +153,6 @@ const handleWithdraw = async (applicationId) => {
                         <h5>{application.jobTitle}</h5>
 
                        <p className="mb-1">
-    <strong>Status:</strong>{" "}
  <span
     className={`ms-2 ${
         application.status === "APPLIED"

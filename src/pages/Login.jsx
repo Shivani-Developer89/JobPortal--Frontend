@@ -2,16 +2,18 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../services/AuthService";
+import { toast } from "react-toastify";
 function Login() {
   const[email,setEmail] =useState("");
   const[password,setPassword]= useState("");
   const navigate = useNavigate();
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!email || !password) {
-        alert("Email and Password are required");
+        toast.error("Email and Password are required");
         return;
     }
 
@@ -27,7 +29,9 @@ function Login() {
             response.data.token
         );
 
-        alert("Login Successful");
+
+        
+        toast.success("Login Successful");
 
        navigate("/jobs");
 
@@ -35,7 +39,7 @@ function Login() {
 
         console.error(error);
 
-        alert(
+        toast.error(
             error.response?.data ||
             error.response?.data?.message ||
             "Invalid Credentials"
