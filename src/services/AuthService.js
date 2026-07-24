@@ -1,10 +1,9 @@
-import axios from "axios";
+import api from "./appConfig";
 
-const API_URL = "http://localhost:81/auth";
-
-export const registerUser = async (userData) => {
-    return axios.post(`${API_URL}/register`, userData);
+export const registerUser = (userData) => {
+    return api.post("/auth/register", userData);
 };
+
 export const loginUser = (credentials) => {
-    return axios.post(`${API_URL}/login`, credentials);
+    return api.post("/auth/login", credentials);
 };

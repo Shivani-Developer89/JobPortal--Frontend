@@ -1,10 +1,10 @@
-import api from "./axiosConfig";
+import axios from "axios";
 
 const api = axios.create({
-    baseURL: "http://localhost:81"
+    baseURL: "http://localhost:81",
 });
 
-api.interceptors.request.use(config => {
+api.interceptors.request.use((config) => {
 
     const token = localStorage.getItem("token");
 
@@ -16,9 +16,7 @@ api.interceptors.request.use(config => {
 });
 
 api.interceptors.response.use(
-
     response => response,
-
     error => {
 
         if (
@@ -27,7 +25,6 @@ api.interceptors.response.use(
         ) {
             localStorage.removeItem("token");
             localStorage.removeItem("role");
-
             window.location.href = "/login";
         }
 
