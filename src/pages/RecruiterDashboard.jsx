@@ -1,14 +1,36 @@
-import { useState, useEffect } from "react";
-import {getRecruiterDashboard, getRecentApplications, downloadResume} from "../services/ApplicationService";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+import {
+    getRecruiterDashboard,
+    getRecentApplications,
+    downloadResume
+} from "../services/ApplicationService";
+
+import {
+    FaBriefcase,
+    FaUsers,
+    FaUserCheck,
+    FaUserTie,
+    FaUserTimes,
+    FaPlus,
+    FaArrowRight,
+    FaFileAlt
+} from "react-icons/fa";
+
+import "../styles/RecruiterDashboard.css";
 
 function RecruiterDashboard() {
 
+    const navigate = useNavigate();
+
     const [dashboard, setDashboard] = useState(null);
     const [recentApplications, setRecentApplications] = useState([]);
+    
 
     useEffect(() => {
         loadDashboard();
-          loadRecentApplications(); 
+        loadRecentApplications();
     }, []);
 
     const loadDashboard = async () => {
@@ -19,145 +41,290 @@ function RecruiterDashboard() {
             console.error(error);
         }
     };
-    const loadRecentApplications = async () => {
-    try {
-        const response = await getRecentApplications();
-        console.log(response.data);
 
-        setRecentApplications(response.data);
-    } catch (error) {
-        console.error(error);
-    }
-};
+    const loadRecentApplications = async () => {
+        try {
+            const response = await getRecentApplications();
+            setRecentApplications(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const handleViewResume = async (applicationId) => {
+        try {
+            const response = await downloadResume(applicationId);
+
+            const file = new Blob([response.data], {
+                type: "application/pdf"
+            });
+
+            const fileURL = URL.createObjectURL(file);
+
+            window.open(fileURL, "_blank");
+
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const getInitials = (name) => {
+        if (!name) return "?";
+
+        return name
+            .trim()
+            .split(/\s+/)
+            .map(part => part[0])
+            .join("")
+            .slice(0, 2)
+            .toUpperCase();
+    };
+
+    const formatStatus = (status) => {
+        if (!status) return "Unknown";
+
+        return status
+            .replaceAll("_", " ")
+            .toLowerCase()
+            .replace(/\b\w/g, char => char.toUpperCase());
+    };
 
     if (!dashboard) {
         return (
-            <div className="container mt-5">
-                <h4>Loading...</h4>
+            <div className="recruiter-loading">
+                <div className="spinner-border text-primary" role="status" />
+                <span>Loading dashboard...</span>
             </div>
         );
     }
-const handleViewResume = async (applicationId) => {
-    try {
-        const response = await downloadResume(applicationId);
 
-        const file = new Blob([response.data], {
-            type: "application/pdf"
-        });
+    const stats = [
+        {
+            title: "Total Jobs",
+            value: dashboard.totalJobs,
+            icon: <FaBriefcase />
+        },
+        {
+            title: "Applications",
+            value: dashboard.totalApplications,
+            icon: <FaUsers />
+        },
+        {
+            title: "Shortlisted",
+            value: dashboard.shortlisted,
+            icon: <FaUserCheck />
+        },
+        {
+            title: "Hired",
+            value: dashboard.hired,
+            icon: <FaUserTie />
+        },
+        {
+            title: "Rejected",
+            value: dashboard.rejected,
+            icon: <FaUserTimes />
+        }
+    ];
 
-        const fileURL = URL.createObjectURL(file);
+    return (
+        <main className="recruiter-dashboard">
 
-        window.open(fileURL, "_blank");
-    } catch (error) {
-        console.error(error);
-    }
-};
+            {/* Header */}
 
-return (
-    <div className="container mt-5">
+            <div className="dashboard-header">
 
-        <h2 className="mb-2">Recruiter Dashboard</h2>
+                <div>
+                    <h1>Recruiter Dashboard</h1>
 
-        <div className="row g-2">
-
-            <div className="col-md-2">
-                <div className="card shadow-sm text-center h-100">
-                   <div className="card-body py-3">
-                       <h6 className="text-muted mb-2">Total Jobs</h6>
-                       <h2 className="fw-bold mb-0">{dashboard.totalJobs}</h2>   
-                    </div>
-                </div>
-            </div>
-
-            <div className="col-md-2">
-                <div className="card shadow-sm text-center h-100">
-                   <div className="card-body py-3">
-                       <h6 className="text-muted mb-2">Total Application</h6>
-                       <h2 className="fw-bold mb-0">{dashboard.totalApplications}</h2>   
-                    </div>
-                </div>
-            </div>
-
-            <div className="col-md-2">
-                <div className="card shadow-sm text-center h-100">
-                   <div className="card-body py-3">
-                       <h6 className="text-muted mb-2">Shortlisted</h6>
-                       <h2 className="fw-bold mb-0">{dashboard.shortlisted}</h2>   
-                    </div>
-                </div>
-            </div>
-
-            <div className="col-md-2">
-             <div className="card shadow-sm text-center h-100">
-                   <div className="card-body py-3">
-                       <h6 className="text-muted mb-2">Hired</h6>
-                       <h2 className="fw-bold mb-0">{dashboard.hired}</h2>   
-                    </div>
-                </div>
-            </div>
-
-            <div className="col-md-2">
-              <div className="card shadow-sm text-center h-100">
-                   <div className="card-body py-3">
-                       <h6 className="text-muted mb-2">Rejected</h6>
-                       <h2 className="fw-bold mb-0">{dashboard.rejected}</h2>   
-                    </div>
-                </div>
-            </div>
-
-        </div>
-        <div className="mt-5">
-    <h4 className="mb-3">Recent Applications</h4>
-
-  <div className="row g-3 mt-4">
-    
-
-    {recentApplications.map(app => (
-
-        <div className="col-lg-6" key={app.applicationId}>
-
-            <div className="card shadow-sm">
-
-                <div className="card-body py-3">
-
-                    <h5>  💂‍♂️ {app.candidateName}</h5>
-
-                    <p className="text-muted mb-1">
-                        {app.candidateEmail}
+                    <p>
+                        Manage your job postings and candidate applications.
                     </p>
+                </div>
 
-                    <span className="badge bg-primary">
-                        {app.status}
-                    </span>
+                <button
+                    className="post-job-btn"
+                    onClick={() => navigate("/recruiter/create-job")}
+                >
+                    <FaPlus />
+                    Post New Job
+                </button>
 
-                    <p className="mt-2 mb-2">
-                      {new Date(app.appliedAt).toLocaleDateString("en-IN", {
-                        day: "numeric",month: "short",year: "numeric"})}
-                    </p>
-                        <button
-                        className="btn btn-success btn-sm me-2"
-                        onClick={() => handleViewResume(app.applicationId)}
-                        >
-                        View Resume
-                        </button>
+            </div>
 
-                    <button className="btn btn-outline-primary btn-sm">
-                        Manage
+            {/* Statistics */}
+
+            <section className="dashboard-stats">
+
+                {stats.map(stat => (
+
+                    <div
+                        className="stat-card"
+                        key={stat.title}
+                    >
+
+                        <div className="stat-icon">
+                            {stat.icon}
+                        </div>
+
+                        <div>
+                            <span className="stat-title">
+                                {stat.title}
+                            </span>
+
+                            <h2>{stat.value ?? 0}</h2>
+                        </div>
+
+                    </div>
+
+                ))}
+
+            </section>
+
+            {/* Recent Applications */}
+
+            <section className="applications-section">
+
+                <div className="section-header">
+
+                    <div>
+                        <h2>Recent Applications</h2>
+
+                        <p>
+                            Review candidates who recently applied to your jobs.
+                        </p>
+                    </div>
+
+                    <button
+                        className="view-jobs-btn"
+                        onClick={() => navigate("/recruiter/jobs")}
+                    >
+                        My Jobs
+                        <FaArrowRight />
                     </button>
 
                 </div>
 
-            </div>
+                {recentApplications.length === 0 ? (
 
-        </div>
+                    <div className="empty-applications">
+                        <FaUsers />
 
-    ))}
+                        <h3>No recent applications</h3>
 
-</div>
-</div>
+                        <p>
+                            New candidate applications will appear here.
+                        </p>
+                    </div>
 
-    </div>
-    
-);
+                ) : (
+
+                    <div className="applications-table-wrapper">
+
+                        <table className="applications-table">
+
+                            <thead>
+                                <tr>
+                                    <th>Candidate</th>
+                                    <th>Applied Date</th>
+                                    <th>Status</th>
+                                    <th>Resume</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                {recentApplications.map(app => (
+
+                                    <tr key={app.applicationId}>
+
+                                        <td>
+
+                                            <div className="candidate-info">
+
+                                                <div className="candidate-avatar">
+                                                    {getInitials(app.candidateName)}
+                                                </div>
+
+                                                <div>
+                                                    <h4>
+                                                        {app.candidateName}
+                                                    </h4>
+
+                                                    <span>
+                                                        {app.candidateEmail}
+                                                    </span>
+                                                </div>
+
+                                            </div>
+
+                                        </td>
+
+                                        <td className="applied-date">
+
+                                            {new Date(
+                                                app.appliedAt
+                                            ).toLocaleDateString(
+                                                "en-IN",
+                                                {
+                                                    day: "2-digit",
+                                                    month: "short",
+                                                    year: "numeric"
+                                                }
+                                            )}
+
+                                        </td>
+
+                                        <td>
+                                            <span
+                                                className={`application-status status-${app.status?.toLowerCase()}`}
+                                            >
+                                                {formatStatus(app.status)}
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            <button
+                                                className="resume-btn"
+                                                onClick={() =>
+                                                    handleViewResume(
+                                                        app.applicationId
+                                                    )
+                                                }
+                                            >
+                                                <FaFileAlt />
+                                                View Resume
+                                            </button>
+                                        </td>
+
+                                        <td className="manage-column">
+                                            <button
+    className="manage-btn"
+    onClick={() =>
+        navigate(`/recruiter/jobs/${app.jobId}/applicants`)
+    }
+>
+    Manage
+    <FaArrowRight />
+</button>
+                                        </td>
+
+                                    </tr>
+
+                                ))}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                )}
+
+            </section>
+
+        </main>
+    );
 }
+
 export default RecruiterDashboard;

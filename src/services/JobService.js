@@ -2,6 +2,10 @@ import api from "./appConfig";
 
 const API_URL = "http://localhost:81/job";
 
+export const createJob = (job) => {
+    return api.post("/jobs", job);
+};
+
 export const getAllJobs = () => {
     return api.get("/job/all");
 };

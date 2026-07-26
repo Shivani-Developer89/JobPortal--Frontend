@@ -1,63 +1,83 @@
 import { useNavigate } from "react-router-dom";
+import "../../styles/JobCard.css";
+import {
+  FaRegStar,
+  FaMapMarkerAlt,
+  FaClock
+} from "react-icons/fa";
 
+import { FaShareNodes } from "react-icons/fa6";
+
+//import ShareIcon from "@mui/icons-material/Share";
 function JobCard({ job }) {
 
     const navigate = useNavigate();
 
-    return (
+return (
+<div className="job-card">
 
-        <div className="col-lg-4 col-md-6 mb-4">
+    {/* Header */}
+   <div className="job-card-header">
 
-            <div className="card h-100 shadow-sm">
+    <div className="job-info">
 
-                <div className="card-body">
+        <div className="job-title-row">
+            <h5 className="job-title">{job.title}</h5>
 
-                    <h5>{job.title}</h5>
+            <div className="job-actions">
+                <button className="icon-btn">
+                    <FaRegStar />
+                </button>
 
-                    <p className="text-muted">
-
-                        {job.recruiterName}
-
-                    </p>
-
-                    <p>
-
-                        📍 {job.location}
-
-                    </p>
-
-                    <p>
-
-                        💼 {job.jobType}
-
-                    </p>
-
-                    <p>
-
-                        ⭐ {job.experienceLevel}
-
-                    </p>
-
-                    <h5 className="text-success">
-
-                        ₹ {job.salary}
-
-                    </h5>
-
-                    <button
-                        className="btn btn-primary w-100"
-                        onClick={() => navigate(`/jobs/${job.id}`)}
-                    >
-                        View Details
-                    </button>
-
-                </div>
-
+                <button className="icon-btn">
+                    <FaShareNodes />
+                </button>
             </div>
-
         </div>
 
-    );
+        <p className="company-name">{job.companyName}</p>
+
+        <div className="job-location">
+            <FaMapMarkerAlt className="location-icon" />
+            <span>{job.location}</span>
+        </div>
+
+    </div>
+
+</div>
+
+    {/* Chips */}
+  <div className="job-chips">
+    <span className="chip">{job.jobType}</span>
+    <span className="chip">{job.experience}</span>
+    <span className="chip">{job.salary}</span>
+</div>
+
+    {/* Description */}
+  <div className="job-description">
+    <p>{job.description}</p>
+</div>
+
+
+    {/* Footer */}
+<div className="job-footer">
+
+    <div className="posted-date">
+        <FaClock />
+        <span>Posted 2 days ago</span>
+    </div>
+
+    <button
+        className="view-details-btn"
+        onClick={() => navigate(`/jobs/${job.id}`)}
+    >
+        View Details →
+    </button>
+
+</div>
+
+</div>
+);
 }
 
 export default JobCard;

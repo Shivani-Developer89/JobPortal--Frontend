@@ -25,6 +25,7 @@ function RecruiterJobs() {
     <div className="container mt-5">
 
         <h2 className="mb-4">My Jobs</h2>
+   
 
         <div className="row g-4">
 
@@ -49,8 +50,10 @@ function RecruiterJobs() {
                             <p className="text-muted">
                                 Posted on {new Date(job.createdAt).toLocaleDateString()}
                             </p>
+                            
 
                             <div className="d-flex gap-2">
+                               
 
                          <button
                         className="btn btn-primary btn-sm"
