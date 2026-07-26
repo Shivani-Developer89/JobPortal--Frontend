@@ -5,6 +5,7 @@ import SkillsSection from "../components/SkillsSection";
 import ExperienceSection from "../components/ExperienceSection";
 import SocialLinksSection from "../components/SocialLinksSection";
 import ResumeSection from "../components/ResumeSection";
+import { toast } from "react-toastify";
 
 function CandidateProfile() {
 
