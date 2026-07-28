@@ -435,6 +435,12 @@ const handleStatusUpdate = async (status) => {
                         })}
                     </strong>
                 </div>
+                    <div>
+        <span>Location</span>
+        <strong>
+            {selectedApplication.candidateLocation || "Not provided"}
+        </strong>
+    </div>
 
                 <div>
                     <span>Current Status</span>
@@ -445,6 +451,45 @@ const handleStatusUpdate = async (status) => {
                 </div>
 
             </div>
+            <div className="candidate-experience">
+    <h6>Experience</h6>
+
+    {selectedApplication.candidateExperience?.length > 0 ? (
+        selectedApplication.candidateExperience.map((exp, index) => (
+            <div className="experience-item" key={index}>
+
+                <div className="experience-header">
+                    <strong>
+                        {exp.jobTitle || "Experience"}
+                    </strong>
+
+                    {exp.yearsOfExperience && (
+                        <span>{exp.yearsOfExperience}</span>
+                    )}
+                </div>
+
+                {exp.company && (
+                    <p>{exp.company}</p>
+                )}
+
+                <div className="experience-details">
+                    {exp.employmentType && (
+                        <span>{exp.employmentType}</span>
+                    )}
+
+                    {exp.location && (
+                        <span>{exp.location}</span>
+                    )}
+                </div>
+
+            </div>
+        ))
+    ) : (
+        <p className="text-muted mb-0">
+            No experience added
+        </p>
+    )}
+</div>
 
             <button
                 className="modal-resume-btn"
@@ -492,17 +537,18 @@ const handleStatusUpdate = async (status) => {
                         Hire
                     </button>
 
-                    <button
-                        className="reject-btn"
-                    disabled={
-    updatingStatus ||
-    !["APPLIED", "SHORTLISTED"].includes(
-        selectedApplication.status
-    )
-}
-                    >
-                        Reject
-                    </button>
+                 <button
+    className="reject-btn"
+    disabled={
+        updatingStatus ||
+        !["APPLIED", "SHORTLISTED"].includes(
+            selectedApplication.status
+        )
+    }
+    onClick={() => handleStatusUpdate("REJECTED")}
+>
+    Reject
+</button>
 
                 </div>
 
