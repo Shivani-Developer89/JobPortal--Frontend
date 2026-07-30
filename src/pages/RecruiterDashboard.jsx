@@ -166,9 +166,17 @@ const handleStatusUpdate = async (status) => {
     return (
         <main className="recruiter-dashboard">
 
-            {/* Header */}
+            {/* Header */}'
+                  <button
+    className="back-home-btn"
+    onClick={() => navigate("/")}
+>
+    ← Home
+</button>
+
 
             <div className="dashboard-header">
+            
 
                 <div>
                     <h1>Recruiter Dashboard</h1>
@@ -177,6 +185,8 @@ const handleStatusUpdate = async (status) => {
                         Manage your job postings and candidate applications.
                     </p>
                 </div>
+
+                 
 
                 <button
                     className="post-job-btn"

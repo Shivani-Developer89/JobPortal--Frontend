@@ -664,3 +664,49 @@
         margin-left: 0;
     }
 }
+
+.recruiter-dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.recruiter-dashboard-header h2 {
+    margin-bottom: 5px;
+}
+
+.recruiter-dashboard-header p {
+    margin: 0;
+    color: #6c757d;
+}
+
+.back-home-btn {
+    padding: 10px 18px;
+
+    background-color: #fcfdfd;
+    color: blue;
+
+    border: 1px solid #0d6efd;
+    border-radius: 7px;
+
+    font-size: 15px;
+    font-weight: 500;
+
+    cursor: pointer;
+        
+    transform: translateY(-25px);
+
+   
+    transition: all 0.2s ease;
+}
+
+.back-home-btn:hover {
+    background-color: #f8fbff;
+    border-color: #0a58ca;
+    transform: translateY(-1px);
+}
+
+.back-home-btn:active {
+    transform: translateY(0);
+}
