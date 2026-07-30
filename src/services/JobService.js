@@ -1,9 +1,8 @@
 import api from "./appConfig";
 
-const API_URL = "http://localhost:81/job";
 
 export const createJob = (job) => {
-    return api.post("/jobs", job);
+    return api.post("/job", job);
 };
 
 export const getAllJobs = () => {
@@ -28,4 +27,19 @@ export const updateApplicationStatus = (applicationId, status) => {
 
 export const getFeaturedJobs = () => {
     return api.get("/job/all?page=0&size=6&sort=createdAt");
+};
+
+export const deleteJob = (jobId) => {
+    return api.delete(`/job/${jobId}`);
+};
+
+export const updateJob = (jobId, jobData) => {
+    return api.put(`/job/${jobId}`, jobData);
+};
+export const closeJob = (jobId) => {
+    return api.put(`/job/${jobId}/close`);
+};
+
+export const reopenJob = (jobId) => {
+    return api.put(`/job/${jobId}/reopen`);
 };
