@@ -1,0 +1,68 @@
+.job-list-item{
+
+    background:white;
+
+    border-radius:12px;
+
+    padding:18px;
+
+    margin-bottom:15px;
+
+    cursor:pointer;
+
+    border:1px solid #e5e7eb;
+
+    transition:.2s;
+}
+
+.job-list-item:hover{
+
+    border-color:#2563eb;
+
+    transform:translateY(-2px);
+
+}
+
+.job-list-item.selected{
+
+    border:2px solid #2563eb;
+
+    background:#f5f9ff;
+
+}
+.job-meta,
+.job-extra{
+    display:flex;
+    align-items:center;
+    gap:20px;
+    flex-wrap:wrap;
+    margin-top:10px;
+}
+
+.job-meta span,
+.job-extra span{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:15px;
+    color:#4b5563;
+}
+
+.salary{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-top:14px;
+    font-size:18px;
+    font-weight:700;
+    color:#0f766e;
+}
+
+.posted{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-top:14px;
+    color:#6b7280;
+    font-size:14px;
+}

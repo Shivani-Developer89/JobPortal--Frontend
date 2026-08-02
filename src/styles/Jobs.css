@@ -1,0 +1,38 @@
+.jobs-page{
+    display:flex;
+    gap:20px;
+    padding:20px;
+    background:#f7f8fa;
+    height:calc(100vh - 40px);
+    overflow:hidden;
+}
+
+.job-list{
+    width:36%;
+    overflow-y:auto;
+}
+
+.job-details-panel{
+    width:64%;
+    overflow-y:auto;
+}
+
+.jobs-header{
+    background:#fff;
+    border-bottom:1px solid #e5e7eb;
+    padding:28px 40px;
+    height: 20px;
+}
+
+.jobs-header h1{
+    margin:0;
+    font-size:32px;
+    font-weight:600;
+    color:#111827;
+}
+
+.jobs-header p{
+    margin-top:8px;
+    color:#6b7280;
+    font-size:16px;
+}

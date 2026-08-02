@@ -1,0 +1,270 @@
+.edit-job-page {
+    min-height: 100vh;
+    background: #f5f8fc;
+    padding: 45px 20px 70px;
+}
+
+.edit-job-container {
+    max-width: 1150px;
+    margin: 0 auto;
+}
+
+/* Header */
+
+.edit-job-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+}
+
+.edit-label {
+    color: #2563eb;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.edit-job-header h1 {
+    margin: 5px 0;
+    font-size: 32px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.edit-job-header p {
+    margin: 0;
+    color: #64748b;
+}
+
+.edit-back-btn {
+    background: white;
+    color: #2563eb;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+
+    padding: 10px 17px;
+
+    font-weight: 600;
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.edit-back-btn:hover {
+    border-color: #2563eb;
+    background: #eff6ff;
+}
+
+
+/* Sections */
+
+.edit-section {
+    background: white;
+
+    border: 1px solid #e2e8f0;
+    border-top: 3px solid #3b82f6;
+    border-radius: 14px;
+
+    padding: 26px;
+    margin-bottom: 24px;
+
+    box-shadow: 0 5px 18px rgba(15, 23, 42, 0.05);
+}
+
+.compensation-section {
+    border-top-color: #10b981;
+}
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    padding-bottom: 18px;
+    margin-bottom: 22px;
+
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.section-icon {
+    width: 45px;
+    height: 45px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #eff6ff;
+    border-radius: 10px;
+
+    font-size: 20px;
+}
+
+.section-heading h3 {
+    margin: 0 0 3px;
+    font-size: 18px;
+    color: #0f172a;
+}
+
+.section-heading p {
+    margin: 0;
+    color: #64748b;
+    font-size: 13px;
+}
+
+
+/* Form */
+
+.edit-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px 24px;
+}
+
+.three-columns {
+    grid-template-columns: repeat(3, 1fr);
+    margin-bottom: 20px;
+}
+
+.edit-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+.edit-field label {
+    margin-bottom: 7px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    color: #1e293b;
+}
+
+.edit-field input,
+.edit-field textarea,
+.edit-field select {
+    width: 100%;
+
+    padding: 11px 13px;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+
+    background: white;
+    color: #0f172a;
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition: border-color 0.2s ease,
+                box-shadow 0.2s ease;
+}
+
+.edit-field textarea {
+    resize: vertical;
+}
+
+.edit-field input:focus,
+.edit-field textarea:focus,
+.edit-field select:focus {
+    border-color: #3b82f6;
+
+    box-shadow:
+        0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+.edit-field small {
+    margin-top: 6px;
+    color: #64748b;
+}
+
+
+/* Bottom buttons */
+
+.edit-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+
+    padding: 20px;
+
+    background: white;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+}
+
+.cancel-edit-btn,
+.update-job-btn {
+    padding: 11px 22px;
+
+    border-radius: 8px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.cancel-edit-btn {
+    background: white;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+}
+
+.cancel-edit-btn:hover {
+    background: #f8fafc;
+}
+
+.update-job-btn {
+    border: none;
+
+    background: #2563eb;
+    color: white;
+
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.22);
+}
+
+.update-job-btn:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+
+/* Responsive */
+
+@media (max-width: 768px) {
+
+    .edit-job-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 18px;
+    }
+
+    .edit-grid,
+    .three-columns {
+        grid-template-columns: 1fr;
+    }
+
+    .full-width {
+        grid-column: auto;
+    }
+
+    .edit-actions {
+        flex-direction: column-reverse;
+    }
+
+    .cancel-edit-btn,
+    .update-job-btn {
+        width: 100%;
+    }
+}
