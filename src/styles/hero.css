@@ -104,3 +104,66 @@
 .hero-stat{
     text-align:center;
 }
+.featured-jobs{
+
+    padding:90px 0;
+
+    background:#f8fafc;
+
+}
+
+.featured-header{
+
+    text-align:center;
+
+    margin-bottom:50px;
+
+}
+
+.featured-header h2{
+
+    font-size:42px;
+
+    font-weight:700;
+
+    color:#111827;
+
+    margin-bottom:10px;
+
+}
+
+.featured-header p{
+
+    color:#6b7280;
+
+    font-size:18px;
+
+}
+
+.browse-jobs-btn{
+
+    display:inline-block;
+
+    background:#2563eb;
+
+    color:#fff;
+
+    text-decoration:none;
+
+    padding:14px 30px;
+
+    border-radius:10px;
+
+    font-weight:600;
+
+    transition:.25s;
+
+}
+
+.browse-jobs-btn:hover{
+
+    background:#1d4ed8;
+
+    color:#fff;
+
+}

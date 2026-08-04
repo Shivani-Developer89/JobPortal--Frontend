@@ -1,83 +1,112 @@
-import { useNavigate } from "react-router-dom";
-import "../../styles/JobCard.css";
+import { Link } from "react-router-dom";
+
 import {
-  FaRegStar,
-  FaMapMarkerAlt,
-  FaClock
+    FaMapMarkerAlt,
+    FaBriefcase,
+    FaUserTie,
+    FaRupeeSign,
+    FaClock
 } from "react-icons/fa";
 
-import { FaShareNodes } from "react-icons/fa6";
 
-//import ShareIcon from "@mui/icons-material/Share";
+import "../../styles/JobCard.css";
+
 function JobCard({ job }) {
 
-    const navigate = useNavigate();
+    const salary = () => {
 
-return (
-<div className="job-card">
+        if (
+            job.minSalary != null &&
+            job.maxSalary != null
+        ) {
 
-    {/* Header */}
-   <div className="job-card-header">
+            return `₹${Number(job.minSalary).toLocaleString("en-IN")} - ₹${Number(job.maxSalary).toLocaleString("en-IN")}`;
+        }
 
-    <div className="job-info">
+        return "Salary not disclosed";
+    };
 
-        <div className="job-title-row">
-            <h5 className="job-title">{job.title}</h5>
+    return (
 
-            <div className="job-actions">
-                <button className="icon-btn">
-                    <FaRegStar />
-                </button>
+        <div className="job-card">
 
-                <button className="icon-btn">
-                    <FaShareNodes />
-                </button>
+            <h3>{job.title}</h3>
+
+            <p className="company-name">
+
+                {job.companyName || "Company"}
+
+            </p>
+
+            <div className="job-meta">
+
+                <span>
+
+                    <FaMapMarkerAlt />
+
+                    {job.location}
+
+                </span>
+
+                <span>
+
+                    <FaBriefcase />
+
+                    {job.jobType?.replaceAll("_"," ")}
+
+                </span>
+
+                <span>
+
+                    <FaUserTie />
+
+                    {job.experienceLevel?.replaceAll("_"," ")}
+
+                </span>
+
             </div>
+
+            <div className="job-salary">
+
+                <FaRupeeSign />
+
+                {salary()}
+
+            </div>
+
+          
+
+            <div className="job-footer">
+
+                <span>
+
+                    <FaClock />
+
+                    {" "}
+                    Posted{" "}
+                    {new Date(job.createdAt).toLocaleDateString(
+                        "en-IN",
+                        {
+                            day:"2-digit",
+                            month:"short",
+                            year:"numeric"
+                        }
+                    )}
+
+                </span>
+
+           <Link
+    to={`/jobs?selected=${job.id}`}
+    className="view-details"
+>
+    View Details →
+</Link>
+
+            </div>
+
         </div>
 
-        <p className="company-name">{job.companyName}</p>
-
-        <div className="job-location">
-            <FaMapMarkerAlt className="location-icon" />
-            <span>{job.location}</span>
-        </div>
-
-    </div>
-
-</div>
-
-    {/* Chips */}
-  <div className="job-chips">
-    <span className="chip">{job.jobType}</span>
-    <span className="chip">{job.experience}</span>
-    <span className="chip">{job.salary}</span>
-</div>
-
-    {/* Description */}
-  <div className="job-description">
-    <p>{job.description}</p>
-</div>
-
-
-    {/* Footer */}
-<div className="job-footer">
-
-    <div className="posted-date">
-        <FaClock />
-        <span>Posted 2 days ago</span>
-    </div>
-
-    <button
-        className="view-details-btn"
-        onClick={() => navigate(`/jobs/${job.id}`)}
-    >
-        View Details →
-    </button>
-
-</div>
-
-</div>
-);
+    );
 }
 
 export default JobCard;

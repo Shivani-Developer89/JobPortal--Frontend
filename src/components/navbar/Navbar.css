@@ -1,0 +1,248 @@
+/* ---------- NAVBAR ---------- */
+
+.navbar{
+
+    background:#fff;
+
+    box-shadow:0 2px 10px rgba(0,0,0,.05);
+
+    position:sticky;
+
+    top:0;
+
+    z-index:1000;
+
+}
+
+/* ---------- TOP ---------- */
+
+.navbar-top{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:18px 40px;
+
+    border-bottom:1px solid #eef2f7;
+
+}
+.left-section{
+    display: flex;
+    align-items: center;
+    gap: 80px;
+}
+
+/* ---------- BOTTOM ---------- */
+
+.navbar-bottom{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:14px 40px;
+
+}
+
+/* ---------- LINKS ---------- */
+
+.nav-links{
+
+    display:flex;
+   
+
+    gap:30px;
+
+}
+
+.nav-links a{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    color:#475569;
+
+    font-weight:600;
+
+    text-decoration:none;
+
+    transition:.2s;
+
+}
+
+.nav-links a:hover{
+
+    color:#2563eb;
+
+}
+
+.nav-links .active{
+
+    color:#2563eb;
+
+}
+
+/* ---------- BUTTONS ---------- */
+
+.guest-actions{
+
+    display:flex;
+
+    gap:15px;
+     margin-left: 40px; 
+
+}
+
+.login-btn{
+
+    padding:10px 22px;
+
+    border:2px solid #2563eb;
+
+    color:#2563eb;
+
+    border-radius:10px;
+
+    text-decoration:none;
+
+    font-weight:600;
+
+}
+
+.login-btn:hover{
+
+    background:#2563eb;
+
+    color:white;
+
+}
+
+.register-btn{
+
+    padding:10px 22px;
+
+    background:#2563eb;
+
+    color:white;
+
+    border-radius:10px;
+
+    text-decoration:none;
+
+    font-weight:600;
+
+}
+
+.register-btn:hover{
+
+    background:#1d4ed8;
+
+}
+
+.nav-logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    text-decoration:none;
+
+    font-size:28px;
+    font-weight:700;
+
+    color:#2563eb;
+}
+
+.logo-icon{
+    font-size:32px;
+}
+
+.nav-logo:hover{
+    color:#1d4ed8;
+}
+
+/*  navSearch*/
+.nav-search{
+
+    display:flex;
+    align-items:center;
+
+    gap:10px;
+
+    background:#f5f7fa;
+
+    border-radius:30px;
+
+    padding:10px 18px;
+
+    width:280px;
+
+}
+
+.nav-search input{
+
+    border:none;
+
+    background:transparent;
+
+    width:100%;
+
+    outline:none;
+
+}
+.user-menu{
+
+    display:flex;
+    align-items:center;
+    gap:20px;
+
+}
+
+.notification-btn{
+
+    width:42px;
+    height:42px;
+
+    border:none;
+
+    background:#f5f7fa;
+
+    border-radius:50%;
+
+    cursor:pointer;
+
+    font-size:18px;
+
+}
+
+.notification-btn:hover{
+
+    background:#e5efff;
+
+}
+
+.profile-menu{
+
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+}
+
+.profile-menu svg{
+
+    font-size:30px;
+    color:#2563eb;
+
+}
