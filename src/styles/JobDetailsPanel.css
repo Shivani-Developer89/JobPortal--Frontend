@@ -1,9 +1,41 @@
 .job-details-panel{
     background:#fff;
     border-radius:12px;
-    padding:35px;
+    padding:25px;
     box-shadow:0 3px 15px rgba(0,0,0,.08);
     overflow-y:auto;
+}
+.details-header-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+}
+
+.details-actions{
+    display:flex;
+    gap:12px;
+}
+
+.icon-btn{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    border:1px solid #d9e2f3;
+    background:#fff;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    cursor:pointer;
+    font-size:18px;
+    color:#4b5563;
+    transition:0.2s;
+}
+
+.icon-btn:hover{
+    background:#eef4ff;
+    color:#2563eb;
+    border-color:#2563eb;
 }
 
 .details-header h1{

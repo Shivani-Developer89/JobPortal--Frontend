@@ -1,63 +1,79 @@
 import { useEffect, useState } from "react";
 import { getAllJobs } from "../services/jobService";
-import { useNavigate } from "react-router-dom";
-import JobCard from "../components/home/JobCard";
+
+import JobList from "../components/jobs/JobList";
+import JobDetailsPanel from "../components/jobs/JobDetailsPanel";
+
+import "../styles/Jobs.css";
+import { useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function Jobs() {
+  const [jobs, setJobs] = useState([]);
+  const [selectedJob, setSelectedJob] = useState(null);
+  const [searchParams] = useSearchParams();
 
-    const [jobs, setJobs] = useState([]);
-    const navigate = useNavigate();
-
-    useEffect(() => {
-
-        loadJobs();
-
-    }, []);
+useEffect(() => {
+    loadJobs();
+}, [searchParams]);
 
   const loadJobs = async () => {
+    const response = await getAllJobs();
+    const allJobs = response.data.content;
 
-    try {
+    setJobs(allJobs);
 
-        const response = await getAllJobs();
+const selectedId = Number(searchParams.get("selected"));
 
-        console.log(response.data);
+if (selectedId) {
 
-        setJobs(response.data.content);
+    const selected = allJobs.find(
+        job => job.id === selectedId
+    );
 
-    }catch (error) {
-
-    if (
-        error.response?.status === 401 ||
-        error.response?.status === 403
-    ) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("role");
-
-        window.location.href = "/login";
+    if (selected) {
+        setSelectedJob(selected);
         return;
     }
-
-    console.error(error);
 }
-};
 
- return (
-    <div className="container mt-5">
+if (allJobs.length > 0) {
+    setSelectedJob(allJobs[0]);
+}
+  };
 
-        <h2 className="mb-4">Available Jobs</h2>
+  return (
+    <>
+    <div className="jobs-header">
 
-        {jobs.length === 0 ? (
-            <p>No Jobs Available</p>
-        ) : (
-            jobs.map((job) => (
-                <JobCard
-                    key={job.id}
-                    job={job}
-                />
-            ))
-        )}
+    <div className="header-left">
+        <h1>Find Your Next Opportunity</h1>
 
+        <p>
+            Browse available jobs and select one to view complete details.
+        </p>
     </div>
+
+    <Link to="/" className="back-home-btn">
+        ← Home
+    </Link>
+
+</div>
+    
+<div className="jobs-page">
+
+            <JobList
+                jobs={jobs}
+                selectedJob={selectedJob}
+                onSelect={setSelectedJob}
+            />
+
+            <JobDetailsPanel
+                job={selectedJob}
+            />
+
+        </div>
+    </>
 );
 }
 

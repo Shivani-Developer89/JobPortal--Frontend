@@ -120,7 +120,11 @@ const handleReopenJob = async (jobId) => {
     )}
 </h5>
                             <p className="text-muted">
-                                Posted on {new Date(job.createdAt).toLocaleDateString()}
+                               Posted on {new Date(job.createdAt).toLocaleDateString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+})}
                             </p>
                             
 <div className="d-flex gap-2 mt-3">

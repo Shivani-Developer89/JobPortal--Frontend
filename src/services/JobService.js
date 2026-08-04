@@ -5,8 +5,10 @@ export const createJob = (job) => {
     return api.post("/job", job);
 };
 
-export const getAllJobs = () => {
-    return api.get("/job/all");
+export const getAllJobs = (page = 0, size = 6) => {
+    return api.get(
+        `/job/all?page=${page}&size=${size}&sort=createdAt`
+    );
 };
 export const getJobById = (id) => {
     return api.get(`/job/${id}`);
@@ -26,7 +28,9 @@ export const updateApplicationStatus = (applicationId, status) => {
 };
 
 export const getFeaturedJobs = () => {
-    return api.get("/job/all?page=0&size=6&sort=createdAt");
+    return api.get(
+        "/job/all?page=0&size=6&sort=createdAt"
+    );
 };
 
 export const deleteJob = (jobId) => {

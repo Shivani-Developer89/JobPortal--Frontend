@@ -1,4 +1,5 @@
 import "../../styles/JobDetailsPanel.css";
+import { useState, useEffect } from "react";
 
 import {
     FaMapMarkerAlt,
@@ -7,8 +8,22 @@ import {
     FaClock,
     FaUserTie
 } from "react-icons/fa";
+import {
+    FaBookmark,
+    FaRegBookmark,
+    FaShareAlt
+} from "react-icons/fa";
+import { applyJob } from "../../services/ApplicationService";
 
 function JobDetailsPanel({ job }) {
+    const [saved, setSaved] = useState(false);
+    const [applying, setApplying] = useState(false);
+const [applied, setApplied] = useState(false);
+useEffect(() => {
+    if (job) {
+        setApplied(job.applied || false);
+    }
+}, [job]);
 
     if (!job) {
         return (
@@ -33,53 +48,144 @@ function JobDetailsPanel({ job }) {
         .replace(/\*/g, "")
         .trim();
 
+  const handleApply = async () => {
+
+    try {
+
+        setApplying(true);
+
+        await applyJob(job.id);
+
+        setApplied(true);
+
+        alert("Application submitted successfully.");
+
+    } catch (error) {
+
+        if (
+            error.response?.status === 400 &&
+            error.response?.data?.message === "Already applied"
+        ) {
+
+            setApplied(true);
+            alert("You have already applied.");
+            return;
+        }
+
+        if (
+            error.response?.status === 401 ||
+            error.response?.status === 403
+        ) {
+
+            localStorage.removeItem("token");
+            localStorage.removeItem("role");
+
+            window.location.href = "/login";
+            return;
+        }
+
+        alert(
+            error.response?.data?.message ||
+            "Failed to apply."
+        );
+
+    } finally {
+
+        setApplying(false);
+
+    }
+
+};
+
     return (
 
         <div className="job-details-panel">
 
             {/* Header */}
 
-            <div className="details-header">
+   <div className="details-header-top">
 
-                <span className="status-badge">
-                    {job.status}
-                </span>
+            <span className="status-badge">
+                {job.status}
+            </span>
 
-                <h1>{job.title}</h1>
+            <div className="details-actions">
 
-                <h3>{job.companyName || "Company"}</h3>
+                <button
+                    className="icon-btn"
+                    onClick={() => setSaved(!saved)}
+                >
+                    {saved ? <FaBookmark /> : <FaRegBookmark />}
+                </button>
 
-                <div className="details-meta">
-
-                    <span>
-                        <FaMapMarkerAlt />
-                        {job.location}
-                    </span>
-
-                    <span>
-                        <FaBriefcase />
-                        {job.jobType?.replaceAll("_", " ")}
-                    </span>
-
-                    <span>
-                        <FaUserTie />
-                        {job.experienceLevel?.replaceAll("_", " ")}
-                    </span>
-
-                </div>
-
-                <div className="salary">
-                    <FaRupeeSign />
-                    {salary()}
-                </div>
-
-                <button className="apply-btn">
-                    Apply Now
+                <button
+                    className="icon-btn"
+                    onClick={() =>
+                        navigator.share
+                            ? navigator.share({
+                                  title: job.title,
+                                  text: job.title,
+                                  url: window.location.href
+                              })
+                            : navigator.clipboard.writeText(window.location.href)
+                    }
+                >
+                    <FaShareAlt />
                 </button>
 
             </div>
 
-            <hr />
+        </div>
+
+        <h1>{job.title}</h1>
+
+        <h3>{job.companyName}</h3>
+
+        <div className="details-meta">
+
+            <span>
+                <FaMapMarkerAlt />
+                {job.location}
+            </span>
+
+            <span>
+                <FaBriefcase />
+                {job.jobType?.replaceAll("_", " ")}
+            </span>
+
+            <span>
+                <FaUserTie />
+                {job.experienceLevel?.replaceAll("_", " ")}
+            </span>
+
+        </div>
+
+        <div className="salary">
+            <FaRupeeSign />
+            {salary()}
+        </div>
+
+<button
+    className="apply-btn"
+    onClick={handleApply}
+    disabled={
+        applied ||
+        applying ||
+        job.status === "CLOSED"
+    }
+>
+
+    {job.status === "CLOSED"
+        ? "Applications Closed"
+        : applying
+        ? "Applying..."
+        : applied
+        ? "✓ Applied"
+        : "Apply Now"}
+
+</button>
+
+        <hr />
 
             {/* Overview */}
 

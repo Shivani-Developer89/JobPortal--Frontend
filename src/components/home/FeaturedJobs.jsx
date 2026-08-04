@@ -1,37 +1,30 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { getFeaturedJobs } from "../../services/jobService";
 import JobCard from "./JobCard";
 
 function FeaturedJobs() {
 
-    const [jobs, setJobs] = useState([]);
+    const [jobs, setJobs] =useState([]);
 
     useEffect(() => {
         loadJobs();
     }, []);
 
     const loadJobs = async () => {
-try {
 
-    const response = await getFeaturedJobs();
+        try {
 
-    setJobs(response.data.content);
+            const response = await getFeaturedJobs();
 
-} catch (error) {
+            setJobs(response.data.content);
 
-    if (
-        error.response?.status === 401 ||
-        error.response?.status === 403
-    ) {
+        } catch (error) {
 
-        localStorage.clear();
+            console.error(error);
 
-        setJobs([]);   // Show no featured jobs (or switch to a public endpoint)
-        return;
-    }
-
-    console.error(error);
-}
+            setJobs([]);
+        }
     };
 
     return (
@@ -40,20 +33,41 @@ try {
 
             <div className="container">
 
-                <h2 className="text-center mb-5">
-                    Featured Jobs
-                </h2>
+                <div className="featured-header">
 
-                <div className="row">
+                    <h2>Featured Opportunities</h2>
+
+                    <p>
+                        Explore some of the latest openings from top recruiters.
+                    </p>
+
+                </div>
+
+                <div className="row g-4">
 
                     {jobs.map(job => (
 
-                        <JobCard
+                        <div
+                            className="col-lg-4 col-md-6"
                             key={job.id}
-                            job={job}
-                        />
+                        >
+
+                            <JobCard job={job}/>
+
+                        </div>
 
                     ))}
+
+                </div>
+
+                <div className="text-center mt-5">
+
+                    <Link
+                        to="/jobs"
+                        className="browse-jobs-btn"
+                    >
+                        Browse All Jobs →
+                    </Link>
 
                 </div>
 

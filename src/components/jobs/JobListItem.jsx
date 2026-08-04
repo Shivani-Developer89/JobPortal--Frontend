@@ -7,6 +7,7 @@ import {
     FaClock
 } from "react-icons/fa";
 
+
 function JobListItem({
     job,
     selected,

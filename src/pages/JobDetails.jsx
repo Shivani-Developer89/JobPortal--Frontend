@@ -1,133 +1,328 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { getJobById } from "../services/JobService";
+import { useNavigate, useParams } from "react-router-dom";
+
+import { getJobById } from "../services/jobService";
 import { applyJob } from "../services/ApplicationService";
+
+import {
+    FaMapMarkerAlt,
+    FaBriefcase,
+    FaRupeeSign,
+    FaCalendarAlt,
+    FaUserTie
+} from "react-icons/fa";
+
+import "../styles/JobDetails.css";
 
 function JobDetails() {
 
     const { id } = useParams();
+    const navigate = useNavigate();
 
     const [job, setJob] = useState(null);
     const [applied, setApplied] = useState(false);
-      
+    const [applying, setApplying] = useState(false);
 
     useEffect(() => {
-        loadJob();
-    }, []);
-const handleApply = async () => {
+        if (id) {
+            loadJob();
+        }
+    }, [id]);
 
-    try {
+    const loadJob = async () => {
 
-        await applyJob(id);
+        try {
 
-        setApplied(true);
+            const response = await getJobById(id);
 
-        alert("Application Submitted Successfully");
+            setJob(response.data);
+            setApplied(response.data.applied || false);
 
-        
-    } catch (error) {
+        } catch (error) {
 
-    if (
-        error.response?.status === 401 ||
-        error.response?.status === 403
-    ) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("role");
+            console.error(error);
 
-        window.location.href = "/login";
-        return;
-    }
+            if (
+                error.response?.status === 401 ||
+                error.response?.status === 403
+            ) {
 
-    if (
-        error.response?.status === 400 &&
-        error.response?.data?.message === "Already applied"
-    ) {
-        setApplied(true);
-        alert("You have already applied for this job.");
-        return;
-    }
+                localStorage.removeItem("token");
+                localStorage.removeItem("role");
 
-    alert(
-        error.response?.data?.message ||
-        "Failed to Apply"
-    );
-}
-};
+                window.location.href = "/login";
+            }
+        }
+    };
 
-   const loadJob = async () => {
+    const handleApply = async () => {
 
-    try {
+        try {
 
-        const response = await getJobById(id);
+            setApplying(true);
 
-        setJob(response.data);
-        setApplied(response.data.applied);
+            await applyJob(id);
 
-    } 
-    catch (error) {
+            setApplied(true);
 
-    if (
-        error.response?.status === 401 ||
-        error.response?.status === 403
-    ) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("role");
+            alert("Application submitted successfully.");
 
-        window.location.href = "/login";
-        return;
-    }
+        } catch (error) {
 
-    console.error(error);
-}
-};
+            if (
+                error.response?.status === 401 ||
+                error.response?.status === 403
+            ) {
+
+                localStorage.removeItem("token");
+                localStorage.removeItem("role");
+
+                window.location.href = "/login";
+
+                return;
+            }
+
+            if (
+                error.response?.status === 400 &&
+                error.response?.data?.message === "Already applied"
+            ) {
+
+                setApplied(true);
+
+                alert("You have already applied.");
+
+                return;
+            }
+
+            alert(
+                error.response?.data?.message ||
+                "Failed to apply."
+            );
+
+        } finally {
+
+            setApplying(false);
+
+        }
+    };
+
+    const getSalary = () => {
+
+        if (
+            job.minSalary != null &&
+            job.maxSalary != null
+        ) {
+
+            return `₹${Number(job.minSalary).toLocaleString("en-IN")} - ₹${Number(job.maxSalary).toLocaleString("en-IN")}`;
+        }
+
+        return "Salary not disclosed";
+    };
 
     if (!job) {
 
-        return <h3>Loading...</h3>;
+        return (
+            <div className="container mt-5 text-center">
+                <h4>Loading Job...</h4>
+            </div>
+        );
     }
 
     return (
-        <div className="container mt-5">
 
-        <h2>{job.title}</h2>
+        <div className="job-details-page">
 
-<p className="text-muted">
-    👤 {job.recruiterName}
-</p>
+            <div className="job-details-container">
 
-<p>
-    📍 {job.location}
-</p>
+                <button
+                    className="details-back-btn"
+                    onClick={() => navigate("/jobs")}
+                >
+                    ← Back to Jobs
+                </button>
 
-<p>
-    💼 {job.jobType}
-</p>
+                <div className="job-details-card">
 
-<p>
-    ⭐ {job.experienceLevel}
-</p>
+                    <div className="details-header">
 
-<p>
-    💰 ₹ {job.salary}
-</p>
+                        <div>
 
-<p>
-    📅 {new Date(job.createdAt).toLocaleDateString()}
-</p>
+                            <span
+                                className={`details-status ${
+                                    job.status === "ACTIVE"
+                                        ? "active"
+                                        : "closed"
+                                }`}
+                            >
+                                {job.status}
+                            </span>
 
-<hr />
+                            <h1>{job.title}</h1>
 
-<h4>Job Description</h4>
+                            <p className="details-company">
+                                {job.companyName || "Company Name"}
+                            </p>
 
-<p>{job.description}</p>
+                        </div>
 
-<button
-    onClick={handleApply}
-    disabled={applied}
-    className="btn btn-success"
->
-    {applied ? "Applied" : "Apply Now"}
-</button>
+                    </div>
+
+                    <div className="details-meta">
+
+                        <div>
+                            <FaUserTie />
+                            <span>{job.recruiterName || "Recruiter"}</span>
+                        </div>
+
+                        <div>
+                            <FaMapMarkerAlt />
+                            <span>{job.location || "Location not specified"}</span>
+                        </div>
+
+                        <div>
+                            <FaBriefcase />
+                            <span>
+                                {job.jobType
+                                    ? job.jobType.replaceAll("_", " ")
+                                    : "Not specified"}
+                            </span>
+                        </div>
+
+                        <div>
+                            <FaRupeeSign />
+                            <span>{getSalary()}</span>
+                        </div>
+
+                        <div>
+                            <FaCalendarAlt />
+                            <span>
+                                Posted{" "}
+                                {job.createdAt
+                                    ? new Date(job.createdAt).toLocaleDateString(
+                                          "en-IN",
+                                          {
+                                              day: "2-digit",
+                                              month: "short",
+                                              year: "numeric"
+                                          }
+                                      )
+                                    : "-"}
+                            </span>
+                        </div>
+
+                    </div>
+
+                    <hr />
+
+                    <section className="details-section">
+
+                        <h3>Job Description</h3>
+
+                        <p>
+                            {job.description || "No description available."}
+                        </p>
+
+                    </section>
+
+                    {job.skills?.length > 0 && (
+
+                        <section className="details-section">
+
+                            <h3>Skills Required</h3>
+
+                            <div className="details-skills">
+
+                                {job.skills.map((skill, index) => (
+
+                                    <span key={index}>
+                                        {skill}
+                                    </span>
+
+                                ))}
+
+                            </div>
+
+                        </section>
+
+                    )}
+
+                    <section className="details-section">
+
+                        <h3>Job Information</h3>
+
+                        <div className="details-info-grid">
+
+                            <div>
+                                <small>Work Mode</small>
+                                <strong>
+                                    {job.workMode
+                                        ? job.workMode.replaceAll("_", " ")
+                                        : "Not specified"}
+                                </strong>
+                            </div>
+
+                            <div>
+                                <small>Experience Level</small>
+                                <strong>
+                                    {job.experienceLevel
+                                        ? job.experienceLevel.replaceAll("_", " ")
+                                        : "Not specified"}
+                                </strong>
+                            </div>
+
+                            <div>
+                                <small>Experience</small>
+                                <strong>
+                                    {job.minExperience != null &&
+                                    job.maxExperience != null
+                                        ? `${job.minExperience} - ${job.maxExperience} Years`
+                                        : "Not specified"}
+                                </strong>
+                            </div>
+
+                            <div>
+                                <small>Vacancies</small>
+                                <strong>
+                                    {job.vacancies ?? "Not specified"}
+                                </strong>
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <div className="details-apply-area">
+
+                        {job.status === "CLOSED" ? (
+
+                            <button
+                                className="apply-btn closed"
+                                disabled
+                            >
+                                Applications Closed
+                            </button>
+
+                        ) : (
+
+                            <button
+                                className="apply-btn"
+                                onClick={handleApply}
+                                disabled={applied || applying}
+                            >
+                                {applying
+                                    ? "Applying..."
+                                    : applied
+                                    ? "✓ Applied"
+                                    : "Apply Now"}
+                            </button>
+
+                        )}
+
+                    </div>
+
+                </div>
+
+            </div>
 
         </div>
     );
