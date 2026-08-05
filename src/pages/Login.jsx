@@ -23,12 +23,17 @@ function Login() {
             email,
             password
         });
+localStorage.setItem("token", response.data.token);
+localStorage.setItem("role", response.data.role);
+
+console.log("Saved token:", localStorage.getItem("token"));
+console.log("Saved role:", localStorage.getItem("role"));
 
         localStorage.setItem(
             "token",
             response.data.token
         );
-
+ 
 
         
         toast.success("Login Successful");
