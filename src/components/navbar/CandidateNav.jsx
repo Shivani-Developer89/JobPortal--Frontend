@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-
+import "./Navbar.css";
 import {
     FaHome,
     FaBriefcase,
@@ -16,7 +16,7 @@ function CandidateNav() {
 
     return (
 
-        <header className="navbar">
+        <header className="app-navbar">
 
             {/* Top Row */}
 

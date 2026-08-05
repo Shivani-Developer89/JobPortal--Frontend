@@ -15,7 +15,7 @@ function GuestNav() {
 
     return (
 
-        <header className="navbar">
+        <header className="app-navbar">
 
             {/* Top Row */}
 
