@@ -1,225 +1,872 @@
-/* ==============================
-   APP NAVBAR
-============================== */
+/* ==========================================================
+   JOB PORTAL NAVBAR
+   Part 1 - Common + Guest Navbar
+========================================================== */
 
-.app-navbar {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+/* =========================
+   RESET
+========================= */
 
-    background: #fff;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-/* ==============================
-   TOP ROW
-============================== */
+/* =========================
+   COMMON NAVBAR
+========================= */
 
-.navbar-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.guest-navbar,
+.candidate-navbar,
+.recruiter-navbar{
 
-    padding:12px 50px;
+    position:sticky;
+    top:0;
+    z-index:1000;
 
-    border-bottom: 1px solid #eef2f7;
+    background:#ffffff;
+
+    border-bottom:1px solid #edf2f7;
+
+    box-shadow:0 3px 15px rgba(0,0,0,.05);
 }
 
-/* Logo + Search */
+/* =========================
+   COMMON CONTAINER
+========================= */
 
-.left-section {
-    display: flex;
-    align-items: center;
-    gap: 28px;
-      flex: 1;
+.guest-navbar-content,
+.candidate-navbar-content,
+.recruiter-navbar-content{
+
+        display:grid;
+
+    grid-template-columns:auto auto 1fr auto;
+
+    align-items:center;
+
+    gap:35px;
+
+    padding:0 35px;
+
+    height:80px;
 }
 
-/* ==============================
-   BOTTOM ROW
-============================== */
-
-.navbar-bottom {
-    display: flex;
-    align-items: center;
-
-    padding: 10px 50px;
-}
-
-/* ==============================
-   NAVIGATION LINKS
-============================== */
-
-.nav-links {
-    display: flex;
-    align-items: center;
-    gap: 34px;
-}
-
-.nav-links a {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    color: #475569;
-    text-decoration: none;
-    font-weight: 600;
-
-    transition: 0.2s;
-}
-
-.nav-links a:hover {
-    color: #2563eb;
-}
-
-.nav-links .active {
-  color:#2563eb;
-    border-bottom:2px solid #2563eb;
-    padding-bottom:8px;
-}
-
-/* ==============================
+/* =========================
    LOGO
-============================== */
+========================= */
 
-.nav-logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.nav-logo{
 
-    text-decoration: none;
+    display:flex;
+    align-items:center;
 
-    color: #2563eb;
+    gap:10px;
 
-    font-size: 28px;
-    font-weight: 700;
+    text-decoration:none;
+
+    color:#2563eb;
+
+    font-size:28px;
+
+    font-weight:700;
+
+    white-space:nowrap;
 }
 
-.logo-icon {
-    font-size: 32px;
+.nav-logo:hover{
+
+    color:#1d4ed8;
 }
 
-.nav-logo:hover {
-    color: #1d4ed8;
+.logo-icon{
+
+    font-size:30px;
 }
 
-/* ==============================
-   SEARCH
-============================== */
+/* =========================
+   SEARCH BAR
+========================= */
 
-.nav-search {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+.nav-search{
 
-   width:340px;
-    height: 46px;
+    display:flex;
+    align-items:center;
 
-    padding: 0 18px;
+    margin-left:30px;
 
-    background: #f5f7fa;
-    border-radius: 24px;
-}
+    width:280px;
 
-.nav-search input {
-    width: 100%;
+    height:46px;
 
-    border: none;
-    outline: none;
-    background: transparent;
+    padding:0 18px;
 
-    font-size: 15px;
-}
+    gap:12px;
 
-/* ==============================
-   USER MENU
-============================== */
-
-.user-menu {
-    display: flex;
-    align-items: center;
-    margin-right:20px;
-
-    gap: 14px;
-}
-
-.notification-btn {
-    width: 40px;
-    height: 40px;
-
-    border: none;
-    border-radius: 50%;
+    border-radius:25px;
 
     background:#f8fafc;
 
+    transition:.25s;
+}
 
-    cursor: pointer;
+.nav-search:hover{
 
+    background:#f1f5f9;
+}
+
+.nav-search svg{
+
+    color:#64748b;
+}
+
+.nav-search input{
+
+    width:100%;
+
+    border:none;
+
+    outline:none;
+
+    background:transparent;
+
+    font-size:15px;
+
+    color:#1e293b;
+}
+
+.nav-search input::placeholder{
+
+    color:#94a3b8;
+}
+
+/* =========================
+   NAVIGATION LINKS
+========================= */
+
+.nav-links{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    margin-left:auto;
+}
+
+.nav-links a{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    padding:10px 18px;
+
+    border-radius:10px;
+
+    text-decoration:none;
+
+    font-weight:600;
+
+    color:#475569;
+
+    transition:.25s;
+}
+
+.nav-links a svg{
+
+    font-size:15px;
+}
+
+.nav-links a:hover{
+
+    background:#eff6ff;
+
+    color:#2563eb;
+}
+
+/* Active Link */
+
+.nav-links a.active{
+
+    background:#2563eb;
+
+    color:#fff;
+}
+
+.nav-links a.active svg{
+
+    color:#fff;
+}
+
+/* =========================
+   GUEST ACTIONS
+========================= */
+
+.guest-actions{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    margin-left:30px;
+}
+
+/* Login */
+
+.login-btn{
+
+    padding:10px 22px;
+
+    border-radius:10px;
+
+    border:2px solid #2563eb;
+
+    color:#2563eb;
+
+    text-decoration:none;
+
+    font-weight:600;
+
+    transition:.25s;
+}
+
+.login-btn:hover{
+
+    background:#2563eb;
+
+    color:white;
+}
+
+/* Register */
+
+.register-btn{
+
+    padding:10px 22px;
+
+    border-radius:10px;
+
+    background:#2563eb;
+
+    color:white;
+
+    text-decoration:none;
+
+    font-weight:600;
+
+    transition:.25s;
+}
+
+.register-btn:hover{
+
+    background:#1d4ed8;
+}
+
+/* ==========================================================
+   PART 2 - CANDIDATE / RECRUITER NAVBAR
+========================================================== */
+
+/* =========================
+   LEFT SECTION
+========================= */
+
+.nav-left{
+    display:flex;
+    align-items:center;
+    gap:25px;
+    flex:1;
+}
+
+/* =========================
+   CENTER NAVIGATION
+========================= */
+
+.nav-center{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    flex:1;
+
+    gap:10px;
+}
+
+.nav-center a{
+
+    display:flex;
+    align-items:center;
+
+    gap:8px;
+
+    padding:10px 16px;
+
+    border-radius:10px;
+
+    color:#475569;
+
+    text-decoration:none;
+
+    font-weight:600;
+
+    transition:.25s ease;
+}
+
+.nav-center a svg{
+    font-size:15px;
+}
+
+.nav-center a:hover{
+
+    background:#eff6ff;
+
+    color:#2563eb;
+}
+
+/* Active Page */
+
+.nav-center a.active{
+
+    background:#2563eb;
+
+    color:#fff;
+
+    box-shadow:0 5px 12px rgba(37,99,235,.25);
+}
+
+.nav-center a.active svg{
+
+    color:#fff;
+}
+
+/* =========================
+   RIGHT SECTION
+========================= */
+
+.nav-right{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    align-items:center;
+
+    flex:1;
+}
+
+/* =========================
+   USER MENU
+========================= */
+
+.user-menu{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:16px;
+
+    position:relative;
+}
+
+/* =========================
+   NOTIFICATION BUTTON
+========================= */
+
+.notification-btn{
+
+    width:42px;
+
+    height:42px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:#f8fafc;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    cursor:pointer;
+
+    transition:.25s;
+}
+
+.notification-btn svg{
+
+    font-size:18px;
+
+    color:#475569;
+}
+
+.notification-btn:hover{
+
+    background:#2563eb;
+}
+
+.notification-btn:hover svg{
+
+    color:white;
+}
+
+/* =========================
+   PROFILE
+========================= */
+
+.profile-menu{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    cursor:pointer;
+
+    padding:6px 10px;
+
+    border-radius:12px;
+
+    transition:.25s;
+}
+
+.profile-menu:hover{
+
+    background:#f8fafc;
+}
+
+.profile-icon{
+
+    font-size:38px;
+
+    color:#2563eb;
+}
+
+.profile-info{
+
+    display:flex;
+
+    flex-direction:column;
+
+    line-height:1.2;
+}
+
+.profile-name{
+
+    font-size:15px;
+
+    font-weight:700;
+
+    color:#1e293b;
+
+    max-width:140px;
+
+    overflow:hidden;
+
+    white-space:nowrap;
+
+    text-overflow:ellipsis;
+}
+
+.profile-role{
+
+    font-size:12px;
+
+    color:#64748b;
+
+    font-weight:500;
+}
+
+.dropdown-icon{
+
+    font-size:13px;
+
+    color:#94a3b8;
+
+    transition:.25s;
+}
+
+.profile-menu:hover .dropdown-icon{
+
+    transform:rotate(180deg);
+}
+
+/* =========================
+   PROFILE DROPDOWN
+========================= */
+
+.profile-dropdown{
+    position: absolute;
+    top: 72px;
+    right: 0;
+
+    width: 250px;
+
+    background: #fff;
+    border-radius: 16px;
+
+    box-shadow: 0 15px 40px rgba(0,0,0,.12);
+
+    overflow: hidden;
+    z-index: 1000;
+
+    animation: dropdown .2s ease;
+}
+@keyframes dropdown{
+    from{
+        opacity:0;
+        transform:translateY(-10px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* Header */
+
+.dropdown-header{
+    padding: 22px 32px 18px;
+    border-bottom: 1px solid #eef2f7;
+}
+
+.dropdown-header h4{
+    margin: 0;
     font-size: 18px;
-
-    transition: 0.2s;
+    font-weight: 700;
+    color: #1e293b;
 }
 
-.notification-btn:hover {
-    background: #e5efff;
+.dropdown-header p{
+    margin-top: 6px;
+    margin-bottom: 0;
+
+    font-size: 14px;
+    color: #64748b;
 }
 
-.profile-menu {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+/* Menu */
 
-    cursor: pointer;
+.profile-dropdown a,
+.profile-dropdown button{
+    display:flex;
+    align-items:center;
+    gap:14px;
 
-    font-weight: 600;
+    width:100%;
+
+    padding:16px 32px;
+
+    color:#334155;
+
+    text-decoration:none;
+    font-size:16px;
+    font-weight:500;
+
+    background:none;
+    border:none;
+
+    cursor:pointer;
+
+    transition:.25s;
 }
 
-.profile-menu svg {
-    color: #2563eb;
-    font-size: 26px;
+.profile-dropdown a:hover{
+    background:#f8fafc;
 }
 
-/* ==============================
-   GUEST BUTTONS
-============================== */
-
-.guest-actions {
-    display: flex;
-    align-items: center;
-    gap: 14px;
+.profile-dropdown button{
+    color:#ef4444;
 }
 
-.login-btn {
-    padding: 10px 22px;
-
-    border: 2px solid #2563eb;
-    border-radius: 10px;
-
-    color: #2563eb;
-    text-decoration: none;
-    font-weight: 600;
-
-    transition: 0.2s;
+.profile-dropdown button:hover{
+    background:#fef2f2;
 }
 
-.login-btn:hover {
-    background: #2563eb;
-    color: white;
+/* =========================
+   DROPDOWN ANIMATION
+========================= */
+
+@keyframes dropdown{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(-10px);
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+    }
+
 }
 
-.register-btn {
-    padding: 10px 22px;
+/* ==========================================================
+   PART 3 - RESPONSIVE DESIGN & FINAL POLISH
+========================================================== */
 
-    background: #2563eb;
+/* ===========================
+   LARGE LAPTOPS (1200px)
+=========================== */
 
-    border-radius: 10px;
+@media (max-width:1200px){
 
-    color: white;
-    text-decoration: none;
-    font-weight: 600;
+    .guest-navbar-content,
+    .candidate-navbar-content,
+    .recruiter-navbar-content{
 
-    transition: 0.2s;
+        padding:0 25px;
+    }
+
+    .nav-search{
+
+        width:260px;
+        margin-left:20px;
+    }
+
+    .nav-center{
+
+        gap:6px;
+    }
+
+    .nav-center a,
+    .nav-links a{
+
+        padding:8px 12px;
+        font-size:14px;
+    }
+
+    .profile-name{
+
+        max-width:100px;
+    }
+
 }
 
-.register-btn:hover {
-    background: #1d4ed8;
+/* ===========================
+   TABLET (992px)
+=========================== */
+
+@media (max-width:992px){
+
+    .nav-search{
+
+        width:200px;
+    }
+
+    .nav-center,
+    .nav-links{
+
+        gap:4px;
+    }
+
+    .nav-center a span,
+    .nav-links a span{
+
+        display:none;
+    }
+
+    .nav-center a,
+    .nav-links a{
+
+        padding:10px;
+    }
+
+    .profile-role{
+
+        display:none;
+    }
+
+}
+
+/* ===========================
+   MOBILE (768px)
+=========================== */
+
+@media (max-width:768px){
+
+    .guest-navbar-content,
+    .candidate-navbar-content,
+    .recruiter-navbar-content{
+
+        height:70px;
+        padding:0 16px;
+    }
+
+    .nav-search{
+
+        display:none;
+    }
+
+    .nav-center,
+    .nav-links{
+
+        display:none;
+    }
+
+    .notification-btn{
+
+        display:none;
+    }
+
+    .profile-name{
+
+        display:none;
+    }
+
+    .dropdown-icon{
+
+        display:none;
+    }
+
+    .profile-menu{
+
+        padding:0;
+    }
+
+    .profile-icon{
+
+        font-size:34px;
+    }
+
+}
+
+/* ===========================
+   SMALL MOBILE (480px)
+=========================== */
+
+@media (max-width:480px){
+
+    .nav-logo{
+
+        font-size:22px;
+    }
+
+    .logo-icon{
+
+        font-size:24px;
+    }
+
+    .guest-actions{
+
+        gap:8px;
+    }
+
+    .login-btn,
+    .register-btn{
+
+        padding:8px 12px;
+        font-size:13px;
+    }
+
+}
+
+/* ===========================
+   SMOOTH ANIMATIONS
+=========================== */
+
+.nav-links a,
+.nav-center a,
+.login-btn,
+.register-btn,
+.notification-btn,
+.profile-menu{
+
+    transition:all .25s ease;
+}
+
+/* ===========================
+   ACTIVE LINK EFFECT
+=========================== */
+
+.nav-links a.active,
+.nav-center a.active{
+
+    position:relative;
+}
+
+.nav-links a.active::after,
+.nav-center a.active::after{
+
+    content:"";
+
+    position:absolute;
+
+    left:15%;
+
+    bottom:-8px;
+
+    width:70%;
+
+    height:3px;
+
+    background:#2563eb;
+
+    border-radius:10px;
+}
+
+/* Remove underline when using blue background */
+.nav-center a.active::after{
+
+    display:none;
+}
+
+/* ===========================
+   FOCUS STATES
+=========================== */
+
+.nav-search input:focus{
+
+    outline:none;
+}
+
+.nav-links a:focus,
+.nav-center a:focus,
+.login-btn:focus,
+.register-btn:focus{
+
+    outline:2px solid #2563eb;
+    outline-offset:2px;
+}
+
+/* ===========================
+   DROPDOWN SHADOW
+=========================== */
+
+.profile-dropdown{
+
+    backdrop-filter:blur(12px);
+}
+
+/* ===========================
+   CUSTOM SCROLLBAR
+=========================== */
+
+::-webkit-scrollbar{
+
+    width:8px;
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:#cbd5e1;
+    border-radius:10px;
+}
+
+::-webkit-scrollbar-thumb:hover{
+
+    background:#94a3b8;
 }

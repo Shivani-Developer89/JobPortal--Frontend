@@ -15,22 +15,13 @@ function GuestNav() {
 
     return (
 
-        <header className="app-navbar">
+        <header className="guest-navbar">
 
-            {/* Top Row */}
+            <div className="guest-navbar-content">
 
-            <div className="navbar-top">
+                <NavLogo />
 
-               <div className="left-section">
-        <NavLogo />
-        <NavSearch placeholder="Search jobs..." />
-    </div>
-
-            </div>
-
-            {/* Bottom Row */}
-
-            <div className="navbar-bottom">
+                <NavSearch placeholder="Search jobs..." />
 
                 <nav className="nav-links">
 
@@ -51,7 +42,7 @@ function GuestNav() {
 
                     <NavLink to="/about">
                         <FaInfoCircle />
-                        About Us
+                        About
                     </NavLink>
 
                 </nav>

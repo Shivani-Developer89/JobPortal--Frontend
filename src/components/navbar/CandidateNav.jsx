@@ -16,62 +16,46 @@ function CandidateNav() {
 
     return (
 
-        <header className="app-navbar">
+<header className="candidate-navbar">
 
-            {/* Top Row */}
+    <div className="candidate-navbar-content">
 
-            <div className="navbar-top">
+        <div className="nav-left">
+            <NavLogo />
+            <NavSearch />
+        </div>
 
-                <div className="left-section">
+        <nav className="nav-center">
 
-                    <NavLogo />
+            <NavLink to="/">
+                <FaHome />
+                Home
+            </NavLink>
 
-                    <NavSearch
-                        placeholder="Search jobs..."
-                    />
+            <NavLink to="/jobs">
+                <FaBriefcase />
+                Jobs
+            </NavLink>
 
-                </div>
+            <NavLink to="/applications">
+                <FaFileAlt />
+                Applications
+            </NavLink>
 
-                <UserMenu />
+            <NavLink to="/saved-jobs">
+                <FaHeart />
+                Saved Jobs
+            </NavLink>
 
-            </div>
+        </nav>
 
-            {/* Bottom Row */}
+        <div className="nav-right">
+            <UserMenu />
+        </div>
 
-            <div className="navbar-bottom">
+    </div>
 
-                <nav className="nav-links">
-
-                    <NavLink to="/candidateDashboard">
-                        <FaHome />
-                        Home
-                    </NavLink>
-
-                    <NavLink to="/jobs">
-                        <FaBriefcase />
-                        Jobs
-                    </NavLink>
-
-                    <NavLink to="/applications">
-                        <FaFileAlt />
-                        Applications
-                    </NavLink>
-
-                    <NavLink to="/saved-jobs">
-                        <FaHeart />
-                        Saved Jobs
-                    </NavLink>
-
-                    <NavLink to="/candidate/profile">
-                        <FaUser />
-                        My Profile
-                    </NavLink>
-
-                </nav>
-
-            </div>
-
-        </header>
+</header>
 
     );
 

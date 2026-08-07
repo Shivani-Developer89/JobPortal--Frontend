@@ -2,24 +2,27 @@ import GuestNav from "./GuestNav";
 import CandidateNav from "./CandidateNav";
 import RecruiterNav from "./RecruiterNav";
 
+import { useAuth } from "../../context/AuthContext";
+
 function Navbar() {
 
-    const token = localStorage.getItem("token");
-    const role = localStorage.getItem("role");
+    const { isAuthenticated, role } = useAuth();
 
-    if (!token) {
+    if (!isAuthenticated) {
         return <GuestNav />;
     }
 
-    if (role === "CANDIDATE") {
-        return <CandidateNav />;
-    }
+    switch (role) {
 
-    if (role === "RECRUITER") {
-        return <RecruiterNav />;
-    }
+        case "CANDIDATE":
+            return <CandidateNav />;
 
-    return <GuestNav />;
+        case "RECRUITER":
+            return <RecruiterNav />;
+
+        default:
+            return <GuestNav />;
+    }
 }
 
 export default Navbar;

@@ -3,10 +3,12 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../services/AuthService";
 import { toast } from "react-toastify";
+import { useAuth } from "../context/AuthContext";
 function Login() {
   const[email,setEmail] =useState("");
   const[password,setPassword]= useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();
 
 
   const handleSubmit = async (e) => {
@@ -23,22 +25,23 @@ function Login() {
             email,
             password
         });
-localStorage.setItem("token", response.data.token);
-localStorage.setItem("role", response.data.role);
+      console.log(response.data);
+login({
+    token: response.data.token,
+    role: response.data.role,
+    name: response.data.name,
+});
 
 console.log("Saved token:", localStorage.getItem("token"));
 console.log("Saved role:", localStorage.getItem("role"));
 
-        localStorage.setItem(
-            "token",
-            response.data.token
-        );
+    
  
 
         
         toast.success("Login Successful");
 
-       navigate("/jobs");
+       navigate("/");
 
     } catch (error) {
 
