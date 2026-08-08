@@ -1,8 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-    getCandidateDashboard,
-    getMyApplications
-} from "../services/applicationService";
+import { getCandidateDashboard, getMyApplications } from "../services/applicationService";
 import { useNavigate } from "react-router-dom";
 import { withdrawApplication } from "../services/applicationService";
 import { toast } from "react-toastify";

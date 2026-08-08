@@ -6,6 +6,9 @@ import ExperienceSection from "../components/ExperienceSection";
 import SocialLinksSection from "../components/SocialLinksSection";
 import ResumeSection from "../components/ResumeSection";
 import { toast } from "react-toastify";
+import { FaUser } from "react-icons/fa";
+import "../styles/CandidateProfile.css";
+
 
 function CandidateProfile() {
 
@@ -53,6 +56,7 @@ function CandidateProfile() {
         postGradingType: "",
         postScore: ""
     });
+    const roleLabel = "Candidate";
 
     const [experience, setExperience] = useState({
 
@@ -257,9 +261,194 @@ const handleEducationChange = (e) => {
 
 };
 
+const validateEducation = () => {
+
+    const requiredFields = [
+        ["10th school", education.tenthSchool],
+        ["10th board", education.tenthBoard],
+        ["10th passing year", education.tenthYear],
+        ["10th grading type", education.tenthGradingType],
+        ["10th score", education.tenthScore],
+
+        ["12th school", education.twelfthSchool],
+        ["12th board", education.twelfthBoard],
+        ["12th stream", education.twelfthStream],
+        ["12th passing year", education.twelfthYear],
+        ["12th grading type", education.twelfthGradingType],
+        ["12th score", education.twelfthScore],
+
+        ["graduation degree", education.graduationDegree],
+        ["graduation branch", education.graduationBranch],
+        ["graduation college", education.graduationCollege],
+        ["graduation university", education.graduationUniversity],
+        ["graduation passing year", education.graduationYear],
+        ["graduation grading type", education.graduationGradingType],
+        ["graduation score", education.graduationScore]
+    ];
+
+    const missingField = requiredFields.find(
+        ([, value]) =>
+            value === undefined ||
+            value === null ||
+            String(value).trim() === ""
+    );
+
+    if (missingField) {
+        toast.error(`Please complete ${missingField[0]}.`);
+        return false;
+    }
+
+    const validateScore = (label, value, gradingType) => {
+
+        const score = Number(value);
+
+        if (!Number.isFinite(score)) {
+            toast.error(`${label} must be a valid number.`);
+            return false;
+        }
+
+        const max = gradingType === "CGPA" ? 10 : 100;
+
+        if (score < 0 || score > max) {
+            toast.error(
+                gradingType === "CGPA"
+                    ? `${label} must be between 0 and 10.`
+                    : `${label} must be between 0 and 100.`
+            );
+            return false;
+        }
+
+        return true;
+    };
+
+    if (
+        !validateScore(
+            "10th score",
+            education.tenthScore,
+            education.tenthGradingType
+        ) ||
+        !validateScore(
+            "12th score",
+            education.twelfthScore,
+            education.twelfthGradingType
+        ) ||
+        !validateScore(
+            "graduation score",
+            education.graduationScore,
+            education.graduationGradingType
+        )
+    ) {
+        return false;
+    }
+
+    const tenthYear = Number(education.tenthYear);
+    const twelfthYear = Number(education.twelfthYear);
+    const graduationYear = Number(education.graduationYear);
+    const currentYear = new Date().getFullYear();
+
+    if (
+        tenthYear > currentYear ||
+        twelfthYear > currentYear ||
+        graduationYear > currentYear
+    ) {
+        toast.error("Passing year cannot be in the future.");
+        return false;
+    }
+
+    if (twelfthYear < tenthYear) {
+        toast.error(
+            "12th passing year cannot be earlier than 10th passing year."
+        );
+        return false;
+    }
+
+    if (graduationYear < twelfthYear) {
+        toast.error(
+            "Graduation passing year cannot be earlier than 12th passing year."
+        );
+        return false;
+    }
+
+    // Post Graduation is optional.
+    // But once the user starts filling it, require all fields.
+    const postStarted = [
+        education.postDegree,
+        education.postBranch,
+        education.postCollege,
+        education.postUniversity,
+        education.postYear,
+        education.postGradingType,
+        education.postScore
+    ].some(
+        (field) =>
+            field !== undefined &&
+            field !== null &&
+            String(field).trim() !== ""
+    );
+
+    if (postStarted) {
+
+        const postFields = [
+            ["post graduation degree", education.postDegree],
+            ["post graduation branch", education.postBranch],
+            ["post graduation college", education.postCollege],
+            ["post graduation university", education.postUniversity],
+            ["post graduation passing year", education.postYear],
+            ["post graduation grading type", education.postGradingType],
+            ["post graduation score", education.postScore]
+        ];
+
+        const missingPostField = postFields.find(
+            ([, value]) =>
+                value === undefined ||
+                value === null ||
+                String(value).trim() === ""
+        );
+
+        if (missingPostField) {
+            toast.error(
+                `Please complete ${missingPostField[0]} or clear the Post Graduation section.`
+            );
+            return false;
+        }
+
+        if (
+            !validateScore(
+                "post graduation score",
+                education.postScore,
+                education.postGradingType
+            )
+        ) {
+            return false;
+        }
+
+        const postYear = Number(education.postYear);
+
+        if (postYear > currentYear) {
+            toast.error(
+                "Post graduation passing year cannot be in the future."
+            );
+            return false;
+        }
+
+        if (postYear < graduationYear) {
+            toast.error(
+                "Post graduation passing year cannot be earlier than graduation year."
+            );
+            return false;
+        }
+    }
+
+    return true;
+};
+
 const handleSubmit = async (e) => {
 
     e.preventDefault();
+
+    if (!validateEducation()) {
+        return;
+    }
 
     try {
 
@@ -299,16 +488,24 @@ const handleSubmit = async (e) => {
                     score: education.graduationScore
                 },
 
-                {
-                    level: "POST_GRADUATION",
-                    degree: education.postDegree,
-                    branch: education.postBranch,
-                    college: education.postCollege,
-                    university: education.postUniversity,
-                    passingYear: education.postYear,
-                    gradingType: education.postGradingType,
-                    score: education.postScore
-                }
+                ...(education.postDegree ||
+                education.postBranch ||
+                education.postCollege ||
+                education.postUniversity ||
+                education.postYear ||
+                education.postGradingType ||
+                education.postScore
+                    ? [{
+                        level: "POST_GRADUATION",
+                        degree: education.postDegree,
+                        branch: education.postBranch,
+                        college: education.postCollege,
+                        university: education.postUniversity,
+                        passingYear: education.postYear,
+                        gradingType: education.postGradingType,
+                        score: education.postScore
+                    }]
+                    : [])
 
             ],
 
@@ -321,19 +518,61 @@ const handleSubmit = async (e) => {
 
         });
 
-        alert("Profile saved successfully.");
+        toast.success("Profile saved successfully!");
 
-        loadProfile();
+        await loadProfile();
 
     } catch (error) {
 
         console.error(error);
 
-        alert("Failed to save profile.");
+        toast.error(
+            error.response?.data?.message ||
+            error.response?.data ||
+            "Failed to save profile."
+        );
 
     }
 
 };
+
+const profileCompletionFields = [
+    profile.phone,
+    profile.location,
+
+    education.tenthSchool,
+    education.tenthBoard,
+    education.tenthYear,
+
+    education.twelfthSchool,
+    education.twelfthBoard,
+    education.twelfthYear,
+
+    education.graduationDegree,
+    education.graduationCollege,
+    education.graduationYear,
+
+    skills.length > 0 ? skills.join("") : "",
+
+    experience.type === "EXPERIENCED"
+        ? experience.experiences.length > 0
+            ? experience.experiences[0].company
+            : ""
+        : "FRESHER",
+
+    resume ? "uploaded" : ""
+];
+
+const completedFields =
+    profileCompletionFields.filter(
+        field => field !== null &&
+                 field !== undefined &&
+                 String(field).trim() !== ""
+    ).length;
+
+const profileCompletion = Math.round(
+    (completedFields / profileCompletionFields.length) * 100
+);
     return (
 
     <div className="container py-5">
@@ -342,21 +581,57 @@ const handleSubmit = async (e) => {
 
             <div className="col-lg-8">
 
-                <div className="card shadow">
+<div className="card shadow candidate-profile-card">
 
-                    <div className="card-body p-5">
+    <div className="candidate-profile-header">
 
-                        <h2 className="text-center mb-4">
-                            Candidate Profile
-                        </h2>
+        <div className="profile-header-left">
 
-                        <form onSubmit={handleSubmit}>
+            <div className="profile-avatar">
+                <FaUser />
+            </div>
 
+            <div>
+                <h2>{profile.name || "Candidate"}</h2>
+
+                <p>
+                    {roleLabel}
+                    {profile.location && ` • ${profile.location}`}
+                </p>
+            </div>
+
+        </div>
+
+        <div className="profile-completion">
+
+            <div className="completion-top">
+                <span>Profile Completion</span>
+                <strong>{profileCompletion}%</strong>
+            </div>
+
+            <div className="completion-bar">
+
+                <div
+                    className="completion-progress"
+                    style={{
+                        width: `${profileCompletion}%`
+                    }}
+                />
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div className="card-body p-5">
+
+        <form onSubmit={handleSubmit}>
                             {/* Personal Information */}
 
-                            <h5 className="mb-3 border-bottom pb-2">
-                                Personal Information
-                            </h5>
+                          <div className="profile-section-title">
+                                <h5>Personal Information</h5>
+                            </div>
 
                             <div className="row">
 
@@ -432,9 +707,9 @@ const handleSubmit = async (e) => {
 
                             {/* Education */}
 
-                            <h5 className="mt-4 mb-3 border-bottom pb-2">
-                                Education
-                            </h5>
+                    <div className="profile-section-title">
+                        <h5>Education</h5>
+                    </div>
 
                             <EducationSection
                                 education={education}
@@ -443,9 +718,11 @@ const handleSubmit = async (e) => {
 
                             {/* Professional Details */}
 
-                            <h5 className="mt-4 mb-3 border-bottom pb-2">
-                                Professional Details
-                            </h5>
+
+                               <div className="profile-section-title">
+                    <h5> Professional Details</h5>
+                        </div>
+                           
 
                             <SkillsSection
                                 skills={skills}
