@@ -29,36 +29,32 @@ function UserMenu() {
 
     return (
 
-        <div className="user-menu">
+<div className="user-menu">
 
-            <button className="notification-btn">
-                <FaBell />
-            </button>
+    <button className="notification-btn">
+        <FaBell />
+    </button>
 
-            <div
-                className="profile-menu"
-                onClick={() => setOpen(!open)}
-            >
+    <div
+        className="profile-wrapper"
+        onClick={() => setOpen(!open)}
+    >
 
-                <FaUserCircle className="profile-icon" />
+        <div className="profile-menu">
 
-                <div className="profile-info">
+            <FaUserCircle className="profile-icon" />
 
-                    <span className="profile-name">
-                        {name}
-                    </span>
-
-                    <span className="profile-role">
-                        {role === "CANDIDATE"
-                            ? "Candidate"
-                            : "Recruiter"}
-                    </span>
-
-                </div>
-
-                <FaChevronDown className="dropdown-icon" />
-
+            <div className="profile-info">
+                <span className="profile-name">{name}</span>
+                <span className="profile-role">
+                    {role === "CANDIDATE" ? "Candidate" : "Recruiter"}
+                </span>
             </div>
+
+            <FaChevronDown className="dropdown-icon" />
+
+        </div>
+
 
             {open && (
 
@@ -100,9 +96,11 @@ function UserMenu() {
 
                 </div>
 
-            )}
+           )}
 
-        </div>
+    </div>
+
+</div>
 
     );
 

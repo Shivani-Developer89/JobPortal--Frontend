@@ -4,6 +4,7 @@ import {
     FaHome,
     FaBriefcase,
     FaFileAlt,
+    FaTachometerAlt ,
     FaHeart,
     FaUser
 } from "react-icons/fa";
@@ -25,29 +26,29 @@ function CandidateNav() {
             <NavSearch />
         </div>
 
-        <nav className="nav-center">
+   <nav className="nav-center">
 
-            <NavLink to="/">
-                <FaHome />
-                Home
-            </NavLink>
+    <NavLink to="/">
+        <FaHome />
+        Home
+    </NavLink>
 
-            <NavLink to="/jobs">
-                <FaBriefcase />
-                Jobs
-            </NavLink>
+    <NavLink to="/candidateDashboard">
+        <FaTachometerAlt />
+        Dashboard
+    </NavLink>
 
-            <NavLink to="/applications">
-                <FaFileAlt />
-                Applications
-            </NavLink>
+    <NavLink to="/jobs">
+        <FaBriefcase />
+        Jobs
+    </NavLink>
 
-            <NavLink to="/saved-jobs">
-                <FaHeart />
-                Saved Jobs
-            </NavLink>
+    <NavLink to="/saved-jobs">
+        <FaHeart />
+        Saved Jobs
+    </NavLink>
 
-        </nav>
+</nav>
 
         <div className="nav-right">
             <UserMenu />

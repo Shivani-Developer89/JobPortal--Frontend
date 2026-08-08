@@ -503,77 +503,81 @@
 /* =========================
    PROFILE DROPDOWN
 ========================= */
-
 .profile-dropdown{
-    position: absolute;
-    top: 72px;
-    right: 0;
+    position:absolute;
+    top:72px;
+    right:0;
 
-    width: 250px;
+    width:260px;
 
-    background: #fff;
-    border-radius: 16px;
+    background:#fff;
+    border-radius:16px;
 
-    box-shadow: 0 15px 40px rgba(0,0,0,.12);
+    box-shadow:0 15px 40px rgba(0,0,0,.12);
 
-    overflow: hidden;
-    z-index: 1000;
+    overflow:hidden;
+    z-index:1000;
 
-    animation: dropdown .2s ease;
-}
-@keyframes dropdown{
-    from{
-        opacity:0;
-        transform:translateY(-10px);
-    }
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
+    animation:dropdown .2s ease;
 }
 
 /* Header */
 
 .dropdown-header{
-    padding: 22px 32px 18px;
-    border-bottom: 1px solid #eef2f7;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+
+    padding:20px 26px;
+
+    border-bottom:1px solid #eef2f7;
 }
 
 .dropdown-header h4{
-    margin: 0;
-    font-size: 18px;
-    font-weight: 700;
-    color: #1e293b;
+
+    margin:0;
+    margin-left: 14px;
+
+    font-size:20px;
+    font-weight:700;
+
+    color:#1e293b;
 }
 
 .dropdown-header p{
-    margin-top: 6px;
-    margin-bottom: 0;
 
-    font-size: 14px;
-    color: #64748b;
+    margin:4px 0 0;
+    margin-left: 14px;
+
+    font-size:14px;
+
+    color:#64748b;
 }
 
 /* Menu */
 
 .profile-dropdown a,
 .profile-dropdown button{
+
     display:flex;
     align-items:center;
+
     gap:14px;
 
     width:100%;
 
-    padding:16px 32px;
+    padding:16px 26px;
+
+    border:none;
+    background:none;
 
     color:#334155;
 
     text-decoration:none;
+
     font-size:16px;
     font-weight:500;
-
-    background:none;
-    border:none;
 
     cursor:pointer;
 
@@ -590,6 +594,18 @@
 
 .profile-dropdown button:hover{
     background:#fef2f2;
+}
+
+.profile-dropdown hr{
+
+    margin:0;
+
+    border:none;
+
+    border-top:1px solid #eef2f7;
+}
+.profile-wrapper{
+    position:relative;
 }
 
 /* =========================
