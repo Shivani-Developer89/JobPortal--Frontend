@@ -11,6 +11,7 @@ function NavSearch({ placeholder }) {
             <input
                 type="text"
                 placeholder={placeholder}
+                
             />
 
         </div>

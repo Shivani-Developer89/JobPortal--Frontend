@@ -8,6 +8,8 @@ import ResumeSection from "../components/ResumeSection";
 import { toast } from "react-toastify";
 import { FaUser } from "react-icons/fa";
 import "../styles/CandidateProfile.css";
+import ProfileSidebar from "../components/ProfileSidebar";
+
 
 
 function CandidateProfile() {
@@ -24,6 +26,7 @@ function CandidateProfile() {
         leetcode: "",
         hackerrank: ""
     });
+    const [profileImage, setProfileImage] = useState(null);
 
     const [education, setEducation] = useState({
 
@@ -56,7 +59,6 @@ function CandidateProfile() {
         postGradingType: "",
         postScore: ""
     });
-    const roleLabel = "Candidate";
 
     const [experience, setExperience] = useState({
 
@@ -247,6 +249,25 @@ const handleChange = (e) => {
 
     });
 
+};
+
+const handleProfileImageChange = (e) => {
+
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+        toast.error("Please select a valid image.");
+        return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+        toast.error("Profile image must be less than 2 MB.");
+        return;
+    }
+
+    setProfileImage(URL.createObjectURL(file));
 };
 
 const handleEducationChange = (e) => {
@@ -573,193 +594,90 @@ const completedFields =
 const profileCompletion = Math.round(
     (completedFields / profileCompletionFields.length) * 100
 );
-    return (
+const scrollToSection = (id) => {
+    document.getElementById(id)?.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+};
+return (
+    <div className="candidate-profile-page">
 
-    <div className="container py-5">
+        <div className="profile-summary-card">
 
-        <div className="row justify-content-center">
+            <div className="profile-summary-left">
 
-            <div className="col-lg-8">
+                <div className="profile-avatar">
 
-<div className="card shadow candidate-profile-card">
+                    {profileImage ? (
+                        <img
+                            src={profileImage}
+                            alt="Profile"
+                        />
+                    ) : (
+                        <i className="bi bi-person-fill"></i>
+                    )}
 
-    <div className="candidate-profile-header">
+                    <label
+                        htmlFor="profile-image-input"
+                        className="profile-image-edit"
+                        title="Change profile picture"
+                    >
+                        <i className="bi bi-camera"></i>
+                    </label>
 
-        <div className="profile-header-left">
+                    <input
+                        id="profile-image-input"
+                        type="file"
+                        accept="image/*"
+                        hidden
+                        onChange={handleProfileImageChange}
+                    />
 
-            <div className="profile-avatar">
-                <FaUser />
+                </div>
+
+                <div className="profile-summary-info">
+
+                    <h2>
+                        {profile.name || "Candidate"}
+                    </h2>
+
+                    <p className="profile-role">
+                        Candidate
+                    </p>
+
+                    <p className="profile-location">
+                        <i className="bi bi-geo-alt"></i>
+                        {profile.location || "Location not added"}
+                    </p>
+
+                    <p className="profile-email">
+                        <i className="bi bi-envelope"></i>
+                        {profile.email || ""}
+                    </p>
+
+                </div>
+
             </div>
 
-            <div>
-                <h2>{profile.name || "Candidate"}</h2>
+            <div className="profile-completion-box">
 
-                <p>
-                    {roleLabel}
-                    {profile.location && ` • ${profile.location}`}
-                </p>
-            </div>
+                <div className="completion-top">
+                    <span>Profile Completion</span>
 
-        </div>
+                    <strong>
+                        {profileCompletion}%
+                    </strong>
+                </div>
 
-        <div className="profile-completion">
+                <div className="completion-bar">
 
-            <div className="completion-top">
-                <span>Profile Completion</span>
-                <strong>{profileCompletion}%</strong>
-            </div>
-
-            <div className="completion-bar">
-
-                <div
-                    className="completion-progress"
-                    style={{
-                        width: `${profileCompletion}%`
-                    }}
-                />
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <div className="card-body p-5">
-
-        <form onSubmit={handleSubmit}>
-                            {/* Personal Information */}
-
-                          <div className="profile-section-title">
-                                <h5>Personal Information</h5>
-                            </div>
-
-                            <div className="row">
-
-                                <div className="col-md-6 mb-3">
-
-                                    <label className="form-label">
-                                        Full Name
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        className="form-control bg-light"
-                                        value={profile.name}
-                                        readOnly
-                                    />
-
-                                </div>
-
-                                <div className="col-md-6 mb-3">
-
-                                    <label className="form-label">
-                                        Email Address
-                                    </label>
-
-                                    <input
-                                        type="email"
-                                        className="form-control bg-light"
-                                        value={profile.email}
-                                        readOnly
-                                    />
-
-                                </div>
-
-                            </div>
-
-                            <div className="row">
-
-                                <div className="col-md-6 mb-3">
-
-                                    <label className="form-label">
-                                        Phone Number
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        name="phone"
-                                        value={profile.phone}
-                                        onChange={handleChange}
-                                        placeholder="Enter phone number"
-                                    />
-
-                                </div>
-
-                                <div className="col-md-6 mb-3">
-
-                                    <label className="form-label">
-                                        Current Location
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        name="location"
-                                        value={profile.location}
-                                        onChange={handleChange}
-                                        placeholder="Enter your location"
-                                    />
-
-                                </div>
-
-                            </div>
-
-                            {/* Education */}
-
-                    <div className="profile-section-title">
-                        <h5>Education</h5>
-                    </div>
-
-                            <EducationSection
-                                education={education}
-                                handleEducationChange={handleEducationChange}
-                            />
-
-                            {/* Professional Details */}
-
-
-                               <div className="profile-section-title">
-                    <h5> Professional Details</h5>
-                        </div>
-                           
-
-                            <SkillsSection
-                                skills={skills}
-                                setSkills={setSkills}
-                            />
-
-                            <ExperienceSection
-                                experience={experience}
-                                setExperience={setExperience}
-                            />
-
-                            <ResumeSection
-                                resume={resume}
-                                setResume={setResume}
-                            />
-
-                                                        {/* Social Links */}
-
-                            <SocialLinksSection
-                                profile={profile}
-                                handleChange={handleChange}
-                            />
-
-                            <div className="text-center mt-4">
-
-                                <button
-                                    type="submit"
-                                    className="btn btn-primary px-5"
-                                >
-                                    Save Profile
-                                </button>
-
-                            </div>
-
-                        </form>
-
-                    </div>
+                    <div
+                        className="completion-value"
+                        style={{
+                            width: `${profileCompletion}%`
+                        }}
+                    />
 
                 </div>
 
@@ -767,8 +685,199 @@ const profileCompletion = Math.round(
 
         </div>
 
-    </div>
 
+        <div className="profile-dashboard-layout">
+
+            <ProfileSidebar
+                name={profile.name}
+                role="Candidate"
+                completion={profileCompletion}
+                onSave={handleSubmit}
+                onNavigate={scrollToSection}
+            />
+
+
+            <main className="profile-content">
+
+                <section
+                    id="personal"
+                    className="profile-section-card"
+                >
+
+                    <div className="section-header">
+
+                        <div>
+                            <h3>Personal Information</h3>
+
+                            <p>
+                                Keep your basic contact information
+                                up to date.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <div className="row g-3">
+
+                        <div className="col-md-6">
+
+                            <label className="form-label">
+                                Full Name
+                            </label>
+
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="name"
+                                value={profile.name || ""}
+                                onChange={handleChange}
+                            />
+
+                        </div>
+
+                        <div className="col-md-6">
+
+                            <label className="form-label">
+                                Email Address
+                            </label>
+
+                            <input
+                                type="email"
+                                className="form-control"
+                                name="email"
+                                value={profile.email || ""}
+                                disabled
+                            />
+
+                            <small className="text-muted">
+                                Email cannot be changed here.
+                            </small>
+
+                        </div>
+
+                        <div className="col-md-6">
+
+                            <label className="form-label">
+                                Phone Number
+                            </label>
+
+                            <input
+                                type="tel"
+                                className="form-control"
+                                name="phone"
+                                value={profile.phone || ""}
+                                onChange={handleChange}
+                            />
+
+                        </div>
+
+                        <div className="col-md-6">
+
+                            <label className="form-label">
+                                Current Location
+                            </label>
+
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="location"
+                                value={profile.location || ""}
+                                onChange={handleChange}
+                                placeholder="e.g. Meerut, Uttar Pradesh"
+                            />
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <section
+                    id="education"
+                    className="profile-section-card"
+                >
+
+                    <EducationSection
+                        education={education}
+                        handleEducationChange={
+                            handleEducationChange
+                        }
+                    />
+
+                </section>
+
+
+                <section
+                    id="skills"
+                    className="profile-section-card"
+                >
+
+                    <SkillsSection
+                        skills={skills}
+                        setSkills={setSkills}
+                    />
+
+                </section>
+
+
+                <section
+                    id="experience"
+                    className="profile-section-card"
+                >
+
+                    <ExperienceSection
+                        experience={experience}
+                        setExperience={setExperience}
+                    />
+
+                </section>
+
+
+                <section
+                    id="resume"
+                    className="profile-section-card"
+                >
+
+                    <ResumeSection
+                        resume={resume}
+                        setResume={setResume}
+                    />
+
+                </section>
+
+
+                <section
+                    id="social"
+                    className="profile-section-card"
+                >
+
+                    <SocialLinksSection
+                        profile={profile}
+                        handleChange={handleChange}
+                    />
+
+                </section>
+
+
+                <div className="profile-save-area">
+
+                    <button
+                        type="button"
+                        className="profile-main-save"
+                        onClick={handleSubmit}
+                    >
+                        <i className="bi bi-check2-circle me-2"></i>
+                        Save Profile
+                    </button>
+
+                </div>
+
+            </main>
+
+        </div>
+
+    </div>
 );
 
 }

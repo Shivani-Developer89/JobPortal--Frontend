@@ -1,208 +1,531 @@
+import { useRef, useState } from "react";
 import {
     uploadResume,
     downloadResume
 } from "../services/ResumeService";
 
+import { toast } from "react-toastify";
+
 function ResumeSection({
     resume,
     setResume
 }) {
-     console.log("Resume selected");
-   const handleResumeChange = async (e) => {
 
-    const file = e.target.files[0];
+    const fileInputRef = useRef(null);
 
-    if (!file) return;
+    const [uploading, setUploading] = useState(false);
+    const [dragging, setDragging] = useState(false);
 
-    if (file.type !== "application/pdf") {
-        alert("Only PDF files are allowed.");
-        return;
-    }
+    const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
-    if (file.size > 5 * 1024 * 1024) {
-        alert("Maximum file size is 5 MB.");
-        return;
-    }
+    /* =====================================================
+       FORMAT FILE SIZE
+    ===================================================== */
 
-    try {
+    const formatFileSize = (bytes) => {
 
-        await uploadResume(file);
+        if (!bytes) {
+            return "0 KB";
+        }
 
-        setResume({
-            file,
-            uploadedAt: new Date().toLocaleDateString("en-GB")
+        const mb = bytes / (1024 * 1024);
+
+        if (mb < 1) {
+            return `${(bytes / 1024).toFixed(0)} KB`;
+        }
+
+        return `${mb.toFixed(2)} MB`;
+    };
+
+    /* =====================================================
+       FORMAT DATE
+    ===================================================== */
+
+    const formatDate = (date) => {
+
+        if (!date) {
+            return "Recently";
+        }
+
+        return new Date(date).toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
         });
+    };
 
-        alert("Resume uploaded successfully.");
+    /* =====================================================
+       VALIDATE FILE
+    ===================================================== */
 
-    } catch (error) {
+    const validateFile = (file) => {
 
-        console.error(error);
+        if (!file) {
+            return false;
+        }
 
-        alert("Resume upload failed.");
+        const isPdf =
+            file.type === "application/pdf" ||
+            file.name.toLowerCase().endsWith(".pdf");
 
-    }
-};
+        if (!isPdf) {
+
+            toast.error(
+                "Only PDF files are allowed."
+            );
+
+            return false;
+        }
+
+        if (file.size > MAX_FILE_SIZE) {
+
+            toast.error(
+                "Resume size must be less than 5 MB."
+            );
+
+            return false;
+        }
+
+        return true;
+    };
+
+    /* =====================================================
+       UPLOAD RESUME
+    ===================================================== */
+
+    const processResume = async (file) => {
+
+        if (!validateFile(file)) {
+            return;
+        }
+
+        try {
+
+            setUploading(true);
+
+            await uploadResume(file);
+
+            setResume({
+                file: file,
+                fileName: file.name,
+                fileSize: file.size,
+                uploadedAt: new Date().toISOString()
+            });
+
+            toast.success(
+                resume
+                    ? "Resume replaced successfully."
+                    : "Resume uploaded successfully."
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Resume upload error:",
+                error
+            );
+
+            toast.error(
+                error.response?.data?.message ||
+                "Resume upload failed. Please try again."
+            );
+
+        } finally {
+
+            setUploading(false);
+
+        }
+    };
+
+    /* =====================================================
+       FILE INPUT
+    ===================================================== */
+
+    const handleResumeChange = (e) => {
+
+        const file = e.target.files?.[0];
+
+        if (file) {
+            processResume(file);
+        }
+
+        // Allows selecting the same file again
+        e.target.value = "";
+    };
+
+    /* =====================================================
+       DRAG & DROP
+    ===================================================== */
+
+    const handleDragOver = (e) => {
+
+        e.preventDefault();
+
+        setDragging(true);
+    };
+
+    const handleDragLeave = (e) => {
+
+        e.preventDefault();
+
+        setDragging(false);
+    };
+
+    const handleDrop = (e) => {
+
+        e.preventDefault();
+
+        setDragging(false);
+
+        const file = e.dataTransfer.files?.[0];
+
+        if (file) {
+            processResume(file);
+        }
+    };
+
+    /* =====================================================
+       VIEW RESUME
+    ===================================================== */
+
+    const handleViewResume = async () => {
+
+        try {
+
+            // Newly uploaded file exists in browser memory
+            if (resume?.file) {
+
+                const url =
+                    URL.createObjectURL(resume.file);
+
+                window.open(url, "_blank");
+
+                // Release object URL later
+                setTimeout(() => {
+                    URL.revokeObjectURL(url);
+                }, 60000);
+
+                return;
+            }
+
+            // Existing resume from backend
+            const response =
+                await downloadResume();
+
+            const blob =
+                new Blob(
+                    [response.data],
+                    {
+                        type: "application/pdf"
+                    }
+                );
+
+            const url =
+                URL.createObjectURL(blob);
+
+            window.open(url, "_blank");
+
+            setTimeout(() => {
+                URL.revokeObjectURL(url);
+            }, 60000);
+
+        } catch (error) {
+
+            console.error(
+                "Resume view error:",
+                error
+            );
+
+            toast.error(
+                "Unable to open resume."
+            );
+        }
+    };
+
+    /* =====================================================
+       REMOVE FROM CURRENT FORM
+       
+       IMPORTANT:
+       This does NOT delete from backend because your
+       current ResumeService has no delete API.
+    ===================================================== */
+
+    const handleRemove = () => {
+
+        setResume(null);
+
+        toast.info(
+            "Resume removed from the current profile form."
+        );
+    };
+
+    /* =====================================================
+       UI
+    ===================================================== */
 
     return (
 
-        <div className="card shadow-sm mb-4">
+        <div className="resume-section">
 
-            <div className="card-header">
-                <h5 className="mb-0">
-                    Resume
-                </h5>
-            </div>
+            <div className="resume-card">
 
-            <div className="card-body">
+                {/* HEADER */}
 
-                {
+                <div className="resume-card-header">
 
-                    resume === null ?
+                    <div>
 
-                    (
+                        <h5>
+                            Resume
+                        </h5>
 
-                        <div className="text-center py-4">
+                        <p>
+                            Upload your latest resume to help recruiters
+                            understand your experience.
+                        </p>
 
-                            <i className="bi bi-file-earmark-pdf-fill text-danger display-4"></i>
+                    </div>
 
-                            <h5 className="mt-3">
-                                No Resume Uploaded
-                            </h5>
+                    <div className="resume-header-icon">
 
-                            <p className="text-muted">
-                                Upload your latest resume (PDF only).
+                        <i className="bi bi-file-earmark-pdf-fill"></i>
+
+                    </div>
+
+                </div>
+
+
+                {/* BODY */}
+
+                <div className="resume-card-body">
+
+                    {!resume ? (
+
+                        /* =================================================
+                           EMPTY STATE
+                        ================================================= */
+
+                        <div
+                            className={`resume-upload-area ${
+                                dragging
+                                    ? "dragging"
+                                    : ""
+                            }`}
+                            onDragOver={handleDragOver}
+                            onDragLeave={handleDragLeave}
+                            onDrop={handleDrop}
+                        >
+
+                            <div className="resume-upload-icon">
+
+                                <i className="bi bi-cloud-arrow-up"></i>
+
+                            </div>
+
+                            <h6>
+                                Upload your resume
+                            </h6>
+
+                            <p>
+                                Drag and drop your PDF here
+                                or choose a file from your computer.
                             </p>
 
-                            <label className="btn btn-primary">
+                            <label className="resume-upload-btn">
 
-                                <i className="bi bi-upload me-2"></i>
+                                {uploading ? (
 
-                                Upload Resume
+                                    <>
+                                        <span
+                                            className="spinner-border spinner-border-sm me-2"
+                                        ></span>
+
+                                        Uploading...
+                                    </>
+
+                                ) : (
+
+                                    <>
+                                        <i className="bi bi-upload me-2"></i>
+                                        Choose Resume
+                                    </>
+
+                                )}
 
                                 <input
+                                    ref={fileInputRef}
                                     type="file"
-                                    accept=".pdf"
+                                    accept="application/pdf,.pdf"
                                     hidden
+                                    disabled={uploading}
                                     onChange={handleResumeChange}
                                 />
 
                             </label>
 
-                            <p className="text-muted small mt-3 mb-0">
-                                Maximum File Size : 5 MB
-                            </p>
+                            <div className="resume-upload-info">
+
+                                <span>
+                                    <i className="bi bi-file-earmark-pdf me-1"></i>
+                                    PDF only
+                                </span>
+
+                                <span>
+                                    <i className="bi bi-hdd me-1"></i>
+                                    Maximum 5 MB
+                                </span>
+
+                            </div>
 
                         </div>
 
-                    )
+                    ) : (
 
-                    :
+                        /* =================================================
+                           RESUME EXISTS
+                        ================================================= */
 
-                    (
+                        <div className="resume-file-container">
 
-                        <>
+                            <div className="resume-file-info">
 
-                            <div className="d-flex align-items-center">
+                                <div className="resume-file-icon">
 
-                                <i className="bi bi-file-earmark-pdf-fill text-danger display-6 me-3"></i>
+                                    <i className="bi bi-file-earmark-pdf-fill"></i>
 
-                                <div>
+                                </div>
 
-                                    <h5 className="mb-1">
-                                      {resume.file?.name || resume.fileName}
-                                    </h5>
+                                <div className="resume-file-details">
 
-                                    <small className="text-muted d-block">
+                                    <h6
+                                        title={
+                                            resume.file?.name ||
+                                            resume.fileName
+                                        }
+                                    >
                                         {
-                                        resume.file
-                                            ? `PDF • ${(resume.file.size / 1024 / 1024).toFixed(2)} MB`
-                                            : "PDF"
-                                    }
-                                    </small>
+                                            resume.file?.name ||
+                                            resume.fileName ||
+                                            "Resume.pdf"
+                                        }
+                                    </h6>
 
-                                    <small className="text-muted">
-                                        Uploaded :{" "}
-                                        {resume.uploadedAt}
+                                    <div className="resume-meta">
+
+                                        <span>
+                                            PDF
+                                        </span>
+
+                                        <span>
+                                            •
+                                        </span>
+
+                                        <span>
+                                            {
+                                                resume.file
+                                                    ? formatFileSize(
+                                                        resume.file.size
+                                                    )
+                                                    : "Uploaded"
+                                            }
+                                        </span>
+
+                                    </div>
+
+                                    <small>
+
+                                        Uploaded{" "}
+
+                                        {formatDate(
+                                            resume.uploadedAt
+                                        )}
+
                                     </small>
 
                                 </div>
 
                             </div>
 
-                            <hr />
 
-                            <div className="d-flex gap-2">
+                            {/* ACTIONS */}
+
+                            <div className="resume-actions">
 
                                 <button
-                                    className="btn btn-outline-primary"
                                     type="button"
-                                    onClick={async () => {
-
-                                        if (resume.file) {
-
-                                            window.open(
-                                                URL.createObjectURL(resume.file),
-                                                "_blank"
-                                            );
-
-                                        } else {
-
-                                       const response = await downloadResume();
-
-const blob = new Blob([response.data], {
-    type: "application/pdf"
-});
-
-const url = URL.createObjectURL(blob);
-
-window.open(url, "_blank");
-
-                                        }
-
-                                    }}
+                                    className="resume-view-btn"
+                                    onClick={handleViewResume}
                                 >
+
                                     <i className="bi bi-eye me-2"></i>
+
                                     View
+
                                 </button>
 
-                                <label className="btn btn-secondary mb-0">
 
-                                    <i className="bi bi-upload me-2"></i>
+                                <label
+                                    className={`resume-replace-btn ${
+                                        uploading
+                                            ? "disabled"
+                                            : ""
+                                    }`}
+                                >
 
-                                    Replace
+                                    {uploading ? (
+
+                                        <>
+                                            <span
+                                                className="spinner-border spinner-border-sm me-2"
+                                            ></span>
+
+                                            Replacing...
+                                        </>
+
+                                    ) : (
+
+                                        <>
+                                            <i className="bi bi-arrow-repeat me-2"></i>
+
+                                            Replace
+                                        </>
+
+                                    )}
 
                                     <input
                                         type="file"
-                                        accept=".pdf"
+                                        accept="application/pdf,.pdf"
                                         hidden
+                                        disabled={uploading}
                                         onChange={handleResumeChange}
                                     />
 
                                 </label>
 
+
                                 <button
-                                    className="btn btn-outline-danger"
                                     type="button"
-                                    onClick={() => setResume(null)}
+                                    className="resume-delete-btn"
+                                    onClick={handleRemove}
+                                    title="Remove resume"
                                 >
+
                                     <i className="bi bi-trash"></i>
+
                                 </button>
 
                             </div>
 
-                        </>
+                        </div>
 
-                    )
+                    )}
 
-                }
+                </div>
 
             </div>
 
         </div>
-
     );
-
 }
 
 export default ResumeSection;
