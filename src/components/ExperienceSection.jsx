@@ -1,22 +1,84 @@
 import { useState } from "react";
 
-function ExperienceSection({ experience, setExperience }) {
+function ExperienceSection({ experience = {}, setExperience }) {
     const [editing, setEditing] = useState(false);
+    const [draftExperience, setDraftExperience] = useState(experience);
 
-    const handleChange = (e) => {
-        setExperience({
+    const experiences = Array.isArray(experience?.experiences) ? experience.experiences : [];
+    const draftExperiences = Array.isArray(draftExperience?.experiences)
+        ? draftExperience.experiences
+        : [];
+
+    const isComplete = (exp) =>
+        [
+            exp.company,
+            exp.jobTitle,
+            exp.employmentType,
+            exp.location,
+            exp.yearsOfExperience,
+            exp.responsibilities
+        ].every(v => v !== undefined && v !== null && String(v).trim() !== "");
+
+    const meaningfulExperiences = experiences.filter(exp =>
+        exp &&
+        (
+            String(exp.company || "").trim() ||
+            String(exp.jobTitle || "").trim() ||
+            String(exp.responsibilities || "").trim()
+        )
+    );
+
+    const hasFresherContent =
+        String(experience?.about || "").trim() ||
+        String(experience?.projects || "").trim() ||
+        String(experience?.internships || "").trim() ||
+        String(experience?.certifications || "").trim();
+
+    const handleEdit = () => {
+        setDraftExperience({
             ...experience,
+            experiences: experiences.map(item => ({ ...item }))
+        });
+        setEditing(true);
+    };
+
+    const handleCancel = () => {
+        setDraftExperience({
+            ...experience,
+            experiences: experiences.map(item => ({ ...item }))
+        });
+        setEditing(false);
+    };
+
+    const handleDone = () => {
+        setExperience({
+            ...draftExperience,
+            experiences: draftExperiences.filter(exp =>
+                Object.values(exp || {}).some(
+                    value => value !== undefined && value !== null && String(value).trim() !== ""
+                )
+            )
+        });
+        setEditing(false);
+    };
+
+    const handleTypeChange = (e) => {
+        setDraftExperience({ ...draftExperience, type: e.target.value });
+    };
+
+    const handleFresherChange = (e) => {
+        setDraftExperience({
+            ...draftExperience,
             [e.target.name]: e.target.value
         });
     };
 
-    const experiences = experience?.experiences || [];
-
     const addExperience = () => {
-        setExperience({
-            ...experience,
+        setDraftExperience({
+            ...draftExperience,
+            type: "EXPERIENCED",
             experiences: [
-                ...experiences,
+                ...draftExperiences,
                 {
                     company: "",
                     jobTitle: "",
@@ -31,50 +93,30 @@ function ExperienceSection({ experience, setExperience }) {
     };
 
     const removeExperience = (index) => {
-        setExperience({
-            ...experience,
-            experiences: experiences.filter((_, i) => i !== index)
+        setDraftExperience({
+            ...draftExperience,
+            experiences: draftExperiences.filter((_, i) => i !== index)
         });
     };
 
     const handleExperienceChange = (index, e) => {
-        const updated = [...experiences];
-        updated[index] = {
-            ...updated[index],
-            [e.target.name]: e.target.value
-        };
+        const updated = [...draftExperiences];
+        updated[index] = { ...updated[index], [e.target.name]: e.target.value };
 
-        setExperience({
-            ...experience,
+        setDraftExperience({
+            ...draftExperience,
             experiences: updated
         });
     };
 
-    const isComplete = (exp) =>
-        [
-            exp.company,
-            exp.jobTitle,
-            exp.employmentType,
-            exp.location,
-            exp.yearsOfExperience,
-            exp.responsibilities
-        ].every(
-            (v) =>
-                v !== undefined &&
-                v !== null &&
-                String(v).trim() !== ""
-        );
-
     return (
-        <div className="experience-section">
+        <section className="experience-section" id="experience">
             <div className="experience-card">
 
                 <div className="experience-card-header">
                     <div>
                         <h5>Experience</h5>
-                        <span>
-                            Tell recruiters about your professional background
-                        </span>
+                        <span>Tell recruiters about your professional background</span>
                     </div>
 
                     <div className="experience-header-right">
@@ -82,33 +124,26 @@ function ExperienceSection({ experience, setExperience }) {
                             <button
                                 type="button"
                                 className="experience-edit-btn"
-                                onClick={() => setEditing(true)}
+                                onClick={handleEdit}
                             >
-                                <i className="bi bi-pencil me-1"></i>
-                                Edit
+                                <i className="bi bi-pencil"></i>
+                                <span>Edit</span>
                             </button>
                         )}
 
                         <span className="experience-count">
-                            {experience?.type === "EXPERIENCED"
-                                ? `${experiences.length} ${
-                                      experiences.length === 1
-                                          ? "experience"
-                                          : "experiences"
-                                  }`
-                                : "Fresher"}
+                            {experience?.type === "FRESHER"
+                                ? "Fresher"
+                                : `${meaningfulExperiences.length} ${meaningfulExperiences.length === 1 ? "experience" : "experiences"}`}
                         </span>
                     </div>
                 </div>
 
-                {!editing && (
+                {!editing ? (
                     <div className="experience-view-body">
 
                         {experience?.type === "FRESHER" ? (
-                            experience?.about ||
-                            experience?.projects ||
-                            experience?.internships ||
-                            experience?.certifications ? (
+                            hasFresherContent ? (
                                 <div className="fresher-summary">
                                     {experience.about && (
                                         <div className="experience-summary-block">
@@ -116,21 +151,18 @@ function ExperienceSection({ experience, setExperience }) {
                                             <p>{experience.about}</p>
                                         </div>
                                     )}
-
                                     {experience.projects && (
                                         <div className="experience-summary-block">
                                             <span>Academic Projects</span>
                                             <p>{experience.projects}</p>
                                         </div>
                                     )}
-
                                     {experience.internships && (
                                         <div className="experience-summary-block">
                                             <span>Internships</span>
                                             <p>{experience.internships}</p>
                                         </div>
                                     )}
-
                                     {experience.certifications && (
                                         <div className="experience-summary-block">
                                             <span>Certifications</span>
@@ -140,68 +172,41 @@ function ExperienceSection({ experience, setExperience }) {
                                 </div>
                             ) : (
                                 <div className="experience-empty-state">
-                                    <i className="bi bi-mortarboard"></i>
+                                    <div className="experience-empty-icon">
+                                        <i className="bi bi-mortarboard"></i>
+                                    </div>
                                     <div>
-                                        <strong>Fresher</strong>
-                                        <p>
-                                            Add your career objective, projects,
-                                            internships and certifications.
-                                        </p>
+                                        <strong>Fresher profile</strong>
+                                        <p>Add your career objective, projects, internships or certifications.</p>
                                     </div>
                                 </div>
                             )
-                        ) : experiences.length > 0 ? (
+                        ) : meaningfulExperiences.length > 0 ? (
                             <div className="experience-summary-list">
-                                {experiences.map((exp, index) => (
-                                    <div
-                                        key={index}
-                                        className="experience-summary-item"
-                                    >
+                                {meaningfulExperiences.map((exp, index) => (
+                                    <div key={index} className="experience-summary-item">
                                         <div className="experience-summary-top">
                                             <div>
-                                                <h6>
-                                                    {exp.jobTitle ||
-                                                        "Job title not added"}
-                                                </h6>
+                                                <h6>{exp.jobTitle || "Job title not added"}</h6>
                                                 <p className="experience-company">
-                                                    {exp.company ||
-                                                        "Company not added"}
+                                                    {exp.company || "Company not added"}
                                                 </p>
                                             </div>
 
-                                            <span
-                                                className={`experience-summary-status ${
-                                                    isComplete(exp)
-                                                        ? "complete"
-                                                        : "incomplete"
-                                                }`}
-                                            >
-                                                {isComplete(exp)
-                                                    ? "Completed"
-                                                    : "Incomplete"}
+                                            <span className={`experience-summary-status ${isComplete(exp) ? "complete" : "incomplete"}`}>
+                                                {isComplete(exp) ? "Completed" : "Incomplete"}
                                             </span>
                                         </div>
 
                                         <div className="experience-summary-meta">
                                             {exp.location && (
-                                                <span>
-                                                    <i className="bi bi-geo-alt me-1"></i>
-                                                    {exp.location}
-                                                </span>
+                                                <span><i className="bi bi-geo-alt"></i>{exp.location}</span>
                                             )}
-
                                             {exp.employmentType && (
-                                                <span>
-                                                    <i className="bi bi-briefcase me-1"></i>
-                                                    {exp.employmentType}
-                                                </span>
+                                                <span><i className="bi bi-briefcase"></i>{exp.employmentType}</span>
                                             )}
-
                                             {exp.yearsOfExperience && (
-                                                <span>
-                                                    <i className="bi bi-clock me-1"></i>
-                                                    {exp.yearsOfExperience}
-                                                </span>
+                                                <span><i className="bi bi-clock"></i>{exp.yearsOfExperience}</span>
                                             )}
                                         </div>
 
@@ -223,27 +228,21 @@ function ExperienceSection({ experience, setExperience }) {
                             </div>
                         ) : (
                             <div className="experience-empty-state">
-                                <i className="bi bi-briefcase"></i>
+                                <div className="experience-empty-icon">
+                                    <i className="bi bi-briefcase"></i>
+                                </div>
                                 <div>
-                                    <strong>No experience added</strong>
-                                    <p>
-                                        Add your professional experience to
-                                        help recruiters understand your
-                                        background.
-                                    </p>
+                                    <strong>No professional experience added</strong>
+                                    <p>If you're a fresher, choose Fresher and add projects or internships instead.</p>
                                 </div>
                             </div>
                         )}
                     </div>
-                )}
-
-                {editing && (
+                ) : (
                     <div className="experience-card-body">
 
                         <div className="experience-status-section">
-                            <label className="experience-label">
-                                Experience Status
-                            </label>
+                            <label className="experience-label">Experience Status</label>
 
                             <div className="experience-options">
                                 <label className="experience-radio">
@@ -251,15 +250,12 @@ function ExperienceSection({ experience, setExperience }) {
                                         type="radio"
                                         name="type"
                                         value="FRESHER"
-                                        checked={experience.type === "FRESHER"}
-                                        onChange={handleChange}
+                                        checked={draftExperience.type === "FRESHER"}
+                                        onChange={handleTypeChange}
                                     />
                                     <span className="radio-content">
                                         <strong>Fresher</strong>
-                                        <small>
-                                            I don't have professional
-                                            experience yet
-                                        </small>
+                                        <small>I don't have professional experience yet</small>
                                     </span>
                                 </label>
 
@@ -268,98 +264,78 @@ function ExperienceSection({ experience, setExperience }) {
                                         type="radio"
                                         name="type"
                                         value="EXPERIENCED"
-                                        checked={
-                                            experience.type === "EXPERIENCED"
-                                        }
-                                        onChange={handleChange}
+                                        checked={draftExperience.type === "EXPERIENCED"}
+                                        onChange={handleTypeChange}
                                     />
                                     <span className="radio-content">
                                         <strong>Experienced</strong>
-                                        <small>
-                                            I have professional work experience
-                                        </small>
+                                        <small>I have professional work experience</small>
                                     </span>
                                 </label>
                             </div>
                         </div>
 
-                        {experience.type === "FRESHER" ? (
+                        {draftExperience.type === "FRESHER" ? (
                             <div className="fresher-profile">
                                 <div className="fresher-intro">
-                                    <div className="fresher-icon">🎓</div>
+                                    <div className="fresher-icon">
+                                        <i className="bi bi-mortarboard"></i>
+                                    </div>
                                     <div>
                                         <h6>Starting your career?</h6>
-                                        <p>
-                                            Add your career objective, projects,
-                                            internships and certifications to
-                                            strengthen your profile.
-                                        </p>
+                                        <p>Add the information that is relevant to your fresher profile.</p>
                                     </div>
                                 </div>
 
                                 <div className="row g-3">
                                     <div className="col-12">
-                                        <label className="form-label">
-                                            Career Objective
-                                        </label>
+                                        <label className="form-label">Career Objective</label>
                                         <textarea
                                             className="form-control"
                                             rows="3"
                                             name="about"
-                                            value={experience.about || ""}
-                                            onChange={handleChange}
-                                            placeholder="Tell recruiters about your career goals and what you are looking for..."
+                                            value={draftExperience.about || ""}
+                                            onChange={handleFresherChange}
+                                            placeholder="Tell recruiters about your career goals and the kind of role you are looking for..."
                                             maxLength={1000}
                                         />
-                                        <small className="field-hint">
-                                            Keep it concise and focused on your
-                                            career goals.
-                                        </small>
                                     </div>
 
                                     <div className="col-12">
-                                        <label className="form-label">
-                                            Academic Projects
-                                        </label>
+                                        <label className="form-label">Academic Projects</label>
                                         <textarea
                                             className="form-control"
                                             rows="4"
                                             name="projects"
-                                            value={experience.projects || ""}
-                                            onChange={handleChange}
+                                            value={draftExperience.projects || ""}
+                                            onChange={handleFresherChange}
                                             placeholder="Describe your academic or personal projects, technologies used and your contribution..."
                                             maxLength={1500}
                                         />
                                     </div>
 
                                     <div className="col-md-6">
-                                        <label className="form-label">
-                                            Internships
-                                        </label>
+                                        <label className="form-label">Internships</label>
                                         <textarea
                                             className="form-control"
                                             rows="4"
                                             name="internships"
-                                            value={experience.internships || ""}
-                                            onChange={handleChange}
-                                            placeholder="Mention internships, company, role and key responsibilities..."
+                                            value={draftExperience.internships || ""}
+                                            onChange={handleFresherChange}
+                                            placeholder="Mention internships, company, role and responsibilities..."
                                             maxLength={1000}
                                         />
                                     </div>
 
                                     <div className="col-md-6">
-                                        <label className="form-label">
-                                            Certifications
-                                        </label>
+                                        <label className="form-label">Certifications</label>
                                         <textarea
                                             className="form-control"
                                             rows="4"
                                             name="certifications"
-                                            value={
-                                                experience.certifications || ""
-                                            }
-                                            onChange={handleChange}
-                                            placeholder="AWS, Oracle Java, Google Cloud, etc..."
+                                            value={draftExperience.certifications || ""}
+                                            onChange={handleFresherChange}
+                                            placeholder="AWS, Oracle Java, Google Cloud, etc."
                                             maxLength={1000}
                                         />
                                     </div>
@@ -367,301 +343,171 @@ function ExperienceSection({ experience, setExperience }) {
                             </div>
                         ) : (
                             <div className="experienced-profile">
-                                {experiences.map((exp, index) => {
-                                    const complete = isComplete(exp);
 
-                                    return (
-                                        <div
-                                            key={index}
-                                            className="experience-item"
-                                        >
-                                            <div className="experience-item-header">
-                                                <div>
-                                                    <h6>
-                                                        Experience #{index + 1}
-                                                    </h6>
-                                                    <span>
-                                                        {complete
-                                                            ? "✓ Details completed"
-                                                            : "Add your work details"}
-                                                    </span>
-                                                </div>
+                                {draftExperiences.map((exp, index) => (
+                                    <div key={index} className="experience-item">
 
-                                                <div className="experience-item-actions">
-                                                    <span
-                                                        className={`experience-status-badge ${
-                                                            complete
-                                                                ? "completed"
-                                                                : "incomplete"
-                                                        }`}
-                                                    >
-                                                        {complete
-                                                            ? "Completed"
-                                                            : "Incomplete"}
-                                                    </span>
-
-                                                    {experiences.length > 1 && (
-                                                        <button
-                                                            type="button"
-                                                            className="remove-experience-btn"
-                                                            onClick={() =>
-                                                                removeExperience(
-                                                                    index
-                                                                )
-                                                            }
-                                                            title="Remove Experience"
-                                                        >
-                                                            ×
-                                                        </button>
-                                                    )}
-                                                </div>
+                                        <div className="experience-item-header">
+                                            <div>
+                                                <h6>Experience #{index + 1}</h6>
+                                                <span>
+                                                    {isComplete(exp)
+                                                        ? "Details completed"
+                                                        : "Complete the required details"}
+                                                </span>
                                             </div>
 
-                                            <div className="row g-3">
-                                                <div className="col-md-6">
-                                                    <label className="form-label">
-                                                        Company Name
-                                                        <span className="required">
-                                                            *
-                                                        </span>
-                                                    </label>
-                                                    <input
-                                                        type="text"
-                                                        className="form-control"
-                                                        name="company"
-                                                        value={exp.company || ""}
-                                                        onChange={(e) =>
-                                                            handleExperienceChange(
-                                                                index,
-                                                                e
-                                                            )
-                                                        }
-                                                        placeholder="e.g. TCS"
-                                                        maxLength={120}
-                                                    />
-                                                </div>
+                                            <div className="experience-item-actions">
+                                                <span className={`experience-status-badge ${isComplete(exp) ? "completed" : "incomplete"}`}>
+                                                    {isComplete(exp) ? "Completed" : "Incomplete"}
+                                                </span>
 
-                                                <div className="col-md-6">
-                                                    <label className="form-label">
-                                                        Job Title
-                                                        <span className="required">
-                                                            *
-                                                        </span>
-                                                    </label>
-                                                    <input
-                                                        type="text"
-                                                        className="form-control"
-                                                        name="jobTitle"
-                                                        value={
-                                                            exp.jobTitle || ""
-                                                        }
-                                                        onChange={(e) =>
-                                                            handleExperienceChange(
-                                                                index,
-                                                                e
-                                                            )
-                                                        }
-                                                        placeholder="e.g. Java Developer"
-                                                        maxLength={120}
-                                                    />
-                                                </div>
-
-                                                <div className="col-md-6">
-                                                    <label className="form-label">
-                                                        Employment Type
-                                                        <span className="required">
-                                                            *
-                                                        </span>
-                                                    </label>
-                                                    <select
-                                                        className="form-select"
-                                                        name="employmentType"
-                                                        value={
-                                                            exp.employmentType ||
-                                                            ""
-                                                        }
-                                                        onChange={(e) =>
-                                                            handleExperienceChange(
-                                                                index,
-                                                                e
-                                                            )
-                                                        }
-                                                    >
-                                                        <option value="">
-                                                            Select employment
-                                                            type
-                                                        </option>
-                                                        <option value="Full Time">
-                                                            Full Time
-                                                        </option>
-                                                        <option value="Part Time">
-                                                            Part Time
-                                                        </option>
-                                                        <option value="Internship">
-                                                            Internship
-                                                        </option>
-                                                        <option value="Contract">
-                                                            Contract
-                                                        </option>
-                                                        <option value="Freelance">
-                                                            Freelance
-                                                        </option>
-                                                    </select>
-                                                </div>
-
-                                                <div className="col-md-6">
-                                                    <label className="form-label">
-                                                        Years of Experience
-                                                        <span className="required">
-                                                            *
-                                                        </span>
-                                                    </label>
-                                                    <select
-                                                        className="form-select"
-                                                        name="yearsOfExperience"
-                                                        value={
-                                                            exp.yearsOfExperience ||
-                                                            ""
-                                                        }
-                                                        onChange={(e) =>
-                                                            handleExperienceChange(
-                                                                index,
-                                                                e
-                                                            )
-                                                        }
-                                                    >
-                                                        <option value="">
-                                                            Select experience
-                                                        </option>
-                                                        <option value="0-1 Years">
-                                                            0-1 Years
-                                                        </option>
-                                                        <option value="1-2 Years">
-                                                            1-2 Years
-                                                        </option>
-                                                        <option value="2-5 Years">
-                                                            2-5 Years
-                                                        </option>
-                                                        <option value="5-10 Years">
-                                                            5-10 Years
-                                                        </option>
-                                                        <option value="10+ Years">
-                                                            10+ Years
-                                                        </option>
-                                                    </select>
-                                                </div>
-
-                                                <div className="col-12">
-                                                    <label className="form-label">
-                                                        Location
-                                                        <span className="required">
-                                                            *
-                                                        </span>
-                                                    </label>
-                                                    <input
-                                                        type="text"
-                                                        className="form-control"
-                                                        name="location"
-                                                        value={exp.location || ""}
-                                                        onChange={(e) =>
-                                                            handleExperienceChange(
-                                                                index,
-                                                                e
-                                                            )
-                                                        }
-                                                        placeholder="e.g. Delhi, India"
-                                                        maxLength={100}
-                                                    />
-                                                </div>
-
-                                                <div className="col-12">
-                                                    <label className="form-label">
-                                                        Responsibilities
-                                                        <span className="required">
-                                                            *
-                                                        </span>
-                                                    </label>
-                                                    <textarea
-                                                        className="form-control"
-                                                        rows="4"
-                                                        name="responsibilities"
-                                                        value={
-                                                            exp.responsibilities ||
-                                                            ""
-                                                        }
-                                                        onChange={(e) =>
-                                                            handleExperienceChange(
-                                                                index,
-                                                                e
-                                                            )
-                                                        }
-                                                        placeholder="Describe your main responsibilities, technologies used and work performed..."
-                                                        maxLength={2000}
-                                                    />
-                                                    <small className="field-hint">
-                                                        Focus on what you actually
-                                                        did in the role.
-                                                    </small>
-                                                </div>
-
-                                                <div className="col-12">
-                                                    <label className="form-label">
-                                                        Achievements
-                                                    </label>
-                                                    <textarea
-                                                        className="form-control"
-                                                        rows="3"
-                                                        name="achievements"
-                                                        value={
-                                                            exp.achievements || ""
-                                                        }
-                                                        onChange={(e) =>
-                                                            handleExperienceChange(
-                                                                index,
-                                                                e
-                                                            )
-                                                        }
-                                                        placeholder="Mention measurable achievements, improvements or important results..."
-                                                        maxLength={1500}
-                                                    />
-                                                </div>
+                                                <button
+                                                    type="button"
+                                                    className="remove-experience-btn"
+                                                    onClick={() => removeExperience(index)}
+                                                    title="Remove experience"
+                                                >
+                                                    <i className="bi bi-trash"></i>
+                                                </button>
                                             </div>
                                         </div>
-                                    );
-                                })}
+
+                                        <div className="row g-3">
+                                            <div className="col-md-6">
+                                                <label className="form-label">Company Name <span className="required">*</span></label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    name="company"
+                                                    value={exp.company || ""}
+                                                    onChange={(e) => handleExperienceChange(index, e)}
+                                                    placeholder="e.g. TCS"
+                                                    maxLength={120}
+                                                />
+                                            </div>
+
+                                            <div className="col-md-6">
+                                                <label className="form-label">Job Title <span className="required">*</span></label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    name="jobTitle"
+                                                    value={exp.jobTitle || ""}
+                                                    onChange={(e) => handleExperienceChange(index, e)}
+                                                    placeholder="e.g. Java Developer"
+                                                    maxLength={120}
+                                                />
+                                            </div>
+
+                                            <div className="col-md-6">
+                                                <label className="form-label">Employment Type <span className="required">*</span></label>
+                                                <select
+                                                    className="form-select"
+                                                    name="employmentType"
+                                                    value={exp.employmentType || ""}
+                                                    onChange={(e) => handleExperienceChange(index, e)}
+                                                >
+                                                    <option value="">Select employment type</option>
+                                                    <option value="Full Time">Full Time</option>
+                                                    <option value="Part Time">Part Time</option>
+                                                    <option value="Internship">Internship</option>
+                                                    <option value="Contract">Contract</option>
+                                                    <option value="Freelance">Freelance</option>
+                                                </select>
+                                            </div>
+
+                                            <div className="col-md-6">
+                                                <label className="form-label">Years of Experience <span className="required">*</span></label>
+                                                <select
+                                                    className="form-select"
+                                                    name="yearsOfExperience"
+                                                    value={exp.yearsOfExperience || ""}
+                                                    onChange={(e) => handleExperienceChange(index, e)}
+                                                >
+                                                    <option value="">Select experience</option>
+                                                    <option value="0-1 Years">0-1 Years</option>
+                                                    <option value="1-2 Years">1-2 Years</option>
+                                                    <option value="2-5 Years">2-5 Years</option>
+                                                    <option value="5-10 Years">5-10 Years</option>
+                                                    <option value="10+ Years">10+ Years</option>
+                                                </select>
+                                            </div>
+
+                                            <div className="col-12">
+                                                <label className="form-label">Location <span className="required">*</span></label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    name="location"
+                                                    value={exp.location || ""}
+                                                    onChange={(e) => handleExperienceChange(index, e)}
+                                                    placeholder="e.g. Delhi, India"
+                                                    maxLength={100}
+                                                />
+                                            </div>
+
+                                            <div className="col-12">
+                                                <label className="form-label">Responsibilities <span className="required">*</span></label>
+                                                <textarea
+                                                    className="form-control"
+                                                    rows="4"
+                                                    name="responsibilities"
+                                                    value={exp.responsibilities || ""}
+                                                    onChange={(e) => handleExperienceChange(index, e)}
+                                                    placeholder="Describe your main responsibilities, technologies used and work performed..."
+                                                    maxLength={2000}
+                                                />
+                                            </div>
+
+                                            <div className="col-12">
+                                                <label className="form-label">Achievements</label>
+                                                <textarea
+                                                    className="form-control"
+                                                    rows="3"
+                                                    name="achievements"
+                                                    value={exp.achievements || ""}
+                                                    onChange={(e) => handleExperienceChange(index, e)}
+                                                    placeholder="Mention measurable achievements or important results..."
+                                                    maxLength={1500}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+
+                                {draftExperiences.length === 0 && (
+                                    <div className="experience-empty-edit">
+                                        <i className="bi bi-briefcase"></i>
+                                        <p>No experience added yet.</p>
+                                    </div>
+                                )}
 
                                 <button
                                     type="button"
                                     className="add-experience-btn"
                                     onClick={addExperience}
                                 >
-                                    + Add Another Experience
+                                    <i className="bi bi-plus-lg"></i>
+                                    Add Experience
                                 </button>
                             </div>
                         )}
 
                         <div className="experience-edit-actions">
-                            <button
-                                type="button"
-                                className="btn btn-primary"
-                                onClick={() => setEditing(false)}
-                            >
-                                <i className="bi bi-check2 me-1"></i>
+                            <button type="button" className="experience-done-btn" onClick={handleDone}>
+                                <i className="bi bi-check2"></i>
                                 Done
                             </button>
 
-                            <button
-                                type="button"
-                                className="btn btn-outline-secondary"
-                                onClick={() => setEditing(false)}
-                            >
+                            <button type="button" className="experience-cancel-btn" onClick={handleCancel}>
                                 Cancel
                             </button>
                         </div>
                     </div>
                 )}
             </div>
-        </div>
+        </section>
     );
 }
 

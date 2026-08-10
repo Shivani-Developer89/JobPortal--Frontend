@@ -601,13 +601,17 @@ const scrollToSection = (id) => {
     });
 };
 return (
-    <div className="candidate-profile-page">
+    <div className="profile-page">
 
-        <div className="profile-summary-card">
+        {/* =====================================================
+            PROFILE HEADER
+        ===================================================== */}
 
-            <div className="profile-summary-left">
+        <section className="profile-header-card">
 
-                <div className="profile-avatar">
+            <div className="profile-header-left">
+
+                <div className="profile-header-avatar">
 
                     {profileImage ? (
                         <img
@@ -620,7 +624,7 @@ return (
 
                     <label
                         htmlFor="profile-image-input"
-                        className="profile-image-edit"
+                        className="profile-avatar-edit"
                         title="Change profile picture"
                     >
                         <i className="bi bi-camera"></i>
@@ -636,23 +640,26 @@ return (
 
                 </div>
 
-                <div className="profile-summary-info">
+
+                <div className="profile-header-info">
 
                     <h2>
                         {profile.name || "Candidate"}
                     </h2>
 
-                    <p className="profile-role">
+                    <p className="profile-header-role">
                         Candidate
                     </p>
 
-                    <p className="profile-location">
+                    <p className="profile-header-location">
                         <i className="bi bi-geo-alt"></i>
+
                         {profile.location || "Location not added"}
                     </p>
 
-                    <p className="profile-email">
+                    <p className="profile-header-email">
                         <i className="bi bi-envelope"></i>
+
                         {profile.email || ""}
                     </p>
 
@@ -660,20 +667,28 @@ return (
 
             </div>
 
-            <div className="profile-completion-box">
 
-                <div className="completion-top">
-                    <span>Profile Completion</span>
+            {/* Profile Completion */}
+
+            <div className="profile-header-completion">
+
+                <div className="profile-completion-row">
+
+                    <span>
+                        Profile Completion
+                    </span>
 
                     <strong>
                         {profileCompletion}%
                     </strong>
+
                 </div>
 
-                <div className="completion-bar">
+
+                <div className="profile-completion-bar">
 
                     <div
-                        className="completion-value"
+                        className="profile-completion-fill"
                         style={{
                             width: `${profileCompletion}%`
                         }}
@@ -683,10 +698,16 @@ return (
 
             </div>
 
-        </div>
+        </section>
 
 
-        <div className="profile-dashboard-layout">
+        {/* =====================================================
+            MAIN PROFILE LAYOUT
+        ===================================================== */}
+
+        <div className="profile-layout">
+
+            {/* LEFT SIDEBAR */}
 
             <ProfileSidebar
                 name={profile.name}
@@ -697,94 +718,113 @@ return (
             />
 
 
-            <main className="profile-content">
+            {/* RIGHT CONTENT */}
+
+            <main className="profile-main-content">
+
+
+                {/* =================================================
+                    PERSONAL INFORMATION
+                ================================================= */}
 
                 <section
                     id="personal"
-                    className="profile-section-card"
+                    className="profile-section"
                 >
 
-                    <div className="section-header">
+                    <div className="profile-section-header">
 
                         <div>
-                            <h3>Personal Information</h3>
+
+                            <h3>
+                                Personal Information
+                            </h3>
 
                             <p>
                                 Keep your basic contact information
                                 up to date.
                             </p>
+
                         </div>
 
                     </div>
 
-                    <div className="row g-3">
 
-                        <div className="col-md-6">
+                    <div className="profile-form-body">
 
-                            <label className="form-label">
-                                Full Name
-                            </label>
+                        <div className="row g-3">
 
-                            <input
-                                type="text"
-                                className="form-control"
-                                name="name"
-                                value={profile.name || ""}
-                                onChange={handleChange}
-                            />
+                            <div className="col-md-6">
 
-                        </div>
+                                <label className="form-label">
+                                    Full Name
+                                </label>
 
-                        <div className="col-md-6">
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    name="name"
+                                    value={profile.name || ""}
+                                    onChange={handleChange}
+                                />
 
-                            <label className="form-label">
-                                Email Address
-                            </label>
+                            </div>
 
-                            <input
-                                type="email"
-                                className="form-control"
-                                name="email"
-                                value={profile.email || ""}
-                                disabled
-                            />
 
-                            <small className="text-muted">
-                                Email cannot be changed here.
-                            </small>
+                            <div className="col-md-6">
 
-                        </div>
+                                <label className="form-label">
+                                    Email Address
+                                </label>
 
-                        <div className="col-md-6">
+                                <input
+                                    type="email"
+                                    className="form-control"
+                                    name="email"
+                                    value={profile.email || ""}
+                                    disabled
+                                />
 
-                            <label className="form-label">
-                                Phone Number
-                            </label>
+                                <small className="text-muted">
+                                    Email cannot be changed here.
+                                </small>
 
-                            <input
-                                type="tel"
-                                className="form-control"
-                                name="phone"
-                                value={profile.phone || ""}
-                                onChange={handleChange}
-                            />
+                            </div>
 
-                        </div>
 
-                        <div className="col-md-6">
+                            <div className="col-md-6">
 
-                            <label className="form-label">
-                                Current Location
-                            </label>
+                                <label className="form-label">
+                                    Phone Number
+                                </label>
 
-                            <input
-                                type="text"
-                                className="form-control"
-                                name="location"
-                                value={profile.location || ""}
-                                onChange={handleChange}
-                                placeholder="e.g. Meerut, Uttar Pradesh"
-                            />
+                                <input
+                                    type="tel"
+                                    className="form-control"
+                                    name="phone"
+                                    value={profile.phone || ""}
+                                    onChange={handleChange}
+                                />
+
+                            </div>
+
+
+                            <div className="col-md-6">
+
+                                <label className="form-label">
+                                    Current Location
+                                </label>
+
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    name="location"
+                                    value={profile.location || ""}
+                                    onChange={handleChange}
+                                    placeholder="e.g. Meerut, Uttar Pradesh"
+                                />
+
+                            </div>
 
                         </div>
 
@@ -793,9 +833,13 @@ return (
                 </section>
 
 
+                {/* =================================================
+                    EDUCATION
+                ================================================= */}
+
                 <section
                     id="education"
-                    className="profile-section-card"
+                    className="profile-section"
                 >
 
                     <EducationSection
@@ -808,9 +852,13 @@ return (
                 </section>
 
 
+                {/* =================================================
+                    SKILLS
+                ================================================= */}
+
                 <section
                     id="skills"
-                    className="profile-section-card"
+                    className="profile-section"
                 >
 
                     <SkillsSection
@@ -821,9 +869,13 @@ return (
                 </section>
 
 
+                {/* =================================================
+                    EXPERIENCE
+                ================================================= */}
+
                 <section
                     id="experience"
-                    className="profile-section-card"
+                    className="profile-section"
                 >
 
                     <ExperienceSection
@@ -834,9 +886,13 @@ return (
                 </section>
 
 
+                {/* =================================================
+                    RESUME
+                ================================================= */}
+
                 <section
                     id="resume"
-                    className="profile-section-card"
+                    className="profile-section"
                 >
 
                     <ResumeSection
@@ -847,9 +903,13 @@ return (
                 </section>
 
 
+                {/* =================================================
+                    SOCIAL PROFILES
+                ================================================= */}
+
                 <section
                     id="social"
-                    className="profile-section-card"
+                    className="profile-section"
                 >
 
                     <SocialLinksSection
@@ -859,19 +919,6 @@ return (
 
                 </section>
 
-
-                <div className="profile-save-area">
-
-                    <button
-                        type="button"
-                        className="profile-main-save"
-                        onClick={handleSubmit}
-                    >
-                        <i className="bi bi-check2-circle me-2"></i>
-                        Save Profile
-                    </button>
-
-                </div>
 
             </main>
 

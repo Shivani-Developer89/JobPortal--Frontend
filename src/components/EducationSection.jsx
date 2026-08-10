@@ -1,23 +1,33 @@
 import { useState } from "react";
 
 function EducationSection({
-    profile,
-    handleChange
+    education,
+    handleEducationChange
 }) {
-
     const [editing, setEditing] = useState(false);
 
-    return (
+    const data = education || {};
 
-        <div className="profile-inner-section">
+    const formatScore = (score, gradingType) => {
+        if (
+            score === undefined ||
+            score === null ||
+            String(score).trim() === ""
+        ) {
+            return "Score not added";
+        }
+
+        return gradingType === "CGPA"
+            ? `${score} CGPA`
+            : `${score}%`;
+    };
+
+    return (
+        <div className="profile-inner-section" >
 
             {/* HEADER */}
-
             <div className="section-title-row">
-
-                <h3>
-                    Education
-                </h3>
+                <h3>Education</h3>
 
                 <button
                     type="button"
@@ -26,468 +36,430 @@ function EducationSection({
                     <i className="bi bi-pencil me-1"></i>
                     Edit
                 </button>
-
             </div>
-
 
             {/* =========================
                 DISPLAY MODE
             ========================= */}
-
             {!editing && (
-
                 <div className="education-list">
 
-                    {/* 10th */}
-
+                    {/* 10TH */}
                     <div className="education-item">
-
                         <h4>10th</h4>
 
                         <p className="education-institute">
-                            {profile.tenthSchool || "Not added"}
+                            {data.tenthSchool || "Not added"}
                         </p>
 
                         <p className="education-meta">
-
-                            {profile.tenthBoard || "Board not added"}
-
+                            {data.tenthBoard || "Board not added"}
                             {" • "}
-
-                            {profile.tenthPassingYear || "Year not added"}
-
+                            {data.tenthYear || "Year not added"}
                             {" • "}
-
-                            {profile.tenthScore
-                                ? `${profile.tenthScore}%`
-                                : "Score not added"}
-
+                            {formatScore(
+                                data.tenthScore,
+                                data.tenthGradingType
+                            )}
                         </p>
-
                     </div>
 
-
-                    {/* 12th */}
-
+                    {/* 12TH */}
                     <div className="education-item">
-
                         <h4>12th</h4>
 
                         <p className="education-institute">
-                            {profile.twelfthSchool || "Not added"}
+                            {data.twelfthSchool || "Not added"}
                         </p>
 
                         <p className="education-meta">
-
-                            {profile.twelfthStream && (
+                            {data.twelfthStream && (
                                 <>
-                                    {profile.twelfthStream}
+                                    {data.twelfthStream}
                                     {" • "}
                                 </>
                             )}
 
-                            {profile.twelfthBoard || "Board not added"}
-
+                            {data.twelfthBoard || "Board not added"}
                             {" • "}
-
-                            {profile.twelfthPassingYear || "Year not added"}
-
+                            {data.twelfthYear || "Year not added"}
                             {" • "}
-
-                            {profile.twelfthScore
-                                ? `${profile.twelfthScore}%`
-                                : "Score not added"}
-
+                            {formatScore(
+                                data.twelfthScore,
+                                data.twelfthGradingType
+                            )}
                         </p>
-
                     </div>
 
-
-                    {/* Graduation */}
-
+                    {/* GRADUATION */}
                     <div className="education-item">
-
                         <h4>
-                            {profile.graduationDegree || "Graduation"}
+                            {data.graduationDegree || "Graduation"}
                         </h4>
 
                         <p className="education-institute">
-
-                            {profile.graduationCollege ||
-                                "College not added"}
-
+                            {data.graduationCollege || "College not added"}
                         </p>
 
                         <p className="education-meta">
-
-                            {profile.graduationUniversity ||
+                            {data.graduationUniversity ||
                                 "University not added"}
-
                             {" • "}
-
-                            {profile.graduationPassingYear ||
-                                "Year not added"}
-
+                            {data.graduationYear || "Year not added"}
                             {" • "}
-
-                            {profile.graduationPercentage
-                                ? `${profile.graduationPercentage}%`
-                                : "Score not added"}
-
+                            {formatScore(
+                                data.graduationScore,
+                                data.graduationGradingType
+                            )}
                         </p>
 
-                        {profile.graduationBranch && (
-
+                        {data.graduationBranch && (
                             <p className="education-specialization">
-
-                                {profile.graduationBranch}
-
+                                {data.graduationBranch}
                             </p>
-
                         )}
-
                     </div>
 
-
-                    {/* Post Graduation */}
-
-                    {(profile.postGraduationDegree ||
-                        profile.postGraduationCollege) && (
-
+                    {/* POST GRADUATION */}
+                    {(data.postDegree || data.postCollege) && (
                         <div className="education-item">
-
                             <h4>
-
-                                {profile.postGraduationDegree ||
-                                    "Post Graduation"}
-
+                                {data.postDegree || "Post Graduation"}
                             </h4>
 
                             <p className="education-institute">
-
-                                {profile.postGraduationCollege ||
-                                    "College not added"}
-
+                                {data.postCollege || "College not added"}
                             </p>
 
                             <p className="education-meta">
-
-                                {profile.postGraduationUniversity ||
+                                {data.postUniversity ||
                                     "University not added"}
-
                                 {" • "}
-
-                                {profile.postGraduationPassingYear ||
-                                    "Year not added"}
-
+                                {data.postYear || "Year not added"}
                                 {" • "}
-
-                                {profile.postGraduationPercentage
-                                    ? `${profile.postGraduationPercentage}%`
-                                    : "Score not added"}
-
+                                {formatScore(
+                                    data.postScore,
+                                    data.postGradingType
+                                )}
                             </p>
 
+                            {data.postBranch && (
+                                <p className="education-specialization">
+                                    {data.postBranch}
+                                </p>
+                            )}
                         </div>
-
                     )}
 
+                    {!data.tenthSchool &&
+                        !data.twelfthSchool &&
+                        !data.graduationCollege &&
+                        !data.postCollege && (
+                            <div className="education-empty">
+                                <i className="bi bi-mortarboard"></i>
+                                <p>No education details added yet.</p>
+                                <button
+                                    type="button"
+                                    className="btn btn-primary"
+                                    onClick={() => setEditing(true)}
+                                >
+                                    Add Education
+                                </button>
+                            </div>
+                        )}
                 </div>
-
             )}
-
 
             {/* =========================
                 EDIT MODE
             ========================= */}
-
             {editing && (
-
                 <div className="education-edit-form">
 
-                    {/* 10th */}
-
+                    {/* 10TH */}
                     <div className="education-form-block">
-
                         <h4>10th Details</h4>
 
                         <div className="row">
 
                             <div className="col-md-6 mb-3">
-
                                 <label className="form-label">
                                     School Name
                                 </label>
-
                                 <input
                                     className="form-control"
                                     name="tenthSchool"
-                                    value={profile.tenthSchool || ""}
-                                    onChange={handleChange}
+                                    value={data.tenthSchool || ""}
+                                    onChange={handleEducationChange}
                                 />
-
                             </div>
 
-
                             <div className="col-md-6 mb-3">
-
                                 <label className="form-label">
                                     Board
                                 </label>
-
                                 <input
                                     className="form-control"
                                     name="tenthBoard"
-                                    value={profile.tenthBoard || ""}
-                                    onChange={handleChange}
+                                    value={data.tenthBoard || ""}
+                                    onChange={handleEducationChange}
                                 />
-
                             </div>
 
-
                             <div className="col-md-6 mb-3">
-
                                 <label className="form-label">
                                     Passing Year
                                 </label>
-
                                 <input
                                     className="form-control"
-                                    name="tenthPassingYear"
-                                    value={profile.tenthPassingYear || ""}
-                                    onChange={handleChange}
+                                    name="tenthYear"
+                                    value={data.tenthYear || ""}
+                                    onChange={handleEducationChange}
                                 />
-
                             </div>
 
+                            <div className="col-md-6 mb-3">
+                                <label className="form-label">
+                                    Grading Type
+                                </label>
+                                <select
+                                    className="form-select"
+                                    name="tenthGradingType"
+                                    value={data.tenthGradingType || ""}
+                                    onChange={handleEducationChange}
+                                >
+                                    <option value="">
+                                        Select grading type
+                                    </option>
+                                    <option value="PERCENTAGE">
+                                        Percentage
+                                    </option>
+                                    <option value="CGPA">
+                                        CGPA
+                                    </option>
+                                </select>
+                            </div>
 
                             <div className="col-md-6 mb-3">
-
                                 <label className="form-label">
-                                    Percentage
+                                    Score
                                 </label>
-
                                 <input
                                     type="number"
+                                    step="0.01"
+                                    min="0"
                                     className="form-control"
                                     name="tenthScore"
-                                    value={profile.tenthScore || ""}
-                                    onChange={handleChange}
+                                    value={data.tenthScore || ""}
+                                    onChange={handleEducationChange}
                                 />
-
                             </div>
 
                         </div>
-
                     </div>
 
-
-                    {/* 12th */}
-
+                    {/* 12TH */}
                     <div className="education-form-block">
-
                         <h4>12th Details</h4>
 
                         <div className="row">
 
                             <div className="col-md-6 mb-3">
-
                                 <label className="form-label">
                                     School Name
                                 </label>
-
                                 <input
                                     className="form-control"
                                     name="twelfthSchool"
-                                    value={profile.twelfthSchool || ""}
-                                    onChange={handleChange}
+                                    value={data.twelfthSchool || ""}
+                                    onChange={handleEducationChange}
                                 />
-
                             </div>
 
-
                             <div className="col-md-6 mb-3">
-
                                 <label className="form-label">
                                     Board
                                 </label>
-
                                 <input
                                     className="form-control"
                                     name="twelfthBoard"
-                                    value={profile.twelfthBoard || ""}
-                                    onChange={handleChange}
+                                    value={data.twelfthBoard || ""}
+                                    onChange={handleEducationChange}
                                 />
-
                             </div>
 
-
                             <div className="col-md-6 mb-3">
-
                                 <label className="form-label">
                                     Stream
                                 </label>
-
                                 <input
                                     className="form-control"
                                     name="twelfthStream"
-                                    value={profile.twelfthStream || ""}
-                                    onChange={handleChange}
+                                    value={data.twelfthStream || ""}
+                                    onChange={handleEducationChange}
                                 />
-
                             </div>
 
-
                             <div className="col-md-6 mb-3">
-
                                 <label className="form-label">
                                     Passing Year
                                 </label>
-
                                 <input
                                     className="form-control"
-                                    name="twelfthPassingYear"
-                                    value={profile.twelfthPassingYear || ""}
-                                    onChange={handleChange}
+                                    name="twelfthYear"
+                                    value={data.twelfthYear || ""}
+                                    onChange={handleEducationChange}
                                 />
-
                             </div>
 
+                            <div className="col-md-6 mb-3">
+                                <label className="form-label">
+                                    Grading Type
+                                </label>
+                                <select
+                                    className="form-select"
+                                    name="twelfthGradingType"
+                                    value={data.twelfthGradingType || ""}
+                                    onChange={handleEducationChange}
+                                >
+                                    <option value="">
+                                        Select grading type
+                                    </option>
+                                    <option value="PERCENTAGE">
+                                        Percentage
+                                    </option>
+                                    <option value="CGPA">
+                                        CGPA
+                                    </option>
+                                </select>
+                            </div>
 
                             <div className="col-md-6 mb-3">
-
                                 <label className="form-label">
-                                    Percentage
+                                    Score
                                 </label>
-
                                 <input
                                     type="number"
+                                    step="0.01"
+                                    min="0"
                                     className="form-control"
                                     name="twelfthScore"
-                                    value={profile.twelfthScore || ""}
-                                    onChange={handleChange}
+                                    value={data.twelfthScore || ""}
+                                    onChange={handleEducationChange}
                                 />
-
                             </div>
 
                         </div>
-
                     </div>
 
-
                     {/* GRADUATION */}
-
                     <div className="education-form-block">
-
                         <h4>Graduation</h4>
 
                         <div className="row">
 
                             <div className="col-md-6 mb-3">
-
                                 <label className="form-label">
                                     Degree
                                 </label>
-
                                 <input
                                     className="form-control"
                                     name="graduationDegree"
-                                    value={profile.graduationDegree || ""}
-                                    onChange={handleChange}
+                                    value={data.graduationDegree || ""}
+                                    onChange={handleEducationChange}
                                 />
-
                             </div>
 
-
                             <div className="col-md-6 mb-3">
-
                                 <label className="form-label">
                                     Branch / Specialization
                                 </label>
-
                                 <input
                                     className="form-control"
                                     name="graduationBranch"
-                                    value={profile.graduationBranch || ""}
-                                    onChange={handleChange}
+                                    value={data.graduationBranch || ""}
+                                    onChange={handleEducationChange}
                                 />
-
                             </div>
 
-
                             <div className="col-md-6 mb-3">
-
                                 <label className="form-label">
                                     College Name
                                 </label>
-
                                 <input
                                     className="form-control"
                                     name="graduationCollege"
-                                    value={profile.graduationCollege || ""}
-                                    onChange={handleChange}
+                                    value={data.graduationCollege || ""}
+                                    onChange={handleEducationChange}
                                 />
-
                             </div>
 
-
                             <div className="col-md-6 mb-3">
-
                                 <label className="form-label">
                                     University
                                 </label>
-
                                 <input
                                     className="form-control"
                                     name="graduationUniversity"
-                                    value={profile.graduationUniversity || ""}
-                                    onChange={handleChange}
+                                    value={data.graduationUniversity || ""}
+                                    onChange={handleEducationChange}
                                 />
-
                             </div>
 
-
                             <div className="col-md-6 mb-3">
-
                                 <label className="form-label">
                                     Passing Year
                                 </label>
-
                                 <input
                                     className="form-control"
-                                    name="graduationPassingYear"
-                                    value={profile.graduationPassingYear || ""}
-                                    onChange={handleChange}
+                                    name="graduationYear"
+                                    value={data.graduationYear || ""}
+                                    onChange={handleEducationChange}
                                 />
-
                             </div>
 
+                            <div className="col-md-6 mb-3">
+                                <label className="form-label">
+                                    Grading Type
+                                </label>
+                                <select
+                                    className="form-select"
+                                    name="graduationGradingType"
+                                    value={data.graduationGradingType || ""}
+                                    onChange={handleEducationChange}
+                                >
+                                    <option value="">
+                                        Select grading type
+                                    </option>
+                                    <option value="PERCENTAGE">
+                                        Percentage
+                                    </option>
+                                    <option value="CGPA">
+                                        CGPA
+                                    </option>
+                                </select>
+                            </div>
 
                             <div className="col-md-6 mb-3">
-
                                 <label className="form-label">
-                                    Percentage
+                                    Score
                                 </label>
-
                                 <input
                                     type="number"
+                                    step="0.01"
+                                    min="0"
                                     className="form-control"
-                                    name="graduationPercentage"
-                                    value={profile.graduationPercentage || ""}
-                                    onChange={handleChange}
+                                    name="graduationScore"
+                                    value={data.graduationScore || ""}
+                                    onChange={handleEducationChange}
                                 />
-
                             </div>
 
                         </div>
-
                     </div>
 
-
                     {/* POST GRADUATION */}
-
                     <div className="education-form-block">
-
                         <h4>
                             Post Graduation
                             <span className="optional-label">
@@ -498,138 +470,120 @@ function EducationSection({
                         <div className="row">
 
                             <div className="col-md-6 mb-3">
-
                                 <label className="form-label">
                                     Degree
                                 </label>
-
                                 <input
                                     className="form-control"
-                                    name="postGraduationDegree"
-                                    value={
-                                        profile.postGraduationDegree || ""
-                                    }
-                                    onChange={handleChange}
+                                    name="postDegree"
+                                    value={data.postDegree || ""}
+                                    onChange={handleEducationChange}
                                 />
-
                             </div>
 
-
                             <div className="col-md-6 mb-3">
-
                                 <label className="form-label">
                                     Branch / Specialization
                                 </label>
-
                                 <input
                                     className="form-control"
-                                    name="postGraduationBranch"
-                                    value={
-                                        profile.postGraduationBranch || ""
-                                    }
-                                    onChange={handleChange}
+                                    name="postBranch"
+                                    value={data.postBranch || ""}
+                                    onChange={handleEducationChange}
                                 />
-
                             </div>
 
-
                             <div className="col-md-6 mb-3">
-
                                 <label className="form-label">
                                     College Name
                                 </label>
-
                                 <input
                                     className="form-control"
-                                    name="postGraduationCollege"
-                                    value={
-                                        profile.postGraduationCollege || ""
-                                    }
-                                    onChange={handleChange}
+                                    name="postCollege"
+                                    value={data.postCollege || ""}
+                                    onChange={handleEducationChange}
                                 />
-
                             </div>
 
-
                             <div className="col-md-6 mb-3">
-
                                 <label className="form-label">
                                     University
                                 </label>
-
                                 <input
                                     className="form-control"
-                                    name="postGraduationUniversity"
-                                    value={
-                                        profile.postGraduationUniversity || ""
-                                    }
-                                    onChange={handleChange}
+                                    name="postUniversity"
+                                    value={data.postUniversity || ""}
+                                    onChange={handleEducationChange}
                                 />
-
                             </div>
 
-
                             <div className="col-md-6 mb-3">
-
                                 <label className="form-label">
                                     Passing Year
                                 </label>
-
                                 <input
                                     className="form-control"
-                                    name="postGraduationPassingYear"
-                                    value={
-                                        profile.postGraduationPassingYear || ""
-                                    }
-                                    onChange={handleChange}
+                                    name="postYear"
+                                    value={data.postYear || ""}
+                                    onChange={handleEducationChange}
                                 />
-
                             </div>
 
+                            <div className="col-md-6 mb-3">
+                                <label className="form-label">
+                                    Grading Type
+                                </label>
+                                <select
+                                    className="form-select"
+                                    name="postGradingType"
+                                    value={data.postGradingType || ""}
+                                    onChange={handleEducationChange}
+                                >
+                                    <option value="">
+                                        Select grading type
+                                    </option>
+                                    <option value="PERCENTAGE">
+                                        Percentage
+                                    </option>
+                                    <option value="CGPA">
+                                        CGPA
+                                    </option>
+                                </select>
+                            </div>
 
                             <div className="col-md-6 mb-3">
-
                                 <label className="form-label">
-                                    Percentage
+                                    Score
                                 </label>
-
                                 <input
                                     type="number"
+                                    step="0.01"
+                                    min="0"
                                     className="form-control"
-                                    name="postGraduationPercentage"
-                                    value={
-                                        profile.postGraduationPercentage || ""
-                                    }
-                                    onChange={handleChange}
+                                    name="postScore"
+                                    value={data.postScore || ""}
+                                    onChange={handleEducationChange}
                                 />
-
                             </div>
 
                         </div>
-
                     </div>
 
-
                     {/* ACTIONS */}
-
                     <div className="education-actions">
 
                         <button
                             type="button"
                             className="btn btn-primary"
-                            onClick={() => {
-                                setEditing(false);
-                            }}
+                            onClick={() => setEditing(false)}
                         >
-                            Save
+                            Done
                         </button>
 
                         <button
                             type="button"
                             className="btn btn-outline-secondary"
-                            onClick={() => {
-                                setEditing(false);
-                            }}
+                            onClick={() => setEditing(false)}
                         >
                             Cancel
                         </button>
@@ -637,9 +591,7 @@ function EducationSection({
                     </div>
 
                 </div>
-
             )}
-
         </div>
     );
 }

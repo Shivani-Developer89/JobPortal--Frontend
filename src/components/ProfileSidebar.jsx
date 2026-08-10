@@ -7,7 +7,6 @@ function ProfileSidebar({
 }) {
 
     const handleNavigation = (section) => {
-
         if (onNavigate) {
             onNavigate(section);
         } else {
@@ -19,11 +18,9 @@ function ProfileSidebar({
     };
 
     return (
-
         <aside className="profile-sidebar">
 
             {/* PROFILE SUMMARY */}
-
             <div className="sidebar-profile">
 
                 <div className="sidebar-avatar">
@@ -31,52 +28,34 @@ function ProfileSidebar({
                 </div>
 
                 <div className="sidebar-profile-info">
-
-                    <h4>
-                        {name || "Candidate"}
-                    </h4>
-
-                    <span>
-                        {role || "Candidate"}
-                    </span>
-
+                    <h4>{name || "Candidate"}</h4>
+                    <span>{role || "Candidate"}</span>
                 </div>
 
             </div>
 
 
-            {/* PROFILE COMPLETION */}
-
+            {/* COMPLETION */}
             <div className="sidebar-completion">
 
                 <div className="sidebar-completion-top">
-
-                    <span>
-                        Profile Completion
-                    </span>
-
-                    <strong>
-                        {completion || 0}%
-                    </strong>
-
+                    <span>Profile Completion</span>
+                    <strong>{completion || 0}%</strong>
                 </div>
 
                 <div className="sidebar-progress">
-
                     <div
                         className="sidebar-progress-value"
                         style={{
                             width: `${completion || 0}%`
                         }}
                     />
-
                 </div>
 
             </div>
 
 
             {/* QUICK LINKS */}
-
             <div className="profile-sidebar-title">
                 Quick Links
             </div>
@@ -85,64 +64,53 @@ function ProfileSidebar({
 
                 <button
                     type="button"
-                    onClick={() =>
-                        handleNavigation("personal")
-                    }
+                    className="sidebar-nav-btn"
+                    onClick={() => handleNavigation("personal")}
                 >
                     <i className="bi bi-person"></i>
                     <span>Personal Information</span>
                 </button>
 
-
                 <button
                     type="button"
-                    onClick={() =>
-                        handleNavigation("education")
-                    }
+                    className="sidebar-nav-btn"
+                    onClick={() => handleNavigation("education")}
                 >
                     <i className="bi bi-mortarboard"></i>
                     <span>Education</span>
                 </button>
 
-
                 <button
                     type="button"
-                    onClick={() =>
-                        handleNavigation("skills")
-                    }
+                    className="sidebar-nav-btn"
+                    onClick={() => handleNavigation("skills")}
                 >
                     <i className="bi bi-tools"></i>
                     <span>Skills</span>
                 </button>
 
-
                 <button
                     type="button"
-                    onClick={() =>
-                        handleNavigation("experience")
-                    }
+                    className="sidebar-nav-btn"
+                    onClick={() => handleNavigation("experience")}
                 >
                     <i className="bi bi-briefcase"></i>
                     <span>Experience</span>
                 </button>
 
-
                 <button
                     type="button"
-                    onClick={() =>
-                        handleNavigation("resume")
-                    }
+                    className="sidebar-nav-btn"
+                    onClick={() => handleNavigation("resume")}
                 >
                     <i className="bi bi-file-earmark-text"></i>
                     <span>Resume</span>
                 </button>
 
-
                 <button
                     type="button"
-                    onClick={() =>
-                        handleNavigation("social")
-                    }
+                    className="sidebar-nav-btn"
+                    onClick={() => handleNavigation("social")}
                 >
                     <i className="bi bi-share"></i>
                     <span>Social Profiles</span>
@@ -152,15 +120,15 @@ function ProfileSidebar({
 
 
             {/* SAVE */}
-
             <div className="sidebar-save">
 
                 <button
                     type="button"
+                    className="sidebar-save-btn"
                     onClick={onSave}
                 >
-                    <i className="bi bi-check2-circle me-2"></i>
-                    Save Profile
+                    <i className="bi bi-check2-circle"></i>
+                    <span>Save Profile</span>
                 </button>
 
             </div>
