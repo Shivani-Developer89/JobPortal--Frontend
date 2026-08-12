@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
     FaBell,
@@ -10,6 +10,7 @@ import {
     FaSignOutAlt
 } from "react-icons/fa";
 import { useAuth } from "../../context/AuthContext";
+import { getMyProfile } from "../../services/candidateProfileService";
 
 function UserMenu() {
 
@@ -18,6 +19,48 @@ function UserMenu() {
     const navigate = useNavigate();
 
     const [open, setOpen] = useState(false);
+    const [profileImage, setProfileImage] = useState(null);
+
+    useEffect(() => {
+
+        if (role !== "CANDIDATE") {
+            return;
+        }
+
+        const loadProfileImage = async () => {
+
+            try {
+
+                const response = await getMyProfile();
+
+                const imagePath = response.data?.profileImagePath;
+
+                if (imagePath) {
+
+                    const normalizedPath =
+                        imagePath.replace(/\\/g, "/");
+
+                    setProfileImage(
+                        `http://localhost:81/${normalizedPath}`
+                    );
+
+                }
+
+            } catch (error) {
+
+                console.error(
+                    "Failed to load profile image",
+                    error
+                );
+
+            }
+
+        };
+
+        loadProfileImage();
+
+    }, [role]);
+
 
     const handleLogout = () => {
 
@@ -27,80 +70,123 @@ function UserMenu() {
 
     };
 
+
     return (
 
-<div className="user-menu">
+        <div className="user-menu">
 
-    <button className="notification-btn">
-        <FaBell />
-    </button>
-
-    <div
-        className="profile-wrapper"
-        onClick={() => setOpen(!open)}
-    >
-
-        <div className="profile-menu">
-
-            <FaUserCircle className="profile-icon" />
-
-            <div className="profile-info">
-                <span className="profile-name">{name}</span>
-                <span className="profile-role">
-                    {role === "CANDIDATE" ? "Candidate" : "Recruiter"}
-                </span>
-            </div>
-
-            <FaChevronDown className="dropdown-icon" />
-
-        </div>
+            <button className="notification-btn">
+                <FaBell />
+            </button>
 
 
-            {open && (
+            <div
+                className="profile-wrapper"
+                onClick={() => setOpen(!open)}
+            >
 
-                <div className="profile-dropdown">
+                <div className="profile-menu">
 
-                    <div className="dropdown-header">
+                    <div className="navbar-profile-avatar">
 
-                        <h4>{name}</h4>
+                        {profileImage ? (
 
-                        <p>
-                            {role === "CANDIDATE"
-                                ? "Candidate"
-                                : "Recruiter"}
-                        </p>
+                            <img
+                                src={profileImage}
+                                alt="Profile"
+                            />
+
+                        ) : (
+
+                            <FaUserCircle className="profile-icon" />
+
+                        )}
 
                     </div>
 
-                    <Link to="/candidate/profile">
-                        <FaUser />
-                        My Profile
-                    </Link>
 
-                    <Link to="/resume">
-                        <FaFileAlt />
-                        Resume
-                    </Link>
+                    <div className="profile-info">
 
-                    <Link to="/settings">
-                        <FaCog />
-                        Settings
-                    </Link>
+                        <span className="profile-name">
+                            {name}
+                        </span>
 
-                    <hr />
+                        <span className="profile-role">
+                            {role === "CANDIDATE"
+                                ? "Candidate"
+                                : "Recruiter"}
+                        </span>
 
-                    <button onClick={handleLogout}>
-                        <FaSignOutAlt />
-                        Logout
-                    </button>
+                    </div>
+
+
+                    <FaChevronDown className="dropdown-icon" />
 
                 </div>
 
-           )}
 
-    </div>
+                {open && (
 
-</div>
+                    <div className="profile-dropdown">
+
+                        <div className="dropdown-header">
+
+                            <h4>{name}</h4>
+
+                            <p>
+                                {role === "CANDIDATE"
+                                    ? "Candidate"
+                                    : "Recruiter"}
+                            </p>
+
+                        </div>
+
+
+                        <Link to="/candidate/profile">
+
+                            <FaUser />
+
+                            My Profile
+
+                        </Link>
+
+
+                        <Link to="/resume">
+
+                            <FaFileAlt />
+
+                            Resume
+
+                        </Link>
+
+
+                        <Link to="/settings">
+
+                            <FaCog />
+
+                            Settings
+
+                        </Link>
+
+
+                        <hr />
+
+
+                        <button onClick={handleLogout}>
+
+                            <FaSignOutAlt />
+
+                            Logout
+
+                        </button>
+
+                    </div>
+
+                )}
+
+            </div>
+
+        </div>
 
     );
 

@@ -1,6 +1,7 @@
 function ProfileSidebar({
     name,
     role,
+    profileImage,
     completion,
     onSave,
     onNavigate
@@ -24,8 +25,15 @@ function ProfileSidebar({
             <div className="sidebar-profile">
 
                 <div className="sidebar-avatar">
-                    <i className="bi bi-person-fill"></i>
-                </div>
+    {profileImage ? (
+        <img
+            src={profileImage}
+            alt="Profile"
+        />
+    ) : (
+        <i className="bi bi-person-fill"></i>
+    )}
+</div>
 
                 <div className="sidebar-profile-info">
                     <h4>{name || "Candidate"}</h4>

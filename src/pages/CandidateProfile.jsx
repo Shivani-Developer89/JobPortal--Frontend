@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getMyProfile, saveProfile } from "../services/CandidateProfileService";
+import { getMyProfile, saveProfile ,uploadProfileImage} from "../services/CandidateProfileService";
 import EducationSection from "../components/EducationSection";
 import SkillsSection from "../components/SkillsSection";
 import ExperienceSection from "../components/ExperienceSection";
@@ -27,6 +27,13 @@ function CandidateProfile() {
         hackerrank: ""
     });
     const [profileImage, setProfileImage] = useState(null);
+    const getProfileImageUrl = (path) => {
+    if (!path) return null;
+
+    const normalizedPath = path.replace(/\\/g, "/");
+
+    return `http://localhost:81/${normalizedPath}`;
+};
 
     const [education, setEducation] = useState({
 
@@ -89,28 +96,55 @@ function CandidateProfile() {
 
 
 
-  const loadProfile = async () => {
+ const loadProfile = async () => {
 
     try {
 
         const response = await getMyProfile();
 
         setProfile(response.data);
+
+        // -------------------------
+        // Profile Image
+        // -------------------------
+
+        if (response.data.profileImagePath) {
+
+            setProfileImage(
+                getProfileImageUrl(
+                    response.data.profileImagePath
+                )
+            );
+
+        } else {
+
+            setProfileImage(null);
+
+        }
+
+        // -------------------------
+        // Resume
+        // -------------------------
+
         if (response.data.resumePath) {
 
-    setResume({
-        fileName: response.data.resumePath
-    .split(/[/\\]/)
-    .pop()
-    .split("_")
-    .slice(1)
-    .join("_"),
-    uploadedAt: response.data.resumeUploadedAt
-    ? new Date(response.data.resumeUploadedAt).toLocaleDateString("en-GB")
-    : ""
-    });
+            setResume({
 
-}
+                fileName: response.data.resumePath
+                    .split(/[/\\]/)
+                    .pop()
+                    .split("_")
+                    .slice(1)
+                    .join("_"),
+
+                uploadedAt: response.data.resumeUploadedAt
+                    ? new Date(
+                        response.data.resumeUploadedAt
+                    ).toLocaleDateString("en-GB")
+                    : ""
+            });
+
+        }
 
         // -------------------------
         // Education
@@ -251,23 +285,136 @@ const handleChange = (e) => {
 
 };
 
-const handleProfileImageChange = (e) => {
+const handleProfileImageChange = async (e) => {
 
     const file = e.target.files?.[0];
 
     if (!file) return;
 
+
+    // -------------------------
+    // Validate file type
+    // -------------------------
+
     if (!file.type.startsWith("image/")) {
+
         toast.error("Please select a valid image.");
+
+        e.target.value = "";
+
         return;
     }
+
+
+    // -------------------------
+    // Validate file size
+    // -------------------------
 
     if (file.size > 2 * 1024 * 1024) {
-        toast.error("Profile image must be less than 2 MB.");
+
+        toast.error(
+            "Profile image must be less than 2 MB."
+        );
+
+        e.target.value = "";
+
         return;
     }
 
-    setProfileImage(URL.createObjectURL(file));
+
+    // -------------------------
+    // Show immediate preview
+    // -------------------------
+
+    const previewUrl =
+        URL.createObjectURL(file);
+
+    setProfileImage(previewUrl);
+
+
+    try {
+
+        // -------------------------
+        // Upload to backend
+        // -------------------------
+
+        const response =
+            await uploadProfileImage(file);
+
+
+        const updatedProfile =
+            response.data;
+
+
+        // -------------------------
+        // Update profile state
+        // -------------------------
+
+        setProfile(updatedProfile);
+
+
+        // -------------------------
+        // Use backend image path
+        // -------------------------
+
+        if (updatedProfile.profileImagePath) {
+
+            setProfileImage(
+                getProfileImageUrl(
+                    updatedProfile.profileImagePath
+                )
+            );
+
+        } else {
+
+            setProfileImage(null);
+
+        }
+
+
+        toast.success(
+            "Profile picture updated successfully."
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Profile image upload failed:",
+            error
+        );
+
+
+        // Remove temporary preview
+        URL.revokeObjectURL(previewUrl);
+
+
+        // Restore previous image
+        if (profile?.profileImagePath) {
+
+            setProfileImage(
+                getProfileImageUrl(
+                    profile.profileImagePath
+                )
+            );
+
+        } else {
+
+            setProfileImage(null);
+
+        }
+
+
+        toast.error(
+            error.response?.data?.message ||
+            "Failed to upload profile picture."
+        );
+
+    } finally {
+
+        // Allow selecting the same file again
+        e.target.value = "";
+
+    }
 };
 
 const handleEducationChange = (e) => {
@@ -600,6 +747,16 @@ const scrollToSection = (id) => {
         block: "start"
     });
 };
+const handleNavigate = (section) => {
+    const element = document.getElementById(section);
+
+    if (element) {
+        element.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    }
+};
 return (
     <div className="profile-page">
 
@@ -611,36 +768,37 @@ return (
 
             <div className="profile-header-left">
 
-                <div className="profile-header-avatar">
+        <div className="profile-header-avatar">
 
-                    {profileImage ? (
-                        <img
-                            src={profileImage}
-                            alt="Profile"
-                        />
-                    ) : (
-                        <i className="bi bi-person-fill"></i>
-                    )}
+    {profileImage ? (
+        <img
+            src={profileImage}
+            alt="Profile"
+            onClick={() => window.open(profileImage, "_blank")}
+            className="profile-header-image clickable-profile-image"
+        />
+    ) : (
+        <i className="bi bi-person-fill"></i>
+    )}
 
-                    <label
-                        htmlFor="profile-image-input"
-                        className="profile-avatar-edit"
-                        title="Change profile picture"
-                    >
-                        <i className="bi bi-camera"></i>
-                    </label>
+    <label
+        htmlFor="profile-image-input"
+        className="profile-avatar-edit"
+        title="Change profile picture"
+        onClick={(e) => e.stopPropagation()}
+    >
+        <i className="bi bi-camera"></i>
+    </label>
 
-                    <input
-                        id="profile-image-input"
-                        type="file"
-                        accept="image/*"
-                        hidden
-                        onChange={handleProfileImageChange}
-                    />
+    <input
+        id="profile-image-input"
+        type="file"
+        accept="image/*"
+        hidden
+        onChange={handleProfileImageChange}
+    />
 
-                </div>
-
-
+</div>
                 <div className="profile-header-info">
 
                     <h2>
@@ -709,13 +867,14 @@ return (
 
             {/* LEFT SIDEBAR */}
 
-            <ProfileSidebar
-                name={profile.name}
-                role="Candidate"
-                completion={profileCompletion}
-                onSave={handleSubmit}
-                onNavigate={scrollToSection}
-            />
+           <ProfileSidebar
+    name={profile?.name}
+    role="Candidate"
+    completion={profileCompletion}
+    profileImage={profileImage}
+    onSave={handleSubmit}
+    onNavigate={handleNavigate}
+/>
 
 
             {/* RIGHT CONTENT */}

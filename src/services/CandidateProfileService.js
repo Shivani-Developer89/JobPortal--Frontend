@@ -7,3 +7,14 @@ export const getMyProfile = () => {
 export const saveProfile = (profile) => {
     return api.post("/candidate-profile", profile);
 };
+export const uploadProfileImage = (file) => {
+
+    const formData = new FormData();
+
+    formData.append("image", file);
+
+    return api.post(
+        "/candidate-profile/profile-image",
+        formData
+    );
+};

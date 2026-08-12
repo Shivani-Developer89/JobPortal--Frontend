@@ -443,6 +443,38 @@
 
     background:#f8fafc;
 }
+/* ================================
+   NAVBAR PROFILE AVATAR
+================================ */
+
+.navbar-profile-avatar {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+
+    border-radius: 50%;
+    overflow: hidden;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #eef3ff;
+}
+
+.navbar-profile-avatar img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    display: block;
+}
+
+.navbar-profile-avatar .profile-icon {
+    width: 42px;
+    height: 42px;
+    color: #2563eb;
+}
 
 .profile-icon{
 
