@@ -4,7 +4,9 @@ const api = axios.create({
     baseURL: "http://localhost:81",
 });
 
+// -----------------------------------
 // Request interceptor
+// -----------------------------------
 api.interceptors.request.use((config) => {
 
     const token = localStorage.getItem("token");
@@ -14,10 +16,12 @@ api.interceptors.request.use((config) => {
     }
 
     return config;
-
 });
 
+
+// -----------------------------------
 // Response interceptor
+// -----------------------------------
 api.interceptors.response.use(
 
     (response) => response,
@@ -26,22 +30,31 @@ api.interceptors.response.use(
 
         if (error.response?.status === 401) {
 
+            // Remove authentication data
             localStorage.removeItem("token");
             localStorage.removeItem("role");
             localStorage.removeItem("name");
 
+            // Tell AuthContext that authentication expired
+            window.dispatchEvent(
+                new Event("auth-expired")
+            );
+
+            // Redirect to login
             if (window.location.pathname !== "/login") {
                 window.location.replace("/login");
             }
         }
 
         if (error.response?.status === 403) {
-            console.error("Access denied:", error.response.data);
+            console.error(
+                "Access denied:",
+                error.response.data
+            );
         }
 
         return Promise.reject(error);
     }
-
 );
 
 export default api;

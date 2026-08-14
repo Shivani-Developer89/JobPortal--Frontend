@@ -463,7 +463,7 @@ function EducationSection({
                         <h4>
                             Post Graduation
                             <span className="optional-label">
-                                Optional
+                               (Optional)
                             </span>
                         </h4>
 
