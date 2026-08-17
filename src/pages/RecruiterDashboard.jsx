@@ -20,6 +20,7 @@ import {
 } from "react-icons/fa";
 
 import "../styles/RecruiterDashboard.css";
+import RecruiterNav from "../components/navbar/RecruiterNav";
 
 function RecruiterDashboard() {
 
