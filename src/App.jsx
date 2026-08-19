@@ -13,6 +13,7 @@ import LandingPage from "./pages/LandingPage";
 import CandidateDashboard from "./pages/CandidateDashboard";
 import CreateJob from "./pages/CreateJob";
 import EditJob from "./pages/EditJob";
+import RecruiterProfile from "./pages/RecruiterProfile";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
     <Route path="/recruiter/jobs/edit/:id" element={<EditJob />}/>
       <Route path="/recruiter/jobs/:jobId/applicants"element={<ViewApplicants />}/>
       <Route path="/candidate/profile"element={<CandidateProfile />}/>
+      <Route path="/recruiter/profile" element={<RecruiterProfile />}/>
       </Routes>
     </BrowserRouter>
   );
