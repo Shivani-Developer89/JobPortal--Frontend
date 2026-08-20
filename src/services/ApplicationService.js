@@ -28,7 +28,6 @@ export const downloadResume = (applicationId) => {
         }
     );
 };
-
 export const getCandidateDashboard = () => {
     return api.get("/applications/candidateDashboard");
 };
