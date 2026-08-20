@@ -1,33 +1,109 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+
 import {
     FaBriefcase,
     FaHome,
     FaTachometerAlt,
     FaBell,
-    FaUserCircle,
     FaChevronDown,
     FaUser,
     FaUsers,
     FaCog,
     FaSignOutAlt,
-    FaSearch
+    FaSearch,
+    FaUserCircle
 } from "react-icons/fa";
 
 import "./Navbar.css";
 
+import { getMyProfile } from "../../services/RecruiterProfileService";
+
 function RecruiterNavbar() {
 
     const navigate = useNavigate();
+
     const [profileOpen, setProfileOpen] = useState(false);
 
-    // Change this later according to your logged-in user data
-    const recruiterName =
-        localStorage.getItem("userName") || "Recruiter";
+    const [recruiterProfile, setRecruiterProfile] = useState({
+        name: localStorage.getItem("userName") || "Recruiter",
+        designation: "Recruiter",
+        profileImagePath: null
+    });
+
+    const [profileImage, setProfileImage] = useState(null);
+
+
+    /* =====================================================
+       PROFILE IMAGE URL
+       ===================================================== */
+
+    const getProfileImageUrl = (path) => {
+
+        if (!path) return null;
+
+        const normalizedPath = path.replace(/\\/g, "/");
+
+        return `http://localhost:81/${normalizedPath}`;
+    };
+
+
+    /* =====================================================
+       LOAD RECRUITER PROFILE
+       ===================================================== */
+
+    useEffect(() => {
+
+        const loadRecruiterProfile = async () => {
+
+            try {
+
+                const response = await getMyProfile();
+
+                const data = response.data || {};
+
+                setRecruiterProfile({
+                    name: data.name ||
+                        localStorage.getItem("userName") ||
+                        "Recruiter",
+
+                    designation:
+                        data.designation || "Recruiter",
+
+                    profileImagePath:
+                        data.profileImagePath || null
+                });
+
+                setProfileImage(
+                    data.profileImagePath
+                        ? getProfileImageUrl(
+                            data.profileImagePath
+                        )
+                        : null
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Failed to load recruiter navbar profile:",
+                    error
+                );
+
+            }
+
+        };
+
+        loadRecruiterProfile();
+
+    }, []);
+
+
+    /* =====================================================
+       LOGOUT
+       ===================================================== */
 
     const handleLogout = () => {
 
-        // Remove according to your existing auth implementation
         localStorage.removeItem("token");
         localStorage.removeItem("userName");
         localStorage.removeItem("role");
@@ -35,30 +111,47 @@ function RecruiterNavbar() {
         navigate("/login");
     };
 
+
     return (
+
         <nav className="recruiter-navbar">
 
-            {/* Logo */}
+            {/* =================================================
+                LOGO
+            ================================================= */}
+
             <div
                 className="recruiter-logo"
                 onClick={() => navigate("/")}
             >
+
                 <FaBriefcase />
+
                 <span>JobPortal</span>
+
             </div>
 
 
-            {/* Search */}
+            {/* =================================================
+                SEARCH
+            ================================================= */}
+
             <div className="recruiter-search">
+
                 <FaSearch />
+
                 <input
                     type="text"
                     placeholder="Search"
                 />
+
             </div>
 
 
-            {/* Navigation */}
+            {/* =================================================
+                NAVIGATION
+            ================================================= */}
+
             <div className="recruiter-nav-links">
 
                 <NavLink
@@ -69,8 +162,11 @@ function RecruiterNavbar() {
                         }`
                     }
                 >
+
                     <FaHome />
+
                     <span>Home</span>
+
                 </NavLink>
 
 
@@ -82,8 +178,11 @@ function RecruiterNavbar() {
                         }`
                     }
                 >
+
                     <FaTachometerAlt />
+
                     <span>Dashboard</span>
+
                 </NavLink>
 
 
@@ -95,23 +194,36 @@ function RecruiterNavbar() {
                         }`
                     }
                 >
+
                     <FaBriefcase />
+
                     <span>My Jobs</span>
+
                 </NavLink>
 
             </div>
 
 
-            {/* Right side */}
+            {/* =================================================
+                RIGHT SIDE
+            ================================================= */}
+
             <div className="recruiter-nav-right">
 
-                {/* Notification */}
+
+                {/* NOTIFICATION */}
+
                 <button className="notification-btn">
+
                     <FaBell />
+
                 </button>
 
 
-                {/* Profile */}
+                {/* =================================================
+                    PROFILE
+                ================================================= */}
+
                 <div className="recruiter-profile">
 
                     <button
@@ -121,90 +233,199 @@ function RecruiterNavbar() {
                         }
                     >
 
+                        {/* PROFILE IMAGE */}
+
                         <div className="profile-icon">
-                            <FaUserCircle />
+
+                            {profileImage ? (
+
+                                <img
+                                    src={profileImage}
+                                    alt={
+                                        recruiterProfile.name
+                                    }
+                                    className="recruiter-navbar-profile-image"
+                                />
+
+                            ) : (
+
+                                <FaUserCircle />
+
+                            )}
+
                         </div>
+
+
+                        {/* PROFILE INFO */}
 
                         <div className="profile-info">
-                            <strong>{recruiterName}</strong>
-                            <span>Recruiter</span>
+
+                            <strong>
+                                {recruiterProfile.name}
+                            </strong>
+
+                            <span>
+                                {recruiterProfile.designation}
+                            </span>
+
                         </div>
 
-                        <FaChevronDown className="profile-arrow" />
+
+                        <FaChevronDown
+                            className="profile-arrow"
+                        />
 
                     </button>
 
 
-                    {/* Dropdown */}
-                   {profileOpen && (
-    <div className="profile-dropdown">
+                    {/* =================================================
+                        DROPDOWN
+                    ================================================= */}
 
-        <div className="dropdown-user">
-            <strong>{recruiterName}</strong>
-            <span>Recruiter</span>
-        </div>
+                    {profileOpen && (
 
-        <div className="dropdown-divider" />
+                        <div className="profile-dropdown">
 
-        <button
-            onClick={() => {
-                setProfileOpen(false);
-                navigate("/recruiter/profile");
-            }}
-        >
-            <FaUser />
-            <span>My Profile</span>
-        </button>
 
-        <button
-            onClick={() => {
-                setProfileOpen(false);
-                navigate("/recruiter/jobs");
-            }}
-        >
-            <FaBriefcase />
-            <span>My Jobs</span>
-        </button>
+                            <div className="dropdown-user">
 
-        <button
-            onClick={() => {
-                setProfileOpen(false);
-                navigate("/recruiter/jobs");
-            }}
-        >
-            <FaUsers />
-            <span>Applicants</span>
-        </button>
+                                <strong>
+                                    {recruiterProfile.name}
+                                </strong>
 
-        <button
-            onClick={() => {
-                setProfileOpen(false);
-                navigate("/recruiter/settings");
-            }}
-        >
-            <FaCog />
-            <span>Settings</span>
-        </button>
+                                <span>
+                                    {recruiterProfile.designation}
+                                </span>
 
-        <div className="dropdown-divider" />
+                            </div>
 
-        <button
-            className="logout-btn"
-            onClick={handleLogout}
-        >
-            <FaSignOutAlt />
-            <span>Logout</span>
-        </button>
 
-    </div>
-)}
+                            <div className="dropdown-divider" />
+
+
+                            {/* MY PROFILE */}
+
+                            <button
+                                onClick={() => {
+
+                                    setProfileOpen(false);
+
+                                    navigate(
+                                        "/recruiter/profile"
+                                    );
+
+                                }}
+                            >
+
+                                <FaUser />
+
+                                <span>
+                                    My Profile
+                                </span>
+
+                            </button>
+
+
+                            {/* MY JOBS */}
+
+                            <button
+                                onClick={() => {
+
+                                    setProfileOpen(false);
+
+                                    navigate(
+                                        "/recruiter/jobs"
+                                    );
+
+                                }}
+                            >
+
+                                <FaBriefcase />
+
+                                <span>
+                                    My Jobs
+                                </span>
+
+                            </button>
+
+
+                            {/* APPLICANTS */}
+
+                            <button
+                                onClick={() => {
+
+                                    setProfileOpen(false);
+
+                                    navigate(
+                                        "/recruiter/jobs"
+                                    );
+
+                                }}
+                            >
+
+                                <FaUsers />
+
+                                <span>
+                                    Applicants
+                                </span>
+
+                            </button>
+
+
+                            {/* SETTINGS */}
+
+                            <button
+                                onClick={() => {
+
+                                    setProfileOpen(false);
+
+                                    navigate(
+                                        "/recruiter/settings"
+                                    );
+
+                                }}
+                            >
+
+                                <FaCog />
+
+                                <span>
+                                    Settings
+                                </span>
+
+                            </button>
+
+
+                            <div className="dropdown-divider" />
+
+
+                            {/* LOGOUT */}
+
+                            <button
+                                className="logout-btn"
+                                onClick={handleLogout}
+                            >
+
+                                <FaSignOutAlt />
+
+                                <span>
+                                    Logout
+                                </span>
+
+                            </button>
+
+
+                        </div>
+
+                    )}
 
                 </div>
 
             </div>
 
         </nav>
+
     );
+
 }
 
 export default RecruiterNavbar;

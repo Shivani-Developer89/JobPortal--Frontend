@@ -1478,3 +1478,15 @@
         right: -5px;
     }
 }
+/* =========================================================
+   RECRUITER NAVBAR PROFILE IMAGE
+   ========================================================= */
+
+.recruiter-navbar-profile-image {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    border: 2px solid #e5e7eb;
+}
