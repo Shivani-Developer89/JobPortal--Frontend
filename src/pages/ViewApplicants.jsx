@@ -4,12 +4,17 @@ import {
     viewApplicants,
     updateApplicationStatus,
 } from "../services/JobService";
-import { downloadResume } from "../services/ApplicationService";
+import {
+    downloadResume,
+    getCandidateProfileImage,
+} from "../services/ApplicationService";
+import "../styles/ViewApplicants.css"
 
 function ViewApplicants() {
     const { jobId } = useParams();
 
     const [applicants, setApplicants] = useState([]);
+    const [profileImages, setProfileImages] = useState({});
     const [loading, setLoading] = useState(true);
     const [updatingId, setUpdatingId] = useState(null);
     const [selectedApplicant, setSelectedApplicant] = useState(null);
@@ -18,59 +23,191 @@ function ViewApplicants() {
         loadApplicants();
     }, [jobId]);
 
+    // ==========================================
+    // LOAD APPLICANTS
+    // ==========================================
+
     const loadApplicants = async () => {
         try {
             setLoading(true);
 
             const response = await viewApplicants(jobId);
 
-            setApplicants(response.data || []);
+            const data = response.data || [];
+
+            setApplicants(data);
+
+            // Load profile images
+            loadProfileImages(data);
+
         } catch (error) {
-            console.error("Failed to load applicants:", error);
+            console.error(
+                "Failed to load applicants:",
+                error
+            );
         } finally {
             setLoading(false);
         }
     };
 
-    const handleStatusChange = async (applicationId, status) => {
+    // ==========================================
+    // LOAD PROFILE IMAGES
+    // ==========================================
+
+    const loadProfileImages = async (applicantsList) => {
+
+        const imageMap = {};
+
+        await Promise.all(
+            applicantsList.map(async (app) => {
+
+                if (!app.candidateId) {
+                    return;
+                }
+
+                try {
+
+                    const response =
+                        await getCandidateProfileImage(
+                            app.candidateId
+                        );
+
+                    const imageUrl =
+                        URL.createObjectURL(
+                            response.data
+                        );
+
+                    imageMap[app.candidateId] =
+                        imageUrl;
+
+                } catch (error) {
+
+                    // Candidate may not have uploaded
+                    // a profile image.
+                    console.log(
+                        `No profile image for candidate ${app.candidateId}`
+                    );
+
+                }
+            })
+        );
+
+        setProfileImages(imageMap);
+    };
+
+    // ==========================================
+    // CLEANUP IMAGE URLS
+    // ==========================================
+
+    useEffect(() => {
+
+        return () => {
+
+            Object.values(profileImages).forEach(
+                (imageUrl) => {
+                    URL.revokeObjectURL(imageUrl);
+                }
+            );
+
+        };
+
+    }, [profileImages]);
+
+    // ==========================================
+    // STATUS CHANGE
+    // ==========================================
+
+    const handleStatusChange = async (
+        applicationId,
+        status
+    ) => {
+
         try {
+
             setUpdatingId(applicationId);
 
-            await updateApplicationStatus(applicationId, status);
+            await updateApplicationStatus(
+                applicationId,
+                status
+            );
 
             await loadApplicants();
+
         } catch (error) {
+
             console.error(
                 "Failed to update application status:",
                 error
             );
+
         } finally {
+
             setUpdatingId(null);
+
         }
     };
 
-    const handleViewResume = async (applicationId) => {
+    // ==========================================
+    // VIEW RESUME
+    // ==========================================
+
+    const handleViewResume = async (
+        applicationId
+    ) => {
+
         try {
-            const response = await downloadResume(applicationId);
 
-            const file = new Blob([response.data], {
-                type: "application/pdf",
-            });
+            const response =
+                await downloadResume(applicationId);
 
-            const fileURL = URL.createObjectURL(file);
+            const file = new Blob(
+                [response.data],
+                {
+                    type:
+                        response.headers[
+                            "content-type"
+                        ] ||
+                        "application/pdf",
+                }
+            );
 
-            window.open(fileURL, "_blank");
+            const fileURL =
+                URL.createObjectURL(file);
+
+            window.open(
+                fileURL,
+                "_blank"
+            );
 
             setTimeout(() => {
-                URL.revokeObjectURL(fileURL);
+
+                URL.revokeObjectURL(
+                    fileURL
+                );
+
             }, 60000);
+
         } catch (error) {
-            console.error("Failed to open resume:", error);
+
+            console.error(
+                "Failed to open resume:",
+                error
+            );
+
+            alert(
+                "Unable to open resume. The candidate may not have uploaded a resume."
+            );
         }
     };
 
+    // ==========================================
+    // STATUS STYLE
+    // ==========================================
+
     const getStatusClass = (status) => {
+
         switch (status) {
+
             case "APPLIED":
                 return "bg-primary-subtle text-primary";
 
@@ -88,20 +225,35 @@ function ViewApplicants() {
         }
     };
 
+    // ==========================================
+    // INITIALS FALLBACK
+    // ==========================================
+
     const getInitials = (name) => {
-        if (!name) return "?";
+
+        if (!name) {
+            return "?";
+        }
 
         return name
             .split(" ")
-            .map((word) => word.charAt(0))
+            .map((word) =>
+                word.charAt(0)
+            )
             .join("")
             .substring(0, 2)
             .toUpperCase();
     };
 
+    // ==========================================
+    // LOADING
+    // ==========================================
+
     if (loading) {
+
         return (
             <div className="container py-5">
+
                 <div className="text-center py-5">
 
                     <div
@@ -118,33 +270,40 @@ function ViewApplicants() {
                     </p>
 
                 </div>
+
             </div>
         );
     }
 
+    // ==========================================
+    // PAGE
+    // ==========================================
+
     return (
         <div className="container py-5">
 
-            {/* =====================================================
-                HEADER
-            ===================================================== */}
+            {/* HEADER */}
 
             <div className="d-flex justify-content-between align-items-center mb-4">
 
                 <div>
+
                     <h2 className="fw-bold mb-1">
                         Applicants
                     </h2>
 
                     <p className="text-muted mb-0">
-                        Review and manage candidates who applied
-                        for this job.
+                        Review and manage candidates who
+                        applied for this job.
                     </p>
+
                 </div>
 
                 <button
                     className="btn btn-outline-primary"
-                    onClick={() => window.history.back()}
+                    onClick={() =>
+                        window.history.back()
+                    }
                 >
                     ← Back to My Jobs
                 </button>
@@ -152,15 +311,14 @@ function ViewApplicants() {
             </div>
 
 
-            {/* =====================================================
-                APPLICANT COUNT
-            ===================================================== */}
+            {/* APPLICANT COUNT */}
 
             <div className="card border-0 shadow-sm mb-4">
 
                 <div className="card-body d-flex justify-content-between align-items-center">
 
                     <div>
+
                         <h6 className="text-muted mb-1">
                             Total Applicants
                         </h6>
@@ -168,6 +326,7 @@ function ViewApplicants() {
                         <h3 className="fw-bold mb-0">
                             {applicants.length}
                         </h3>
+
                     </div>
 
                     <div
@@ -187,9 +346,7 @@ function ViewApplicants() {
             </div>
 
 
-            {/* =====================================================
-                EMPTY STATE
-            ===================================================== */}
+            {/* EMPTY */}
 
             {applicants.length === 0 ? (
 
@@ -216,174 +373,209 @@ function ViewApplicants() {
 
             ) : (
 
-                /* =================================================
-                   APPLICANT CARDS
-                   ================================================= */
+                /* APPLICANT CARDS */
 
                 <div className="row g-4">
 
-                    {applicants.map((app) => (
+                    {applicants.map((app) => {
 
-                        <div
-                            className="col-lg-6"
-                            key={app.applicationId}
-                        >
+                        const profileImage =
+                            profileImages[
+                                app.candidateId
+                            ];
 
-                            <div className="card h-100 border-0 shadow-sm">
+                        return (
 
-                                <div className="card-body p-4">
+                            <div
+                                className="col-lg-6"
+                                key={app.applicationId}
+                            >
+
+                                <div className="card h-100 border-0 shadow-sm">
+
+                                    <div className="card-body p-4">
 
 
-                                    {/* =================================
-                                        CANDIDATE
-                                    ================================= */}
+                                        {/* CANDIDATE */}
 
-                                    <div className="d-flex align-items-center">
+                                        <div className="d-flex align-items-center">
 
-                                        <div
-                                            className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold me-3"
-                                            style={{
-                                                width: "52px",
-                                                height: "52px",
-                                                minWidth: "52px",
-                                            }}
-                                        >
-                                            {getInitials(
-                                                app.candidateName
+                                            {profileImage ? (
+
+                                                <img
+                                                    src={profileImage}
+                                                    alt={
+                                                        app.candidateName
+                                                    }
+                                                    className="rounded-circle me-3"
+                                                    style={{
+                                                        width: "52px",
+                                                        height: "52px",
+                                                        minWidth: "52px",
+                                                        objectFit:
+                                                            "cover",
+                                                    }}
+                                                />
+
+                                            ) : (
+
+                                                <div
+                                                    className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold me-3"
+                                                    style={{
+                                                        width: "52px",
+                                                        height: "52px",
+                                                        minWidth: "52px",
+                                                    }}
+                                                >
+                                                    {getInitials(
+                                                        app.candidateName
+                                                    )}
+                                                </div>
+
                                             )}
-                                        </div>
 
-                                        <div>
+                                            <div>
 
-                                            <h5 className="fw-bold mb-1">
-                                                {app.candidateName}
-                                            </h5>
+                                                <h5 className="fw-bold mb-1">
+                                                    {
+                                                        app.candidateName
+                                                    }
+                                                </h5>
 
-                                            <p className="text-muted mb-0">
-                                                {app.candidateEmail}
-                                            </p>
+                                                <p className="text-muted mb-0">
+                                                    {
+                                                        app.candidateEmail
+                                                    }
+                                                </p>
+                                                {app.candidateLocation && (
+    <p className="text-muted small mb-0">
+        📍 {app.candidateLocation}
+    </p>
+)}
 
-                                        </div>
-
-                                    </div>
-
-
-                                    <hr className="my-4" />
-
-
-                                    {/* =================================
-                                        JOB POSITION
-                                    ================================= */}
-
-                                    {app.jobTitle && (
-
-                                        <div className="mb-3">
-
-                                            <span className="text-muted small">
-                                                Applied for
-                                            </span>
-
-                                            <div className="fw-semibold">
-                                                {app.jobTitle}
                                             </div>
 
                                         </div>
 
-                                    )}
+
+                                        <hr className="my-4" />
 
 
-                                    {/* =================================
-                                        STATUS
-                                    ================================= */}
+                                        {/* JOB */}
 
-                                    <div className="mb-4">
+                                        {app.jobTitle && (
 
-                                        <div className="d-flex justify-content-between align-items-center mb-2">
+                                            <div className="mb-3">
 
-                                            <label className="fw-semibold">
-                                                Application Status
-                                            </label>
+                                                <span className="text-muted small">
+                                                    Applied for
+                                                </span>
 
-                                            <span
-                                                className={`badge rounded-pill px-3 py-2 ${getStatusClass(
-                                                    app.status
-                                                )}`}
-                                            >
-                                                {app.status}
-                                            </span>
+                                                <div className="fw-semibold">
+                                                    {
+                                                        app.jobTitle
+                                                    }
+                                                </div>
 
-                                        </div>
-
-                                        <select
-                                            className="form-select"
-                                            value={app.status}
-                                            disabled={
-                                                updatingId ===
-                                                app.applicationId
-                                            }
-                                            onChange={(e) =>
-                                                handleStatusChange(
-                                                    app.applicationId,
-                                                    e.target.value
-                                                )
-                                            }
-                                        >
-
-                                            <option value="APPLIED">
-                                                Applied
-                                            </option>
-
-                                            <option value="SHORTLISTED">
-                                                Shortlisted
-                                            </option>
-
-                                            <option value="HIRED">
-                                                Hired
-                                            </option>
-
-                                            <option value="REJECTED">
-                                                Rejected
-                                            </option>
-
-                                        </select>
-
-                                        {updatingId ===
-                                            app.applicationId && (
-
-                                            <small className="text-muted">
-                                                Updating status...
-                                            </small>
+                                            </div>
 
                                         )}
 
-                                    </div>
 
+                                        {/* STATUS */}
 
-                                    {/* =================================
-                                        ACTIONS
-                                    ================================= */}
+                                        <div className="mb-4">
 
-                                    <div className="d-flex gap-2">
+                                            <div className="d-flex justify-content-between align-items-center mb-2">
 
-                                        <button
-                                            className="btn btn-success flex-grow-1"
-                                            onClick={() =>
-                                                handleViewResume(
+                                                <label className="fw-semibold">
+                                                    Application Status
+                                                </label>
+
+                                                <span
+                                                    className={`badge rounded-pill px-3 py-2 ${getStatusClass(
+                                                        app.status
+                                                    )}`}
+                                                >
+                                                    {app.status}
+                                                </span>
+
+                                            </div>
+
+                                            <select
+                                                className="form-select"
+                                                value={
+                                                    app.status
+                                                }
+                                                disabled={
+                                                    updatingId ===
                                                     app.applicationId
-                                                )
-                                            }
-                                        >
-                                            📄 View Resume
-                                        </button>
+                                                }
+                                                onChange={(e) =>
+                                                    handleStatusChange(
+                                                        app.applicationId,
+                                                        e.target.value
+                                                    )
+                                                }
+                                            >
 
-                                        <button
-                                            className="btn btn-outline-primary"
-                                            onClick={() =>
-                                                setSelectedApplicant(app)
-                                            }
-                                        >
-                                            View Details
-                                        </button>
+                                                <option value="APPLIED">
+                                                    Applied
+                                                </option>
+
+                                                <option value="SHORTLISTED">
+                                                    Shortlisted
+                                                </option>
+
+                                                <option value="HIRED">
+                                                    Hired
+                                                </option>
+
+                                                <option value="REJECTED">
+                                                    Rejected
+                                                </option>
+
+                                            </select>
+
+                                            {updatingId ===
+                                                app.applicationId && (
+
+                                                <small className="text-muted">
+                                                    Updating status...
+                                                </small>
+
+                                            )}
+
+                                        </div>
+
+
+                                        {/* ACTIONS */}
+
+                                        <div className="d-flex gap-2">
+
+                                            <button
+                                                className="btn btn-success flex-grow-1"
+                                                onClick={() =>
+                                                    handleViewResume(
+                                                        app.applicationId
+                                                    )
+                                                }
+                                            >
+                                                📄 View Resume
+                                            </button>
+
+                                            <button
+                                                className="btn btn-outline-primary"
+                                                onClick={() =>
+                                                    setSelectedApplicant(
+                                                        app
+                                                    )
+                                                }
+                                            >
+                                                View Details
+                                            </button>
+
+                                        </div>
 
                                     </div>
 
@@ -391,18 +583,14 @@ function ViewApplicants() {
 
                             </div>
 
-                        </div>
-
-                    ))}
+                        );
+                    })}
 
                 </div>
-
             )}
 
 
-            {/* =====================================================
-                VIEW DETAILS MODAL
-            ===================================================== */}
+            {/* DETAILS MODAL */}
 
             {selectedApplicant && (
 
@@ -424,17 +612,63 @@ function ViewApplicants() {
 
                             <div className="modal-header">
 
-                                <div>
+                                <div className="d-flex align-items-center">
 
-                                    <h5 className="modal-title fw-bold mb-1">
-                                        {selectedApplicant.candidateName}
-                                    </h5>
+                                    {profileImages[
+                                        selectedApplicant
+                                            .candidateId
+                                    ] ? (
 
-                                    <p className="text-muted mb-0">
-                                        {
-                                            selectedApplicant.candidateEmail
-                                        }
-                                    </p>
+                                        <img
+                                            src={
+                                                profileImages[
+                                                    selectedApplicant
+                                                        .candidateId
+                                                ]
+                                            }
+                                            alt={
+                                                selectedApplicant.candidateName
+                                            }
+                                            className="rounded-circle me-3"
+                                            style={{
+                                                width: "50px",
+                                                height: "50px",
+                                                objectFit:
+                                                    "cover",
+                                            }}
+                                        />
+
+                                    ) : (
+
+                                        <div
+                                            className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold me-3"
+                                            style={{
+                                                width: "50px",
+                                                height: "50px",
+                                            }}
+                                        >
+                                            {getInitials(
+                                                selectedApplicant.candidateName
+                                            )}
+                                        </div>
+
+                                    )}
+
+                                    <div>
+
+                                        <h5 className="modal-title fw-bold mb-1">
+                                            {
+                                                selectedApplicant.candidateName
+                                            }
+                                        </h5>
+
+                                        <p className="text-muted mb-0">
+                                            {
+                                                selectedApplicant.candidateEmail
+                                            }
+                                        </p>
+
+                                    </div>
 
                                 </div>
 
@@ -442,99 +676,92 @@ function ViewApplicants() {
                                     type="button"
                                     className="btn-close"
                                     onClick={() =>
-                                        setSelectedApplicant(null)
+                                        setSelectedApplicant(
+                                            null
+                                        )
                                     }
-                                ></button>
+                                />
 
                             </div>
 
 
                             {/* MODAL BODY */}
 
-                            <div className="modal-body">
+                           <div className="modal-details">
 
-                                <div className="mb-3">
+    <div className="modal-field">
+        <span className="modal-label">Candidate Name</span>
+        <strong>{selectedApplicant.candidateName}</strong>
+    </div>
 
-                                    <label className="text-muted small">
-                                        Candidate Name
-                                    </label>
+    <div className="modal-field">
+        <span className="modal-label">Email</span>
+        <strong>{selectedApplicant.candidateEmail}</strong>
+    </div>
 
-                                    <p className="fw-semibold mb-0">
-                                        {
-                                            selectedApplicant.candidateName
-                                        }
-                                    </p>
+    <div className="modal-field">
+        <span className="modal-label">Location</span>
+        <strong>
+            📍 {selectedApplicant.candidateLocation || "Not provided"}
+        </strong>
+    </div>
 
-                                </div>
+    <div className="modal-field">
+        <span className="modal-label">Skills</span>
+        <strong>
+            {selectedApplicant.candidateSkills &&
+            selectedApplicant.candidateSkills.trim() !== ""
+                ? selectedApplicant.candidateSkills
+                : "No skills information available."}
+        </strong>
+    </div>
 
+    <div className="modal-field">
+        <span className="modal-label">Experience</span>
 
-                                <div className="mb-3">
+        {selectedApplicant.candidateExperience &&
+        selectedApplicant.candidateExperience.length > 0 ? (
+            selectedApplicant.candidateExperience.map((exp, index) => (
+                <div key={index}>
+                    <strong>{exp.jobTitle}</strong>
+                    <div>{exp.companyName}</div>
+                </div>
+            ))
+        ) : (
+            <span className="modal-muted">
+                No experience information available.
+            </span>
+        )}
+    </div>
 
-                                    <label className="text-muted small">
-                                        Email
-                                    </label>
+    <div className="modal-field">
+        <span className="modal-label">Applied On</span>
+        <strong>
+            {new Date(
+                selectedApplicant.appliedAt
+            ).toLocaleDateString()}
+        </strong>
+    </div>
 
-                                    <p className="fw-semibold mb-0">
-                                        {
-                                            selectedApplicant.candidateEmail
-                                        }
-                                    </p>
+    <div className="modal-field">
+        <span className="modal-label">Application Status</span>
+        <strong>
+            {selectedApplicant.status}
+        </strong>
+    </div>
 
-                                </div>
+</div>
 
-
-                                {selectedApplicant.jobTitle && (
-
-                                    <div className="mb-3">
-
-                                        <label className="text-muted small">
-                                            Applied For
-                                        </label>
-
-                                        <p className="fw-semibold mb-0">
-                                            {
-                                                selectedApplicant.jobTitle
-                                            }
-                                        </p>
-
-                                    </div>
-
-                                )}
-
-
-                                <div>
-
-                                    <label className="text-muted small">
-                                        Application Status
-                                    </label>
-
-                                    <div>
-
-                                        <span
-                                            className={`badge rounded-pill px-3 py-2 ${getStatusClass(
-                                                selectedApplicant.status
-                                            )}`}
-                                        >
-                                            {
-                                                selectedApplicant.status
-                                            }
-                                        </span>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-
-                            {/* MODAL FOOTER */}
+                            {/* FOOTER */}
 
                             <div className="modal-footer">
 
                                 <button
                                     className="btn btn-secondary"
                                     onClick={() =>
-                                        setSelectedApplicant(null)
+                                        setSelectedApplicant(
+                                            null
+                                        )
                                     }
                                 >
                                     Close

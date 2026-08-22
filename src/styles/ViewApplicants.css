@@ -1,0 +1,33 @@
+/* Modal details spacing */
+.modal-details {
+    padding: 24px 28px;
+}
+
+.modal-field {
+    margin-bottom: 22px;
+}
+
+.modal-field:last-child {
+    margin-bottom: 0;
+}
+
+.modal-label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 14px;
+    color: #666;
+    font-weight: 500;
+}
+
+.modal-field strong {
+    display: block;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #222;
+}
+
+.modal-muted {
+    color: #666;
+    font-size: 16px;
+    line-height: 1.5;
+}

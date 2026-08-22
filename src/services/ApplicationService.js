@@ -28,6 +28,14 @@ export const downloadResume = (applicationId) => {
         }
     );
 };
+export const getCandidateProfileImage = (candidateId) => {
+    return api.get(
+        `/candidate-profile/candidate/${candidateId}/profile-image`,
+        {
+            responseType: "blob",
+        }
+    );
+};
 export const getCandidateDashboard = () => {
     return api.get("/applications/candidateDashboard");
 };
