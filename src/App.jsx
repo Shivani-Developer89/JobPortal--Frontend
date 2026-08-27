@@ -14,6 +14,7 @@ import CandidateDashboard from "./pages/CandidateDashboard";
 import CreateJob from "./pages/CreateJob";
 import EditJob from "./pages/EditJob";
 import RecruiterProfile from "./pages/RecruiterProfile";
+import RecruiterSettings from "./pages/RecruiterSettings";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
       <Route path="/recruiter/jobs/:jobId/applicants"element={<ViewApplicants />}/>
       <Route path="/candidate/profile"element={<CandidateProfile />}/>
       <Route path="/recruiter/profile" element={<RecruiterProfile />}/>
+<Route path="/recruiter/settings" element={<RecruiterSettings />} />
       </Routes>
     </BrowserRouter>
   );
