@@ -1,698 +1,924 @@
 /* =========================================================
-   PAGE
+   RECRUITER SETTINGS PAGE
    ========================================================= */
 
 .recruiter-settings-page {
-    min-height: calc(100vh - 80px);
-    background: #f8fafc;
-    padding: 35px 8%;
+    min-height: 100vh;
+    background: #f7f9fc;
+    padding: 38px 48px 70px;
     box-sizing: border-box;
+    color: #1e293b;
+    font-family: inherit;
 }
 
-
 /* =========================================================
-   HEADER
+   PAGE HEADER
    ========================================================= */
 
 .settings-header {
+    max-width: 1100px;
+    margin: 0 auto 42px;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
-    margin-bottom: 35px;
+    gap: 30px;
 }
 
 .settings-header h1 {
     margin: 0;
-    color: #0f172a;
+    color: #172033;
     font-size: 32px;
-    font-weight: 700;
+    font-weight: 750;
+    line-height: 1.2;
 }
 
 .settings-header p {
-    margin: 7px 0 0;
+    margin: 8px 0 0;
     color: #64748b;
-    font-size: 15px;
-}
-
-.settings-back-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 11px 18px;
-    border: 1px solid #2563eb;
-    border-radius: 8px;
-    background: white;
-    color: #2563eb;
     font-size: 14px;
-    font-weight: 600;
+    line-height: 1.5;
+}
+
+.back-dashboard-btn {
+    height: 44px;
+    padding: 0 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    border: 1.5px solid #2563eb;
+    border-radius: 9px;
+    background: #ffffff;
+    color: #2563eb;
+
+    font-size: 13px;
+    font-weight: 700;
     cursor: pointer;
-    transition: 0.2s ease;
+
+    transition: all 0.2s ease;
 }
 
-.settings-back-btn:hover {
+.back-dashboard-btn svg {
+    font-size: 13px;
+}
+
+.back-dashboard-btn:hover {
     background: #2563eb;
-    color: white;
+    color: #ffffff;
+    box-shadow: 0 5px 14px rgba(37, 99, 235, 0.22);
 }
-
-
-/* =========================================================
-   CONTENT
-   ========================================================= */
-
-.settings-content {
-    max-width: 900px;
-}
-
 
 /* =========================================================
    SECTION
    ========================================================= */
 
 .settings-section {
-    margin-bottom: 35px;
+    max-width: 1100px;
+    margin: 0 auto 38px;
 }
 
-.section-title {
+.settings-section-title {
     display: flex;
     align-items: center;
-    gap: 14px;
-    margin-bottom: 15px;
+    gap: 13px;
+    margin-bottom: 14px;
 }
 
-.section-title h2 {
+.settings-section-title h2 {
     margin: 0;
-    color: #1e293b;
+    color: #172033;
     font-size: 21px;
+    font-weight: 750;
+    line-height: 1.25;
 }
 
-.section-title p {
+.settings-section-title p {
     margin: 4px 0 0;
     color: #64748b;
-    font-size: 14px;
+    font-size: 13px;
+    line-height: 1.45;
 }
 
-.section-title-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 11px;
+/* =========================================================
+   SECTION ICON
+   ========================================================= */
+
+.settings-section-icon {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
+    border-radius: 10px;
     font-size: 17px;
 }
 
 .account-icon {
-    background: #eff6ff;
     color: #2563eb;
+    background: #eff6ff;
 }
 
 .notification-icon {
-    background: #fef3c7;
-    color: #d97706;
+    color: #f59e0b;
+    background: #fff7d6;
 }
 
 .job-icon {
-    background: #ecfdf5;
     color: #059669;
+    background: #ecfdf5;
 }
 
 .security-icon {
-    background: #f3e8ff;
     color: #9333ea;
+    background: #f5eaff;
 }
 
 .danger-icon {
-    background: #fef2f2;
-    color: #dc2626;
+    color: #ef4444;
+    background: #fff1f2;
 }
 
-
 /* =========================================================
-   CARD
+   COMMON CARD
    ========================================================= */
 
 .settings-card {
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 14px;
-    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.04);
-    padding: 6px 25px;
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #e5eaf1;
+    border-radius: 15px;
+
+    box-shadow:
+        0 5px 18px rgba(15, 23, 42, 0.055),
+        0 1px 3px rgba(15, 23, 42, 0.025);
+
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
-
 /* =========================================================
-   DIVIDER
+   SETTINGS ROW
    ========================================================= */
+
+.settings-row {
+    min-height: 88px;
+    padding: 16px 22px;
+
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    box-sizing: border-box;
+}
+
+.clickable-row {
+    cursor: pointer;
+    transition: background 0.18s ease;
+}
+
+.clickable-row:hover {
+    background: #f8faff;
+}
+
+.settings-row-icon {
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+    background: #f1f5f9;
+    color: #475569;
+
+    font-size: 15px;
+}
+
+.settings-row-content {
+    min-width: 0;
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.settings-row-content strong {
+    display: block;
+    color: #1e293b;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.settings-row-content span {
+    display: block;
+    margin-top: 3px;
+    color: #64748b;
+    font-size: 12.5px;
+    line-height: 1.45;
+}
+
+.settings-row-action {
+    margin-left: auto;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    color: #2563eb;
+    font-size: 13px;
+    font-weight: 650;
+    white-space: nowrap;
+}
+
+.open-arrow {
+    transform: rotate(180deg);
+    font-size: 13px;
+}
+
+.readonly-badge {
+    margin-left: auto;
+
+    padding: 6px 10px;
+
+    border-radius: 7px;
+    background: #f1f5f9;
+    color: #64748b;
+
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+}
 
 .settings-divider {
     height: 1px;
-    background: #edf0f5;
+    margin: 0 22px;
+    background: #edf1f5;
 }
-
 
 /* =========================================================
-   ACCOUNT
+   NOTIFICATION SWITCH
    ========================================================= */
 
-.account-row {
-    min-height: 85px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
-.account-row-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 10px;
-    background: #f1f5f9;
-    color: #475569;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.account-row-content {
-    flex: 1;
-}
-
-.account-row-content h3 {
-    margin: 0 0 5px;
-    color: #1e293b;
-    font-size: 15px;
-}
-
-.account-row-content p {
-    margin: 3px 0;
-    color: #64748b;
-    font-size: 13px;
-}
-
-.settings-action-btn {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    border: none;
-    background: transparent;
-    color: #2563eb;
-    font-size: 14px;
-    font-weight: 600;
+.settings-switch {
+    position: relative;
+    width: 44px;
+    height: 25px;
+    flex: 0 0 44px;
+    margin-left: auto;
     cursor: pointer;
 }
 
-.settings-action-btn:hover {
-    color: #1d4ed8;
+.settings-switch input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
 }
 
-.read-only-badge {
-    padding: 5px 9px;
-    border-radius: 6px;
-    background: #f1f5f9;
-    color: #64748b;
-    font-size: 11px;
-    font-weight: 600;
-}
+.settings-slider {
+    position: absolute;
+    inset: 0;
 
-
-/* =========================================================
-   NOTIFICATIONS
-   ========================================================= */
-
-.setting-toggle-row {
-    min-height: 85px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
-.toggle-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 10px;
-    background: #f8fafc;
-    color: #475569;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.toggle-content {
-    flex: 1;
-}
-
-.toggle-content h3 {
-    margin: 0 0 5px;
-    color: #1e293b;
-    font-size: 15px;
-}
-
-.toggle-content p {
-    margin: 0;
-    color: #64748b;
-    font-size: 13px;
-}
-
-
-/* =========================================================
-   TOGGLE SWITCH
-   ========================================================= */
-
-.toggle-switch {
-    width: 48px;
-    height: 26px;
-    padding: 3px;
-    border: none;
     border-radius: 20px;
     background: #cbd5e1;
-    cursor: pointer;
-    transition: 0.2s ease;
-    flex-shrink: 0;
+
+    transition: background 0.2s ease;
 }
 
-.toggle-switch span {
-    width: 20px;
-    height: 20px;
-    display: block;
+.settings-slider::before {
+    content: "";
+
+    position: absolute;
+    width: 19px;
+    height: 19px;
+
+    left: 3px;
+    top: 3px;
+
     border-radius: 50%;
-    background: white;
-    transition: 0.2s ease;
+    background: #ffffff;
+
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+
+    transition: transform 0.2s ease;
 }
 
-.toggle-switch.checked {
+.settings-switch input:checked + .settings-slider {
     background: #2563eb;
 }
 
-.toggle-switch.checked span {
-    transform: translateX(22px);
+.settings-switch input:checked + .settings-slider::before {
+    transform: translateX(19px);
 }
-
 
 /* =========================================================
-   LOCAL SETTINGS NOTE
+   NOTE
    ========================================================= */
 
-.local-settings-note {
-    margin: 18px 0 12px;
+.settings-note {
+    margin: 0 22px 18px;
     padding: 10px 12px;
+
     border-radius: 7px;
     background: #f8fafc;
-    color: #64748b;
-    font-size: 12px;
-}
 
+    color: #64748b;
+    font-size: 11.5px;
+    line-height: 1.45;
+}
 
 /* =========================================================
    JOB PREFERENCES
    ========================================================= */
 
-.preference-grid {
+.preferences-card {
+    padding: 24px 22px 18px;
+}
+
+.preferences-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr 1fr;
     gap: 20px;
-    padding: 20px 0;
 }
 
-.preference-field {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+.settings-field {
+    min-width: 0;
 }
 
-.preference-field label {
+.settings-field label {
+    min-height: 20px;
+    margin-bottom: 8px;
+
     display: flex;
     align-items: center;
     gap: 7px;
+
     color: #334155;
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 12px;
+    font-weight: 650;
 }
 
-.preference-field label svg {
+.settings-field label svg {
     color: #64748b;
+    font-size: 12px;
 }
 
-.preference-field input,
-.preference-field select {
+.settings-field input,
+.settings-field select {
     width: 100%;
-    height: 44px;
-    padding: 0 12px;
-    border: 1px solid #d8dee8;
+    height: 43px;
+
+    padding: 0 13px;
+
+    border: 1px solid #d9e1eb;
     border-radius: 8px;
-    outline: none;
-    background: white;
+
+    background: #ffffff;
     color: #334155;
-    font-size: 14px;
+
+    font-family: inherit;
+    font-size: 13px;
+
+    outline: none;
     box-sizing: border-box;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
-.preference-field input:focus,
-.preference-field select:focus {
+.settings-field input::placeholder {
+    color: #94a3b8;
+}
+
+.settings-field input:focus,
+.settings-field select:focus {
     border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
 }
 
-.preference-footer {
-    min-height: 65px;
+.preferences-grid .settings-field:nth-child(3) {
+    max-width: calc(50% - 10px);
+}
+
+.preferences-actions {
+    margin-top: 22px;
+    padding-top: 17px;
+
+    border-top: 1px solid #edf1f5;
+
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 15px;
-    border-top: 1px solid #edf0f5;
+    gap: 14px;
+    flex-wrap: wrap;
 }
 
 .save-preferences-btn {
-    padding: 10px 18px;
+    min-width: 135px;
+    height: 40px;
+
+    padding: 0 17px;
+
     border: none;
     border-radius: 8px;
+
     background: #2563eb;
-    color: white;
-    font-size: 13px;
-    font-weight: 600;
+    color: #ffffff;
+
+    font-size: 12px;
+    font-weight: 700;
+
     cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-.save-preferences-btn:hover {
+.save-preferences-btn:hover:not(:disabled) {
     background: #1d4ed8;
+    box-shadow: 0 5px 12px rgba(37, 99, 235, 0.22);
 }
 
-.preference-success {
-    display: flex;
+.save-preferences-btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+.settings-success {
+    display: inline-flex;
     align-items: center;
     gap: 7px;
-    color: #15803d;
-    font-size: 13px;
+
+    padding: 8px 11px;
+
+    border-radius: 7px;
+    background: #ecfdf5;
+    color: #047857;
+
+    border: 1px solid #bbf7d0;
+
+    font-size: 12px;
 }
 
+.settings-success svg {
+    font-size: 12px;
+}
+
+.settings-error {
+    padding: 8px 11px;
+
+    border-radius: 7px;
+    background: #fff1f2;
+    color: #dc2626;
+
+    border: 1px solid #fecaca;
+
+    font-size: 12px;
+}
 
 /* =========================================================
-   PASSWORD
+   PASSWORD CARD
    ========================================================= */
 
 .password-card {
-    padding: 25px;
+    padding: 22px;
 }
 
 .password-header {
     display: flex;
     align-items: center;
     gap: 14px;
-    margin-bottom: 25px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #edf0f5;
+    margin-bottom: 18px;
 }
 
-.password-header-icon {
-    width: 45px;
-    height: 45px;
-    border-radius: 11px;
+.password-header .password-icon {
     background: #f3e8ff;
     color: #9333ea;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
-.password-header h3 {
-    margin: 0;
-    color: #1e293b;
-    font-size: 17px;
-}
-
-.password-header p {
-    margin: 5px 0 0;
-    color: #64748b;
-    font-size: 13px;
-}
-
-.change-password-form {
+.password-header > div:last-child {
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    min-width: 0;
+}
+
+.password-header strong {
+    color: #1e293b;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.password-header span {
+    margin-top: 3px;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.password-card .settings-divider {
+    margin: 0 0 21px;
 }
 
 .password-field {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.password-field label {
-    color: #334155;
-    font-size: 13px;
-    font-weight: 600;
+    margin-bottom: 17px;
 }
 
 .password-input-wrapper {
-    height: 46px;
-    display: flex;
-    align-items: center;
-    border: 1px solid #d8dee8;
-    border-radius: 8px;
-    background: white;
-    overflow: hidden;
-}
-
-.password-input-wrapper:focus-within {
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+    position: relative;
+    width: 100%;
 }
 
 .password-input-wrapper input {
-    flex: 1;
-    height: 100%;
-    padding: 0 14px;
+    padding-right: 46px;
+}
+
+.password-eye-btn {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+
+    width: 34px;
+    height: 34px;
+
+    transform: translateY(-50%);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     border: none;
-    outline: none;
+    border-radius: 6px;
+
     background: transparent;
-    color: #1e293b;
+    color: #64748b;
+
+    cursor: pointer;
     font-size: 14px;
 }
 
-.password-input-wrapper input::placeholder {
-    color: #94a3b8;
-}
-
-.password-input-wrapper button {
-    width: 45px;
-    height: 100%;
-    border: none;
-    background: transparent;
-    color: #64748b;
-    cursor: pointer;
-}
-
-.password-input-wrapper button:hover {
+.password-eye-btn:hover {
+    background: #f1f5f9;
     color: #2563eb;
 }
 
-
-/* =========================================================
-   PASSWORD MESSAGES
-   ========================================================= */
-
-.settings-error {
-    padding: 12px 14px;
-    border-radius: 8px;
-    background: #fff1f2;
-    border: 1px solid #fecdd3;
-    color: #dc2626;
-    font-size: 13px;
+.password-eye-btn:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 1px;
 }
 
-.settings-success {
+.password-error {
+    margin: 4px 0 14px;
+    padding: 10px 12px;
+
+    border-radius: 7px;
+    border: 1px solid #fecaca;
+
+    background: #fff1f2;
+    color: #dc2626;
+
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.password-success {
+    margin: 4px 0 14px;
+    padding: 10px 12px;
+
     display: flex;
     align-items: center;
-    gap: 9px;
-    padding: 12px 14px;
-    border-radius: 8px;
-    background: #f0fdf4;
+    gap: 8px;
+
+    border-radius: 7px;
     border: 1px solid #bbf7d0;
-    color: #15803d;
-    font-size: 13px;
+
+    background: #ecfdf5;
+    color: #047857;
+
+    font-size: 12px;
 }
 
-
-/* =========================================================
-   CHANGE PASSWORD BUTTON
-   ========================================================= */
-
 .change-password-btn {
-    height: 46px;
+    width: 100%;
+    height: 43px;
+
+    margin-top: 5px;
+
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 9px;
+
     border: none;
     border-radius: 8px;
+
     background: #2563eb;
-    color: white;
-    font-size: 14px;
-    font-weight: 600;
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 700;
+
     cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-.change-password-btn:hover {
+.change-password-btn:hover:not(:disabled) {
     background: #1d4ed8;
+    box-shadow: 0 5px 13px rgba(37, 99, 235, 0.22);
 }
 
 .change-password-btn:disabled {
-    background: #93c5fd;
+    opacity: 0.65;
     cursor: not-allowed;
 }
 
+.change-password-btn svg {
+    font-size: 12px;
+}
 
 /* =========================================================
    DANGER ZONE
    ========================================================= */
 
+.danger-section {
+    margin-bottom: 10px;
+}
+
 .danger-card {
-    background: white;
     border: 1px solid #fecaca;
-    border-radius: 14px;
-    padding: 6px 25px;
-    box-shadow: 0 4px 15px rgba(127, 29, 29, 0.03);
+    background: #ffffff;
 }
 
 .danger-row {
-    min-height: 90px;
+    min-height: 86px;
+    padding: 18px 22px;
+
     display: flex;
     align-items: center;
-    gap: 20px;
+    justify-content: space-between;
+    gap: 25px;
+
+    box-sizing: border-box;
 }
 
-.danger-row > div {
+.danger-row > div:first-child {
+    min-width: 0;
     flex: 1;
+
+    display: flex;
+    flex-direction: column;
 }
 
-.danger-row h3 {
-    margin: 0 0 5px;
-    color: #991b1b;
-    font-size: 15px;
+.danger-row strong {
+    color: #b91c1c;
+    font-size: 14px;
+    font-weight: 700;
 }
 
-.danger-row p {
-    margin: 0;
+.danger-row span {
+    margin-top: 4px;
     color: #64748b;
-    font-size: 13px;
+    font-size: 12px;
+    line-height: 1.45;
 }
 
-.danger-outline-btn {
-    padding: 9px 15px;
-    border: 1px solid #ef4444;
+.deactivate-btn,
+.delete-account-btn {
+    height: 39px;
+
+    padding: 0 14px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
     border-radius: 7px;
-    background: white;
-    color: #dc2626;
-    font-size: 13px;
-    font-weight: 600;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+
+    white-space: nowrap;
     cursor: pointer;
+
+    transition: all 0.2s ease;
 }
 
-.danger-outline-btn:hover {
+.deactivate-btn {
+    border: 1px solid #ef4444;
+    background: #ffffff;
+    color: #dc2626;
+}
+
+.deactivate-btn:hover {
     background: #fff1f2;
 }
 
-.danger-btn {
-    padding: 9px 15px;
-    border: none;
-    border-radius: 7px;
+.delete-account-btn {
+    border: 1px solid #dc2626;
     background: #dc2626;
-    color: white;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
+    color: #ffffff;
 }
 
-.danger-btn:hover {
+.delete-account-btn:hover {
     background: #b91c1c;
+    border-color: #b91c1c;
+    box-shadow: 0 4px 10px rgba(220, 38, 38, 0.18);
+}
+
+.danger-card .settings-divider {
+    margin: 0 22px;
 }
 
 .danger-note {
-    margin: 15px 0;
-    padding: 10px 12px;
+    margin: 0 22px 20px;
+    padding: 11px 12px;
+
     border-radius: 7px;
+
     background: #fff7ed;
-    color: #9a3412;
-    font-size: 12px;
+    border: 1px solid #fed7aa;
+
+    color: #c2410c;
+
+    font-size: 11px;
+    line-height: 1.5;
 }
 
+/* =========================================================
+   LOADING
+   ========================================================= */
+
+.settings-loading {
+    min-height: 70vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #64748b;
+    font-size: 14px;
+}
+
+/* =========================================================
+   FOCUS
+   ========================================================= */
+
+.back-dashboard-btn:focus-visible,
+.save-preferences-btn:focus-visible,
+.change-password-btn:focus-visible,
+.deactivate-btn:focus-visible,
+.delete-account-btn:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}
 
 /* =========================================================
    RESPONSIVE
    ========================================================= */
 
-@media (max-width: 800px) {
+@media (max-width: 900px) {
 
     .recruiter-settings-page {
-        padding: 25px 20px;
+        padding: 30px 25px 55px;
     }
 
-    .settings-header {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 18px;
-    }
-
-    .settings-content {
+    .settings-header,
+    .settings-section {
         max-width: 100%;
     }
 
-    .preference-grid {
+    .preferences-grid {
         grid-template-columns: 1fr;
+    }
+
+    .preferences-grid .settings-field:nth-child(3) {
+        max-width: 100%;
     }
 }
 
+@media (max-width: 650px) {
 
-@media (max-width: 600px) {
+    .recruiter-settings-page {
+        padding: 24px 15px 45px;
+    }
+
+    .settings-header {
+        flex-direction: column;
+        gap: 18px;
+        margin-bottom: 32px;
+    }
 
     .settings-header h1 {
-        font-size: 28px;
+        font-size: 27px;
     }
 
-    .settings-card,
-    .danger-card {
-        padding-left: 17px;
-        padding-right: 17px;
-    }
-
-    .account-row,
-    .setting-toggle-row,
-    .danger-row {
-        gap: 11px;
-    }
-
-    .account-row-content p,
-    .toggle-content p,
-    .danger-row p {
-        font-size: 12px;
-    }
-
-    .read-only-badge {
-        display: none;
-    }
-
-    .danger-row {
-        align-items: flex-start;
-        flex-direction: column;
-        padding: 18px 0;
-    }
-
-    .danger-row button {
+    .back-dashboard-btn {
         width: 100%;
     }
 
-    .preference-footer {
+    .settings-section {
+        margin-bottom: 30px;
+    }
+
+    .settings-section-title {
+        align-items: flex-start;
+    }
+
+    .settings-section-icon {
+        width: 38px;
+        height: 38px;
+        flex-basis: 38px;
+    }
+
+    .settings-section-title h2 {
+        font-size: 19px;
+    }
+
+    .settings-row {
+        min-height: 78px;
+        padding: 14px 15px;
+        gap: 11px;
+    }
+
+    .settings-row-icon {
+        width: 36px;
+        height: 36px;
+        flex-basis: 36px;
+    }
+
+    .settings-row-content strong {
+        font-size: 13px;
+    }
+
+    .settings-row-content span {
+        font-size: 11.5px;
+    }
+
+    .settings-row-action span {
+        display: none;
+    }
+
+    .readonly-badge {
+        font-size: 10px;
+        padding: 5px 7px;
+    }
+
+    .settings-divider {
+        margin: 0 15px;
+    }
+
+    .settings-note {
+        margin-left: 15px;
+        margin-right: 15px;
+    }
+
+    .preferences-card,
+    .password-card {
+        padding: 18px 15px;
+    }
+
+    .preferences-actions {
         align-items: stretch;
         flex-direction: column;
-        padding: 15px 0;
+    }
+
+    .settings-success,
+    .settings-error {
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .save-preferences-btn {
         width: 100%;
     }
 
-    .preference-success {
-        justify-content: center;
+    .danger-row {
+        padding: 17px 15px;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .deactivate-btn,
+    .delete-account-btn {
+        width: 100%;
+    }
+
+    .danger-card .settings-divider {
+        margin: 0 15px;
+    }
+
+    .danger-note {
+        margin-left: 15px;
+        margin-right: 15px;
     }
 }

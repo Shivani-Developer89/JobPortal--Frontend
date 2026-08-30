@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import {
     FaArrowLeft,
     FaLock,
@@ -11,811 +12,1125 @@ import {
     FaBriefcase,
     FaShieldAlt,
     FaExclamationTriangle,
-    FaChevronRight,
     FaEnvelope,
+    FaUsers,
     FaClock,
     FaMapMarkerAlt,
-    FaUsers
+    FaBuilding,
+    FaTrash,
+    FaPowerOff,
 } from "react-icons/fa";
-import axios from "axios";
-import "../styles/RecruiterSettings.css";  
+
+
+import "../styles/RecruiterSettings.css";
+
+import {
+    getRecruiterSettings,
+    updateRecruiterSettings,
+    changePassword,
+} from "../services/RecruiterSettingsService";
+
 
 function RecruiterSettings() {
+
     const navigate = useNavigate();
 
-    // ============================
-    // PASSWORD
-    // ============================
+    // =========================================================
+    // SETTINGS STATE
+    // =========================================================
+
+    const [settings, setSettings] = useState({
+        defaultLocation: "",
+        employmentType: "Full Time",
+        salaryVisibility: "Disclose",
+        newApplicants: true,
+        emailNotifications: true,
+        jobExpiryReminders: true,
+    });
+
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+
+    const [message, setMessage] = useState("");
+    const [error, setError] = useState("");
+
+
+    // =========================================================
+    // PASSWORD STATE
+    // =========================================================
 
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
 
-    const [showCurrent, setShowCurrent] = useState(false);
-    const [showNew, setShowNew] = useState(false);
-    const [showConfirm, setShowConfirm] = useState(false);
+    const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+    const [changingPassword, setChangingPassword] = useState(false);
     const [passwordMessage, setPasswordMessage] = useState("");
     const [passwordError, setPasswordError] = useState("");
-    const [passwordLoading, setPasswordLoading] = useState(false);
 
-    // ============================
-    // NOTIFICATIONS
-    // ============================
 
-    const [notifications, setNotifications] = useState({
-        newApplicants: true,
-        emailNotifications: true,
-        jobExpiryReminders: true
-    });
-
-    // ============================
-    // JOB PREFERENCES
-    // ============================
-
-    const [jobPreferences, setJobPreferences] = useState({
-        defaultLocation: "",
-        employmentType: "Full Time",
-        salaryVisibility: "Disclose"
-    });
-
-    const [preferencesSaved, setPreferencesSaved] = useState(false);
-
-    // ============================
-    // LOAD LOCAL SETTINGS
-    // ============================
+    // =========================================================
+    // LOAD SETTINGS
+    // =========================================================
 
     useEffect(() => {
-        const savedNotifications =
-            localStorage.getItem("recruiterNotifications");
 
-        const savedPreferences =
-            localStorage.getItem("recruiterJobPreferences");
+        const loadSettings = async () => {
 
-        if (savedNotifications) {
             try {
-                setNotifications(JSON.parse(savedNotifications));
-            } catch (error) {
-                console.error("Failed to load notification settings");
+
+                setLoading(true);
+                setError("");
+
+                const response = await getRecruiterSettings();
+
+                const data = response.data || {};
+
+                setSettings({
+                    defaultLocation: data.defaultLocation || "",
+                    employmentType:
+                        data.employmentType || "Full Time",
+                    salaryVisibility:
+                        data.salaryVisibility || "Disclose",
+                    newApplicants:
+                        data.newApplicants ?? true,
+                    emailNotifications:
+                        data.emailNotifications ?? true,
+                    jobExpiryReminders:
+                        data.jobExpiryReminders ?? true,
+                });
+
+            } catch (err) {
+
+                console.error(
+                    "Failed to load recruiter settings:",
+                    err
+                );
+
+                setError(
+                    err.response?.data?.message ||
+                    "Failed to load settings."
+                );
+
+            } finally {
+
+                setLoading(false);
+
             }
-        }
-
-        if (savedPreferences) {
-            try {
-                setJobPreferences(JSON.parse(savedPreferences));
-            } catch (error) {
-                console.error("Failed to load job preferences");
-            }
-        }
-    }, []);
-
-    // ============================
-    // NOTIFICATION TOGGLE
-    // ============================
-
-    const handleNotificationChange = (name) => {
-        const updatedNotifications = {
-            ...notifications,
-            [name]: !notifications[name]
         };
 
-        setNotifications(updatedNotifications);
+        loadSettings();
 
-        localStorage.setItem(
-            "recruiterNotifications",
-            JSON.stringify(updatedNotifications)
-        );
-    };
+    }, []);
 
-    // ============================
-    // JOB PREFERENCE CHANGE
-    // ============================
 
-    const handlePreferenceChange = (name, value) => {
-        setJobPreferences((previous) => ({
+    // =========================================================
+    // SETTINGS CHANGE
+    // =========================================================
+
+    const handleSettingChange = (field, value) => {
+
+        setSettings((previous) => ({
             ...previous,
-            [name]: value
+            [field]: value,
         }));
 
-        setPreferencesSaved(false);
+        setMessage("");
+        setError("");
     };
 
-    const saveJobPreferences = () => {
-        localStorage.setItem(
-            "recruiterJobPreferences",
-            JSON.stringify(jobPreferences)
-        );
 
-        setPreferencesSaved(true);
+    // =========================================================
+    // SAVE SETTINGS
+    // =========================================================
 
-        setTimeout(() => {
-            setPreferencesSaved(false);
-        }, 2500);
+    const handleSavePreferences = async () => {
+
+        try {
+
+            setSaving(true);
+            setMessage("");
+            setError("");
+
+            await updateRecruiterSettings(settings);
+
+            setMessage("Preferences saved successfully.");
+
+        } catch (err) {
+
+            console.error(
+                "Failed to update recruiter settings:",
+                err
+            );
+
+            setError(
+                err.response?.data?.message ||
+                "Failed to save preferences."
+            );
+
+        } finally {
+
+            setSaving(false);
+
+        }
     };
 
-    // ============================
+
+    // =========================================================
     // CHANGE PASSWORD
-    // ============================
+    // =========================================================
 
-    const handleChangePassword = async (e) => {
-        e.preventDefault();
+    const handleChangePassword = async (event) => {
+
+        event.preventDefault();
 
         setPasswordMessage("");
         setPasswordError("");
 
-        if (!currentPassword || !newPassword || !confirmPassword) {
-            setPasswordError("Please fill all password fields.");
+        // Empty fields
+        if (
+            !currentPassword ||
+            !newPassword ||
+            !confirmPassword
+        ) {
+            setPasswordError(
+                "Please fill in all password fields."
+            );
             return;
         }
 
+        // Password match
         if (newPassword !== confirmPassword) {
+
             setPasswordError(
                 "New password and confirm password do not match."
             );
+
             return;
         }
 
+        // Basic password validation
         if (newPassword.length < 6) {
+
             setPasswordError(
-                "New password must be at least 6 characters."
+                "New password must contain at least 6 characters."
             );
+
             return;
         }
 
+        // Don't allow same password
         if (currentPassword === newPassword) {
+
             setPasswordError(
-                "New password must be different from current password."
+                "New password must be different from your current password."
             );
+
             return;
         }
 
         try {
-            setPasswordLoading(true);
 
-            const token = localStorage.getItem("token");
+            setChangingPassword(true);
 
-            const response = await axios.put(
-                "http://localhost:81/user/change-password",
-                {
-                    currentPassword,
-                    newPassword
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json"
-                    }
-                }
+            const response = await changePassword(
+                currentPassword,
+                newPassword
             );
 
             setPasswordMessage(
-                response.data || "Password changed successfully."
+                response.data ||
+                "Password changed successfully."
             );
 
+            // Clear fields
             setCurrentPassword("");
             setNewPassword("");
             setConfirmPassword("");
 
-        } catch (error) {
-            console.error("Change password error:", error);
+        } catch (err) {
 
-            if (error.response?.data) {
-                setPasswordError(
-                    typeof error.response.data === "string"
-                        ? error.response.data
-                        : error.response.data.message ||
-                          "Failed to change password."
-                );
-            } else {
-                setPasswordError(
-                    "Unable to connect to the server."
-                );
-            }
+            console.error(
+                "Failed to change password:",
+                err
+            );
+
+            setPasswordError(
+                err.response?.data?.message ||
+                err.response?.data ||
+                "Failed to change password."
+            );
+
         } finally {
-            setPasswordLoading(false);
+
+            setChangingPassword(false);
+
         }
     };
 
-    // ============================
-    // ACCOUNT INFO
-    // ============================
 
-    const userName =
-        localStorage.getItem("userName") || "Recruiter";
+    // =========================================================
+    // LOGOUT
+    // =========================================================
 
-    const userRole =
-        localStorage.getItem("role") || "RECRUITER";
+    const handleLogout = () => {
 
-    // ============================
-    // RENDER
-    // ============================
+        localStorage.removeItem("token");
+        localStorage.removeItem("userName");
+        localStorage.removeItem("role");
+
+        navigate("/login");
+    };
+
+
+    // =========================================================
+    // LOADING
+    // =========================================================
+
+    if (loading) {
+
+        return (
+            <div className="recruiter-settings-page">
+
+                <div className="settings-loading">
+                    Loading settings...
+                </div>
+
+            </div>
+        );
+    }
+
+
+    // =========================================================
+    // UI
+    // =========================================================
 
     return (
+
         <div className="recruiter-settings-page">
 
-            {/* HEADER */}
+            {/* =================================================
+                HEADER
+            ================================================= */}
 
             <div className="settings-header">
 
                 <div>
+
                     <h1>Settings</h1>
+
                     <p>
                         Manage your recruiter account and preferences.
                     </p>
+
                 </div>
 
                 <button
                     type="button"
-                    className="settings-back-btn"
+                    className="back-dashboard-btn"
                     onClick={() =>
-                        navigate("/recruiterDashboard")
+                        navigate("/")
                     }
                 >
                     <FaArrowLeft />
-                    Back to Dashboard
+                    <span>Home</span>
                 </button>
 
             </div>
 
-            <div className="settings-content">
 
-                {/* =========================================
-                    ACCOUNT
-                ========================================= */}
+            {/* =================================================
+                ACCOUNT
+            ================================================= */}
 
-                <section className="settings-section">
+            <section className="settings-section">
 
-                    <div className="section-title">
+                <div className="settings-section-title">
 
-                        <div className="section-title-icon account-icon">
+                    <div className="settings-section-icon account-icon">
+                        <FaUser />
+                    </div>
+
+                    <div>
+                        <h2>Account</h2>
+
+                        <p>
+                            Manage your recruiter account information.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div className="settings-card">
+
+                    {/* My Profile */}
+
+                    <div
+                        className="settings-row clickable-row"
+                        onClick={() =>
+                            navigate("/recruiter/profile")
+                        }
+                    >
+
+                        <div className="settings-row-icon">
                             <FaUser />
                         </div>
 
-                        <div>
-                            <h2>Account</h2>
-                            <p>
-                                Manage your recruiter account information.
-                            </p>
+                        <div className="settings-row-content">
+
+                            <strong>My Profile</strong>
+
+                            <span>
+                                Update your name, designation,
+                                profile photo and other information.
+                            </span>
+
+                        </div>
+
+                        <div className="settings-row-action">
+                            <span>Open</span>
+                            <FaArrowLeft className="open-arrow" />
                         </div>
 
                     </div>
 
-                    <div className="settings-card">
 
-                        <div className="account-row">
+                    <div className="settings-divider" />
 
-                            <div className="account-row-icon">
-                                <FaUser />
-                            </div>
 
-                            <div className="account-row-content">
-                                <h3>My Profile</h3>
-                                <p>
-                                    Update your name, designation,
-                                    profile photo and other information.
-                                </p>
-                            </div>
+                    {/* Account Information */}
 
-                            <button
-                                type="button"
-                                className="settings-action-btn"
-                                onClick={() =>
-                                    navigate("/recruiter/profile")
-                                }
-                            >
-                                Open
-                                <FaChevronRight />
-                            </button>
+                    <div className="settings-row">
+
+                        <div className="settings-row-icon">
+                            <FaEnvelope />
+                        </div>
+
+                        <div className="settings-row-content">
+
+                            <strong>Account Information</strong>
+
+                            <span>
+                                Name:{" "}
+                                {localStorage.getItem("userName") ||
+                                    "Recruiter"}
+                            </span>
+
+                            <span>
+                                Role: RECRUITER
+                            </span>
 
                         </div>
 
-                        <div className="settings-divider" />
+                        <span className="readonly-badge">
+                            Read only
+                        </span>
 
-                        <div className="account-row">
+                    </div>
 
-                            <div className="account-row-icon">
-                                <FaEnvelope />
-                            </div>
+                </div>
 
-                            <div className="account-row-content">
-                                <h3>Account Information</h3>
+            </section>
 
-                                <p>
-                                    Name: <strong>{userName}</strong>
-                                </p>
 
-                                <p>
-                                    Role: <strong>{userRole}</strong>
-                                </p>
+            {/* =================================================
+                NOTIFICATIONS
+            ================================================= */}
 
-                            </div>
+            <section className="settings-section">
 
-                            <span className="read-only-badge">
-                                Read only
+                <div className="settings-section-title">
+
+                    <div className="settings-section-icon notification-icon">
+                        <FaBell />
+                    </div>
+
+                    <div>
+                        <h2>Notifications</h2>
+
+                        <p>
+                            Choose which recruiter notifications
+                            you want to receive.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div className="settings-card">
+
+                    {/* New Applicants */}
+
+                    <div className="settings-row">
+
+                        <div className="settings-row-icon">
+                            <FaUsers />
+                        </div>
+
+                        <div className="settings-row-content">
+
+                            <strong>
+                                New Applicant Alerts
+                            </strong>
+
+                            <span>
+                                Get notified when a candidate
+                                applies to your job.
+                            </span>
+
+                        </div>
+
+                        <label className="settings-switch">
+
+                            <input
+                                type="checkbox"
+                                checked={settings.newApplicants}
+                                onChange={(e) =>
+                                    handleSettingChange(
+                                        "newApplicants",
+                                        e.target.checked
+                                    )
+                                }
+                            />
+
+                            <span className="settings-slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div className="settings-divider" />
+
+
+                    {/* Email Notifications */}
+
+                    <div className="settings-row">
+
+                        <div className="settings-row-icon">
+                            <FaEnvelope />
+                        </div>
+
+                        <div className="settings-row-content">
+
+                            <strong>
+                                Email Notifications
+                            </strong>
+
+                            <span>
+                                Receive important recruiter
+                                updates through email.
+                            </span>
+
+                        </div>
+
+                        <label className="settings-switch">
+
+                            <input
+                                type="checkbox"
+                                checked={settings.emailNotifications}
+                                onChange={(e) =>
+                                    handleSettingChange(
+                                        "emailNotifications",
+                                        e.target.checked
+                                    )
+                                }
+                            />
+
+                            <span className="settings-slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div className="settings-divider" />
+
+
+                    {/* Job Expiry */}
+
+                    <div className="settings-row">
+
+                        <div className="settings-row-icon">
+                            <FaClock />
+                        </div>
+
+                        <div className="settings-row-content">
+
+                            <strong>
+                                Job Expiry Reminders
+                            </strong>
+
+                            <span>
+                                Get reminded when your job
+                                postings are approaching expiry.
+                            </span>
+
+                        </div>
+
+                        <label className="settings-switch">
+
+                            <input
+                                type="checkbox"
+                                checked={settings.jobExpiryReminders}
+                                onChange={(e) =>
+                                    handleSettingChange(
+                                        "jobExpiryReminders",
+                                        e.target.checked
+                                    )
+                                }
+                            />
+
+                            <span className="settings-slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div className="settings-note">
+                        Notification preferences are currently
+                        saved on this account.
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            {/* =================================================
+                JOB PREFERENCES
+            ================================================= */}
+
+            <section className="settings-section">
+
+                <div className="settings-section-title">
+
+                    <div className="settings-section-icon job-icon">
+                        <FaBriefcase />
+                    </div>
+
+                    <div>
+                        <h2>Job Preferences</h2>
+
+                        <p>
+                            Configure your default job posting
+                            preferences.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div className="settings-card preferences-card">
+
+                    <div className="preferences-grid">
+
+                        {/* Location */}
+
+                        <div className="settings-field">
+
+                            <label>
+                                <FaMapMarkerAlt />
+                                Default Location
+                            </label>
+
+                            <input
+                                type="text"
+                                value={settings.defaultLocation}
+                                onChange={(e) =>
+                                    handleSettingChange(
+                                        "defaultLocation",
+                                        e.target.value
+                                    )
+                                }
+                                placeholder="e.g. Delhi"
+                            />
+
+                        </div>
+
+
+                        {/* Employment Type */}
+
+                        <div className="settings-field">
+
+                            <label>
+                                <FaBuilding />
+                                Employment Type
+                            </label>
+
+                            <select
+                                value={settings.employmentType}
+                                onChange={(e) =>
+                                    handleSettingChange(
+                                        "employmentType",
+                                        e.target.value
+                                    )
+                                }
+                            >
+
+                                <option value="Full Time">
+                                    Full Time
+                                </option>
+
+                                <option value="Part Time">
+                                    Part Time
+                                </option>
+
+                                <option value="Contract">
+                                    Contract
+                                </option>
+
+                                <option value="Internship">
+                                    Internship
+                                </option>
+
+                                <option value="Temporary">
+                                    Temporary
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        {/* Salary Visibility */}
+
+                        <div className="settings-field">
+
+                            <label>
+                                Salary Visibility
+                            </label>
+
+                            <select
+                                value={settings.salaryVisibility}
+                                onChange={(e) =>
+                                    handleSettingChange(
+                                        "salaryVisibility",
+                                        e.target.value
+                                    )
+                                }
+                            >
+
+                                <option value="Disclose">
+                                    Disclose
+                                </option>
+
+                                <option value="Hide">
+                                    Hide
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <div className="preferences-actions">
+
+                        {message && (
+
+                            <span className="settings-success">
+                                <FaCheckCircle />
+                                {message}
+                            </span>
+
+                        )}
+
+                        {error && (
+
+                            <span className="settings-error">
+                                {error}
+                            </span>
+
+                        )}
+
+                        <button
+                            type="button"
+                            className="save-preferences-btn"
+                            onClick={handleSavePreferences}
+                            disabled={saving}
+                        >
+
+                            {saving
+                                ? "Saving..."
+                                : "Save Preferences"}
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            {/* =================================================
+                SECURITY
+            ================================================= */}
+
+            <section className="settings-section">
+
+                <div className="settings-section-title">
+
+                    <div className="settings-section-icon security-icon">
+                        <FaShieldAlt />
+                    </div>
+
+                    <div>
+                        <h2>Security</h2>
+
+                        <p>
+                            Protect your recruiter account.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div className="settings-card password-card">
+
+                    <div className="password-header">
+
+                        <div className="settings-row-icon password-icon">
+                            <FaLock />
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Change Password
+                            </strong>
+
+                            <span>
+                                Use a strong password that you
+                                don't use elsewhere.
                             </span>
 
                         </div>
 
                     </div>
 
-                </section>
 
-                {/* =========================================
-                    NOTIFICATIONS
-                ========================================= */}
+                    <div className="settings-divider" />
 
-                <section className="settings-section">
 
-                    <div className="section-title">
+                    <form onSubmit={handleChangePassword}>
 
-                        <div className="section-title-icon notification-icon">
-                            <FaBell />
-                        </div>
+                        {/* Current Password */}
 
-                        <div>
-                            <h2>Notifications</h2>
-                            <p>
-                                Choose which recruiter notifications
-                                you want to receive.
-                            </p>
-                        </div>
+                        <div className="settings-field password-field">
 
-                    </div>
+                            <label>
+                                Current Password
+                            </label>
 
-                    <div className="settings-card">
-
-                        <SettingToggle
-                            icon={<FaUsers />}
-                            title="New Applicant Alerts"
-                            description="Get notified when a candidate applies to your job."
-                            checked={notifications.newApplicants}
-                            onChange={() =>
-                                handleNotificationChange(
-                                    "newApplicants"
-                                )
-                            }
-                        />
-
-                        <div className="settings-divider" />
-
-                        <SettingToggle
-                            icon={<FaEnvelope />}
-                            title="Email Notifications"
-                            description="Receive important recruiter updates through email."
-                            checked={notifications.emailNotifications}
-                            onChange={() =>
-                                handleNotificationChange(
-                                    "emailNotifications"
-                                )
-                            }
-                        />
-
-                        <div className="settings-divider" />
-
-                        <SettingToggle
-                            icon={<FaClock />}
-                            title="Job Expiry Reminders"
-                            description="Get reminded when your job postings are approaching expiry."
-                            checked={notifications.jobExpiryReminders}
-                            onChange={() =>
-                                handleNotificationChange(
-                                    "jobExpiryReminders"
-                                )
-                            }
-                        />
-
-                        <div className="local-settings-note">
-                            Notification preferences are currently
-                            saved on this browser.
-                        </div>
-
-                    </div>
-
-                </section>
-
-                {/* =========================================
-                    JOB PREFERENCES
-                ========================================= */}
-
-                <section className="settings-section">
-
-                    <div className="section-title">
-
-                        <div className="section-title-icon job-icon">
-                            <FaBriefcase />
-                        </div>
-
-                        <div>
-                            <h2>Job Preferences</h2>
-                            <p>
-                                Configure your default job posting preferences.
-                            </p>
-                        </div>
-
-                    </div>
-
-                    <div className="settings-card">
-
-                        <div className="preference-grid">
-
-                            <div className="preference-field">
-
-                                <label>
-                                    <FaMapMarkerAlt />
-                                    Default Location
-                                </label>
+                            <div className="password-input-wrapper">
 
                                 <input
-                                    type="text"
-                                    value={
-                                        jobPreferences.defaultLocation
+                                    type={
+                                        showCurrentPassword
+                                            ? "text"
+                                            : "password"
                                     }
+                                    value={currentPassword}
                                     onChange={(e) =>
-                                        handlePreferenceChange(
-                                            "defaultLocation",
+                                        setCurrentPassword(
                                             e.target.value
                                         )
                                     }
-                                    placeholder="e.g. Delhi"
+                                    placeholder="Enter current password"
                                 />
 
+                                <button
+                                    type="button"
+                                    className="password-eye-btn"
+                                    onClick={() =>
+                                        setShowCurrentPassword(
+                                            !showCurrentPassword
+                                        )
+                                    }
+                                    aria-label={
+                                        showCurrentPassword
+                                            ? "Hide password"
+                                            : "Show password"
+                                    }
+                                >
+
+                                    {showCurrentPassword
+                                        ? <FaEyeSlash />
+                                        : <FaEye />}
+
+                                </button>
+
                             </div>
 
-                            <div className="preference-field">
+                        </div>
 
-                                <label>
-                                    <FaBriefcase />
-                                    Employment Type
-                                </label>
 
-                                <select
-                                    value={
-                                        jobPreferences.employmentType
+                        {/* New Password */}
+
+                        <div className="settings-field password-field">
+
+                            <label>
+                                New Password
+                            </label>
+
+                            <div className="password-input-wrapper">
+
+                                <input
+                                    type={
+                                        showNewPassword
+                                            ? "text"
+                                            : "password"
                                     }
+                                    value={newPassword}
                                     onChange={(e) =>
-                                        handlePreferenceChange(
-                                            "employmentType",
+                                        setNewPassword(
                                             e.target.value
                                         )
                                     }
+                                    placeholder="Enter new password"
+                                />
+
+                                <button
+                                    type="button"
+                                    className="password-eye-btn"
+                                    onClick={() =>
+                                        setShowNewPassword(
+                                            !showNewPassword
+                                        )
+                                    }
+                                    aria-label={
+                                        showNewPassword
+                                            ? "Hide password"
+                                            : "Show password"
+                                    }
                                 >
-                                    <option>Full Time</option>
-                                    <option>Part Time</option>
-                                    <option>Contract</option>
-                                    <option>Internship</option>
-                                    <option>Remote</option>
-                                </select>
+
+                                    {showNewPassword
+                                        ? <FaEyeSlash />
+                                        : <FaEye />}
+
+                                </button>
 
                             </div>
 
-                            <div className="preference-field">
+                        </div>
 
-                                <label>
-                                    Salary Visibility
-                                </label>
 
-                                <select
-                                    value={
-                                        jobPreferences.salaryVisibility
+                        {/* Confirm Password */}
+
+                        <div className="settings-field password-field">
+
+                            <label>
+                                Confirm New Password
+                            </label>
+
+                            <div className="password-input-wrapper">
+
+                                <input
+                                    type={
+                                        showConfirmPassword
+                                            ? "text"
+                                            : "password"
                                     }
+                                    value={confirmPassword}
                                     onChange={(e) =>
-                                        handlePreferenceChange(
-                                            "salaryVisibility",
+                                        setConfirmPassword(
                                             e.target.value
                                         )
                                     }
+                                    placeholder="Confirm new password"
+                                />
+
+                                <button
+                                    type="button"
+                                    className="password-eye-btn"
+                                    onClick={() =>
+                                        setShowConfirmPassword(
+                                            !showConfirmPassword
+                                        )
+                                    }
+                                    aria-label={
+                                        showConfirmPassword
+                                            ? "Hide password"
+                                            : "Show password"
+                                    }
                                 >
-                                    <option>Disclose</option>
-                                    <option>Do not disclose</option>
-                                </select>
+
+                                    {showConfirmPassword
+                                        ? <FaEyeSlash />
+                                        : <FaEye />}
+
+                                </button>
 
                             </div>
 
                         </div>
 
-                        <div className="preference-footer">
 
-                            {preferencesSaved && (
-                                <div className="preference-success">
-                                    <FaCheckCircle />
-                                    Preferences saved.
-                                </div>
-                            )}
+                        {/* Password Error */}
 
-                            <button
-                                type="button"
-                                className="save-preferences-btn"
-                                onClick={saveJobPreferences}
-                            >
-                                Save Preferences
-                            </button>
+                        {passwordError && (
 
-                        </div>
-
-                    </div>
-
-                </section>
-
-                {/* =========================================
-                    SECURITY
-                ========================================= */}
-
-                <section className="settings-section">
-
-                    <div className="section-title">
-
-                        <div className="section-title-icon security-icon">
-                            <FaShieldAlt />
-                        </div>
-
-                        <div>
-                            <h2>Security</h2>
-                            <p>
-                                Protect your recruiter account.
-                            </p>
-                        </div>
-
-                    </div>
-
-                    <div className="settings-card password-card">
-
-                        <div className="password-header">
-
-                            <div className="password-header-icon">
-                                <FaLock />
+                            <div className="password-error">
+                                {passwordError}
                             </div>
 
-                            <div>
-                                <h3>Change Password</h3>
-                                <p>
-                                    Use a strong password that you
-                                    don't use elsewhere.
-                                </p>
+                        )}
+
+
+                        {/* Password Success */}
+
+                        {passwordMessage && (
+
+                            <div className="password-success">
+                                <FaCheckCircle />
+                                {passwordMessage}
                             </div>
 
-                        </div>
+                        )}
 
-                        <form
-                            className="change-password-form"
-                            onSubmit={handleChangePassword}
+
+                        <button
+                            type="submit"
+                            className="change-password-btn"
+                            disabled={changingPassword}
                         >
 
-                            <PasswordField
-                                label="Current Password"
-                                value={currentPassword}
-                                setValue={setCurrentPassword}
-                                show={showCurrent}
-                                setShow={setShowCurrent}
-                                placeholder="Enter current password"
-                            />
+                            <FaLock />
 
-                            <PasswordField
-                                label="New Password"
-                                value={newPassword}
-                                setValue={setNewPassword}
-                                show={showNew}
-                                setShow={setShowNew}
-                                placeholder="Enter new password"
-                            />
+                            {changingPassword
+                                ? "Changing Password..."
+                                : "Change Password"}
 
-                            <PasswordField
-                                label="Confirm New Password"
-                                value={confirmPassword}
-                                setValue={setConfirmPassword}
-                                show={showConfirm}
-                                setShow={setShowConfirm}
-                                placeholder="Confirm new password"
-                            />
+                        </button>
 
-                            {passwordError && (
-                                <div className="settings-error">
-                                    {passwordError}
-                                </div>
-                            )}
+                    </form>
 
-                            {passwordMessage && (
-                                <div className="settings-success">
-                                    <FaCheckCircle />
-                                    <span>{passwordMessage}</span>
-                                </div>
-                            )}
+                </div>
 
-                            <button
-                                type="submit"
-                                className="change-password-btn"
-                                disabled={passwordLoading}
-                            >
-                                <FaLock />
+            </section>
 
-                                {passwordLoading
-                                    ? "Changing Password..."
-                                    : "Change Password"
-                                }
-                            </button>
 
-                        </form>
+            {/* =================================================
+                DANGER ZONE
+            ================================================= */}
 
+            <section className="settings-section danger-section">
+
+                <div className="settings-section-title">
+
+                    <div className="settings-section-icon danger-icon">
+                        <FaExclamationTriangle />
                     </div>
 
-                </section>
+                    <div>
+                        <h2>Danger Zone</h2>
 
-                {/* =========================================
-                    DANGER ZONE
-                ========================================= */}
+                        <p>
+                            Actions that can affect your account.
+                        </p>
+                    </div>
 
-                <section className="settings-section danger-section">
+                </div>
 
-                    <div className="section-title">
 
-                        <div className="section-title-icon danger-icon">
-                            <FaExclamationTriangle />
-                        </div>
+                <div className="settings-card danger-card">
+
+                    {/* Deactivate */}
+
+                    <div className="danger-row">
 
                         <div>
-                            <h2>Danger Zone</h2>
-                            <p>
-                                Actions that can affect your account.
-                            </p>
+
+                            <strong>
+                                Deactivate Account
+                            </strong>
+
+                            <span>
+                                Temporarily disable your recruiter
+                                account.
+                            </span>
+
                         </div>
+
+                        <button
+                            type="button"
+                            className="deactivate-btn"
+                            onClick={() =>
+                                alert(
+                                    "Account deactivation is not connected yet."
+                                )
+                            }
+                        >
+
+                            <FaPowerOff />
+
+                            Deactivate
+
+                        </button>
 
                     </div>
 
-                    <div className="danger-card">
 
-                        <div className="danger-row">
+                    <div className="settings-divider" />
 
-                            <div>
-                                <h3>Deactivate Account</h3>
-                                <p>
-                                    Temporarily disable your recruiter
-                                    account.
-                                </p>
-                            </div>
 
-                            <button
-                                type="button"
-                                className="danger-outline-btn"
-                                onClick={() =>
-                                    alert(
-                                        "Account deactivation will be connected after the backend endpoint is added."
-                                    )
-                                }
-                            >
-                                Deactivate
-                            </button>
+                    {/* Delete */}
 
-                        </div>
+                    <div className="danger-row">
 
-                        <div className="settings-divider" />
+                        <div>
 
-                        <div className="danger-row">
-
-                            <div>
-                                <h3>Delete Account</h3>
-                                <p>
-                                    Permanently delete your recruiter
-                                    account and associated data.
-                                </p>
-                            </div>
-
-                            <button
-                                type="button"
-                                className="danger-btn"
-                                onClick={() =>
-                                    alert(
-                                        "Account deletion will be connected after the backend endpoint is added."
-                                    )
-                                }
-                            >
+                            <strong>
                                 Delete Account
-                            </button>
+                            </strong>
+
+                            <span>
+                                Permanently delete your recruiter
+                                account and associated data.
+                            </span>
 
                         </div>
 
-                        <div className="danger-note">
-                            Account deletion is intentionally not
-                            connected yet because your backend does
-                            not currently have a dedicated delete-account
-                            endpoint.
-                        </div>
+                        <button
+                            type="button"
+                            className="delete-account-btn"
+                            onClick={() =>
+                                alert(
+                                    "Account deletion is not connected yet because the backend does not currently have a dedicated delete-account endpoint."
+                                )
+                            }
+                        >
+
+                            <FaTrash />
+
+                            Delete Account
+
+                        </button>
 
                     </div>
 
-                </section>
 
-            </div>
+                    <div className="danger-note">
 
-        </div>
-    );
-}
+                        Account deletion is intentionally not
+                        connected yet because the backend does not
+                        currently have a dedicated delete-account
+                        endpoint.
 
+                    </div>
 
-/* =========================================================
-   PASSWORD FIELD
-   ========================================================= */
+                </div>
 
-function PasswordField({
-    label,
-    value,
-    setValue,
-    show,
-    setShow,
-    placeholder
-}) {
-    return (
-        <div className="password-field">
-
-            <label>{label}</label>
-
-            <div className="password-input-wrapper">
-
-                <input
-                    type={show ? "text" : "password"}
-                    value={value}
-                    onChange={(e) =>
-                        setValue(e.target.value)
-                    }
-                    placeholder={placeholder}
-                />
-
-                <button
-                    type="button"
-                    onClick={() =>
-                        setShow(!show)
-                    }
-                    aria-label={
-                        show
-                            ? "Hide password"
-                            : "Show password"
-                    }
-                >
-                    {show
-                        ? <FaEyeSlash />
-                        : <FaEye />
-                    }
-                </button>
-
-            </div>
-
-        </div>
-    );
-}
-
-
-/* =========================================================
-   TOGGLE
-   ========================================================= */
-
-function SettingToggle({
-    icon,
-    title,
-    description,
-    checked,
-    onChange
-}) {
-    return (
-        <div className="setting-toggle-row">
-
-            <div className="toggle-icon">
-                {icon}
-            </div>
-
-            <div className="toggle-content">
-                <h3>{title}</h3>
-                <p>{description}</p>
-            </div>
-
-            <button
-                type="button"
-                className={`toggle-switch ${
-                    checked ? "checked" : ""
-                }`}
-                onClick={onChange}
-                aria-label={`Toggle ${title}`}
-                aria-pressed={checked}
-            >
-                <span />
-            </button>
+            </section>
 
         </div>
     );
