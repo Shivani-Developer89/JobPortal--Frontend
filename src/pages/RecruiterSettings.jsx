@@ -1,63 +1,39 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-import {
-    FaArrowLeft,
-    FaLock,
-    FaEye,
-    FaEyeSlash,
-    FaCheckCircle,
-    FaUser,
-    FaBell,
-    FaBriefcase,
-    FaShieldAlt,
-    FaExclamationTriangle,
-    FaEnvelope,
-    FaUsers,
-    FaClock,
-    FaMapMarkerAlt,
-    FaBuilding,
-    FaTrash,
-    FaPowerOff,
-} from "react-icons/fa";
-
-
-import "../styles/RecruiterSettings.css";
+import { useAuth } from "../context/AuthContext";
 
 import {
     getRecruiterSettings,
     updateRecruiterSettings,
     changePassword,
+    deactivateAccount,
+    requestAccountDeletion
 } from "../services/RecruiterSettingsService";
 
+import "../styles/RecruiterSettings.css";
 
-function RecruiterSettings() {
-
+const RecruiterSettings = () => {
     const navigate = useNavigate();
+    const { logout } = useAuth();
 
-    // =========================================================
-    // SETTINGS STATE
-    // =========================================================
+    // ================================
+    // SETTINGS
+    // ================================
 
     const [settings, setSettings] = useState({
         defaultLocation: "",
         employmentType: "Full Time",
         salaryVisibility: "Disclose",
-        newApplicants: true,
-        emailNotifications: true,
-        jobExpiryReminders: true,
     });
 
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [successMessage, setSuccessMessage] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
 
-    const [message, setMessage] = useState("");
-    const [error, setError] = useState("");
-
-
-    // =========================================================
-    // PASSWORD STATE
-    // =========================================================
+    // ================================
+    // PASSWORD
+    // ================================
 
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
@@ -67,130 +43,118 @@ function RecruiterSettings() {
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    const [changingPassword, setChangingPassword] = useState(false);
     const [passwordMessage, setPasswordMessage] = useState("");
     const [passwordError, setPasswordError] = useState("");
+    const [changingPassword, setChangingPassword] = useState(false);
 
+    // ================================
+    // DEACTIVATION
+    // ================================
 
-    // =========================================================
+    const [showDeactivateModal, setShowDeactivateModal] = useState(false);
+    const [deactivating, setDeactivating] = useState(false);
+
+    // ================================
+// ACCOUNT DELETION
+// ================================
+
+const [showDeleteModal, setShowDeleteModal] = useState(false);
+const [deleting, setDeleting] = useState(false);
+
+    // ================================
     // LOAD SETTINGS
-    // =========================================================
+    // ================================
 
     useEffect(() => {
-
-        const loadSettings = async () => {
-
-            try {
-
-                setLoading(true);
-                setError("");
-
-                const response = await getRecruiterSettings();
-
-                const data = response.data || {};
-
-                setSettings({
-                    defaultLocation: data.defaultLocation || "",
-                    employmentType:
-                        data.employmentType || "Full Time",
-                    salaryVisibility:
-                        data.salaryVisibility || "Disclose",
-                    newApplicants:
-                        data.newApplicants ?? true,
-                    emailNotifications:
-                        data.emailNotifications ?? true,
-                    jobExpiryReminders:
-                        data.jobExpiryReminders ?? true,
-                });
-
-            } catch (err) {
-
-                console.error(
-                    "Failed to load recruiter settings:",
-                    err
-                );
-
-                setError(
-                    err.response?.data?.message ||
-                    "Failed to load settings."
-                );
-
-            } finally {
-
-                setLoading(false);
-
-            }
-        };
-
         loadSettings();
-
     }, []);
 
-
-    // =========================================================
-    // SETTINGS CHANGE
-    // =========================================================
-
-    const handleSettingChange = (field, value) => {
-
-        setSettings((previous) => ({
-            ...previous,
-            [field]: value,
-        }));
-
-        setMessage("");
-        setError("");
-    };
-
-
-    // =========================================================
-    // SAVE SETTINGS
-    // =========================================================
-
-    const handleSavePreferences = async () => {
-
+    const loadSettings = async () => {
         try {
+            setLoading(true);
 
-            setSaving(true);
-            setMessage("");
-            setError("");
+            const response = await getRecruiterSettings();
 
-            await updateRecruiterSettings(settings);
+            if (response?.data) {
+                setSettings({
+                    defaultLocation:
+                        response.data.defaultLocation || "",
 
-            setMessage("Preferences saved successfully.");
+                    employmentType:
+                        response.data.employmentType || "Full Time",
 
-        } catch (err) {
-
+                    salaryVisibility:
+                        response.data.salaryVisibility || "Disclose",
+                });
+            }
+        } catch (error) {
             console.error(
-                "Failed to update recruiter settings:",
-                err
+                "Failed to load recruiter settings:",
+                error
             );
 
-            setError(
-                err.response?.data?.message ||
-                "Failed to save preferences."
+            setErrorMessage(
+                error?.response?.data?.message ||
+                "Failed to load settings."
             );
-
         } finally {
-
-            setSaving(false);
-
+            setLoading(false);
         }
     };
 
+    // ================================
+    // SETTINGS CHANGE
+    // ================================
 
-    // =========================================================
+    const handleSettingChange = (e) => {
+        const { name, value } = e.target;
+
+        setSettings((previous) => ({
+            ...previous,
+            [name]: value,
+        }));
+    };
+
+    // ================================
+    // SAVE SETTINGS
+    // ================================
+
+    const handleSaveSettings = async () => {
+        try {
+            setSaving(true);
+            setSuccessMessage("");
+            setErrorMessage("");
+
+            await updateRecruiterSettings(settings);
+
+            setSuccessMessage(
+                "Preferences saved successfully."
+            );
+        } catch (error) {
+            console.error(
+                "Failed to save settings:",
+                error
+            );
+
+            setErrorMessage(
+                error?.response?.data?.message ||
+                "Failed to save preferences."
+            );
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    // ================================
     // CHANGE PASSWORD
-    // =========================================================
+    // ================================
 
-    const handleChangePassword = async (event) => {
-
-        event.preventDefault();
+    const handleChangePassword = async (e) => {
+        e.preventDefault();
 
         setPasswordMessage("");
         setPasswordError("");
 
-        // Empty fields
         if (
             !currentPassword ||
             !newPassword ||
@@ -199,12 +163,11 @@ function RecruiterSettings() {
             setPasswordError(
                 "Please fill in all password fields."
             );
+
             return;
         }
 
-        // Password match
         if (newPassword !== confirmPassword) {
-
             setPasswordError(
                 "New password and confirm password do not match."
             );
@@ -212,146 +175,224 @@ function RecruiterSettings() {
             return;
         }
 
-        // Basic password validation
         if (newPassword.length < 6) {
-
             setPasswordError(
-                "New password must contain at least 6 characters."
-            );
-
-            return;
-        }
-
-        // Don't allow same password
-        if (currentPassword === newPassword) {
-
-            setPasswordError(
-                "New password must be different from your current password."
+                "New password must be at least 6 characters."
             );
 
             return;
         }
 
         try {
-
             setChangingPassword(true);
 
-            const response = await changePassword(
+            await changePassword(
                 currentPassword,
                 newPassword
             );
 
             setPasswordMessage(
-                response.data ||
                 "Password changed successfully."
             );
 
-            // Clear fields
             setCurrentPassword("");
             setNewPassword("");
             setConfirmPassword("");
 
-        } catch (err) {
-
+        } catch (error) {
             console.error(
-                "Failed to change password:",
-                err
+                "Password change failed:",
+                error
             );
 
             setPasswordError(
-                err.response?.data?.message ||
-                err.response?.data ||
+                error?.response?.data?.message ||
                 "Failed to change password."
             );
-
         } finally {
-
             setChangingPassword(false);
-
         }
     };
 
+    // ================================
+    // DEACTIVATE ACCOUNT
+    // ================================
 
-    // =========================================================
-    // LOGOUT
-    // =========================================================
+    const handleDeactivateAccount = async () => {
 
-    const handleLogout = () => {
+        try {
+            setDeactivating(true);
 
-        localStorage.removeItem("token");
-        localStorage.removeItem("userName");
-        localStorage.removeItem("role");
+            /*
+             * Call backend:
+             *
+             * PUT /user/deactivate
+             */
+            const response = await deactivateAccount();
 
-        navigate("/login");
+            console.log(
+                "Account deactivation response:",
+                response?.data
+            );
+
+            /*
+             * IMPORTANT:
+             *
+             * Clear authentication using AuthContext.
+             *
+             * This changes:
+             *
+             * token -> null
+             * role -> null
+             * name -> null
+             *
+             * Therefore:
+             *
+             * isAuthenticated -> false
+             *
+             * Navbar will automatically render GuestNav.
+             */
+            logout();
+
+            /*
+             * Close confirmation modal.
+             */
+            setShowDeactivateModal(false);
+
+            /*
+             * Redirect to public home page.
+             */
+            navigate("/", {
+                replace: true,
+            });
+
+        } catch (error) {
+
+            console.error(
+                "Account deactivation failed:",
+                error
+            );
+
+            setDeactivating(false);
+
+            setShowDeactivateModal(false);
+
+            setErrorMessage(
+                error?.response?.data?.message ||
+                error?.response?.data ||
+                "Failed to deactivate your account."
+            );
+        }
     };
 
+    // ================================
+    // DELETE ACCOUNT
+    // ================================
 
-    // =========================================================
+  const handleDeleteAccount = async () => {
+    try {
+        setDeleting(true);
+
+        const response = await requestAccountDeletion();
+
+        console.log(
+            "Account deletion response:",
+            response?.data
+        );
+
+        // Clear authentication
+        logout();
+
+        // Close modal
+        setShowDeleteModal(false);
+
+        // Redirect to public home page
+        navigate("/", {
+            replace: true,
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Account deletion request failed:",
+            error
+        );
+
+        setDeleting(false);
+
+        setShowDeleteModal(false);
+
+        setErrorMessage(
+            error?.response?.data?.message ||
+            error?.response?.data ||
+            "Failed to request account deletion."
+        );
+    }
+};
+
+    // ================================
+    // BACK TO DASHBOARD
+    // ================================
+
+    const handleBackToDashboard = () => {
+        navigate("/recruiterDashboard");
+    };
+
+    // ================================
     // LOADING
-    // =========================================================
+    // ================================
 
     if (loading) {
-
         return (
-            <div className="recruiter-settings-page">
-
+            <div className="settings-page">
                 <div className="settings-loading">
                     Loading settings...
                 </div>
-
             </div>
         );
     }
 
-
-    // =========================================================
+    // ================================
     // UI
-    // =========================================================
+    // ================================
 
     return (
+        <div className="settings-page">
 
-        <div className="recruiter-settings-page">
-
-            {/* =================================================
+            {/* ================================
                 HEADER
-            ================================================= */}
+            ================================= */}
 
             <div className="settings-header">
 
                 <div>
-
                     <h1>Settings</h1>
 
                     <p>
                         Manage your recruiter account and preferences.
                     </p>
-
                 </div>
 
                 <button
-                    type="button"
                     className="back-dashboard-btn"
-                    onClick={() =>
-                        navigate("/")
-                    }
+                    onClick={handleBackToDashboard}
                 >
-                    <FaArrowLeft />
-                    <span>Home</span>
+                    ← Back to Dashboard
                 </button>
 
             </div>
 
 
-            {/* =================================================
+            {/* ================================
                 ACCOUNT
-            ================================================= */}
+            ================================= */}
 
             <section className="settings-section">
 
-                <div className="settings-section-title">
+                <div className="section-heading account-heading">
 
-                    <div className="settings-section-icon account-icon">
-                        <FaUser />
+                    <div className="section-icon">
+                        👤
                     </div>
 
                     <div>
@@ -367,62 +408,61 @@ function RecruiterSettings() {
 
                 <div className="settings-card">
 
-                    {/* My Profile */}
+                    <div className="settings-row">
 
-                    <div
-                        className="settings-row clickable-row"
-                        onClick={() =>
-                            navigate("/recruiter/profile")
-                        }
-                    >
-
-                        <div className="settings-row-icon">
-                            <FaUser />
+                        <div className="row-icon">
+                            👤
                         </div>
 
-                        <div className="settings-row-content">
+                        <div className="row-content">
 
-                            <strong>My Profile</strong>
+                            <h3>
+                                My Profile
+                            </h3>
 
-                            <span>
+                            <p>
                                 Update your name, designation,
                                 profile photo and other information.
-                            </span>
+                            </p>
 
                         </div>
 
-                        <div className="settings-row-action">
-                            <span>Open</span>
-                            <FaArrowLeft className="open-arrow" />
-                        </div>
+                        <button
+                            className="row-action"
+                            onClick={() =>
+                                navigate("/recruiter/profile")
+                            }
+                        >
+                            Open →
+                        </button>
 
                     </div>
 
 
-                    <div className="settings-divider" />
+                    <div className="settings-divider"></div>
 
-
-                    {/* Account Information */}
 
                     <div className="settings-row">
 
-                        <div className="settings-row-icon">
-                            <FaEnvelope />
+                        <div className="row-icon">
+                            ✉
                         </div>
 
-                        <div className="settings-row-content">
+                        <div className="row-content">
 
-                            <strong>Account Information</strong>
+                            <h3>
+                                Account Information
+                            </h3>
 
-                            <span>
-                                Name:{" "}
-                                {localStorage.getItem("userName") ||
-                                    "Recruiter"}
-                            </span>
+                            <p>
+                                Name: Recruiter
 
-                            <span>
+                                <span className="row-separator">
+                                    |
+                                </span>
+
                                 Role: RECRUITER
-                            </span>
+                            </p>
 
                         </div>
 
@@ -437,25 +477,29 @@ function RecruiterSettings() {
             </section>
 
 
-            {/* =================================================
+            {/* ================================
                 NOTIFICATIONS
-            ================================================= */}
+            ================================= */}
 
             <section className="settings-section">
 
-                <div className="settings-section-title">
+                <div className="section-heading notification-heading">
 
-                    <div className="settings-section-icon notification-icon">
-                        <FaBell />
+                    <div className="section-icon">
+                        🔔
                     </div>
 
                     <div>
-                        <h2>Notifications</h2>
+
+                        <h2>
+                            Notifications
+                        </h2>
 
                         <p>
                             Choose which recruiter notifications
                             you want to receive.
                         </p>
+
                     </div>
 
                 </div>
@@ -463,164 +507,116 @@ function RecruiterSettings() {
 
                 <div className="settings-card">
 
-                    {/* New Applicants */}
+                    <div className="notification-row">
 
-                    <div className="settings-row">
-
-                        <div className="settings-row-icon">
-                            <FaUsers />
+                        <div className="row-icon">
+                            👥
                         </div>
 
-                        <div className="settings-row-content">
+                        <div className="row-content">
 
-                            <strong>
+                            <h3>
                                 New Applicant Alerts
-                            </strong>
+                            </h3>
 
-                            <span>
+                            <p>
                                 Get notified when a candidate
                                 applies to your job.
-                            </span>
+                            </p>
 
                         </div>
 
-                        <label className="settings-switch">
-
-                            <input
-                                type="checkbox"
-                                checked={settings.newApplicants}
-                                onChange={(e) =>
-                                    handleSettingChange(
-                                        "newApplicants",
-                                        e.target.checked
-                                    )
-                                }
-                            />
-
-                            <span className="settings-slider"></span>
-
-                        </label>
+                        <input
+                            type="checkbox"
+                            defaultChecked
+                        />
 
                     </div>
 
 
-                    <div className="settings-divider" />
+                    <div className="notification-row">
 
-
-                    {/* Email Notifications */}
-
-                    <div className="settings-row">
-
-                        <div className="settings-row-icon">
-                            <FaEnvelope />
+                        <div className="row-icon">
+                            ✉
                         </div>
 
-                        <div className="settings-row-content">
+                        <div className="row-content">
 
-                            <strong>
+                            <h3>
                                 Email Notifications
-                            </strong>
+                            </h3>
 
-                            <span>
+                            <p>
                                 Receive important recruiter
                                 updates through email.
-                            </span>
+                            </p>
 
                         </div>
 
-                        <label className="settings-switch">
-
-                            <input
-                                type="checkbox"
-                                checked={settings.emailNotifications}
-                                onChange={(e) =>
-                                    handleSettingChange(
-                                        "emailNotifications",
-                                        e.target.checked
-                                    )
-                                }
-                            />
-
-                            <span className="settings-slider"></span>
-
-                        </label>
+                        <input type="checkbox" />
 
                     </div>
 
 
-                    <div className="settings-divider" />
+                    <div className="notification-row">
 
-
-                    {/* Job Expiry */}
-
-                    <div className="settings-row">
-
-                        <div className="settings-row-icon">
-                            <FaClock />
+                        <div className="row-icon">
+                            ◷
                         </div>
 
-                        <div className="settings-row-content">
+                        <div className="row-content">
 
-                            <strong>
+                            <h3>
                                 Job Expiry Reminders
-                            </strong>
+                            </h3>
 
-                            <span>
-                                Get reminded when your job
-                                postings are approaching expiry.
-                            </span>
+                            <p>
+                                Get reminded when your job postings
+                                are approaching expiry.
+                            </p>
 
                         </div>
 
-                        <label className="settings-switch">
-
-                            <input
-                                type="checkbox"
-                                checked={settings.jobExpiryReminders}
-                                onChange={(e) =>
-                                    handleSettingChange(
-                                        "jobExpiryReminders",
-                                        e.target.checked
-                                    )
-                                }
-                            />
-
-                            <span className="settings-slider"></span>
-
-                        </label>
+                        <input
+                            type="checkbox"
+                            defaultChecked
+                        />
 
                     </div>
 
 
-                    <div className="settings-note">
+                    <p className="saved-note">
                         Notification preferences are currently
                         saved on this account.
-                    </div>
+                    </p>
 
                 </div>
 
             </section>
 
 
-            {/* =================================================
+            {/* ================================
                 JOB PREFERENCES
-            ================================================= */}
+            ================================= */}
 
             <section className="settings-section">
 
-                <div className="settings-section-title">
+                <div className="section-heading preference-heading">
 
-                    <div className="settings-section-icon job-icon">
-                        <FaBriefcase />
+                    <div className="section-icon">
+                        💼
                     </div>
 
                     <div>
-                        <h2>Job Preferences</h2>
+
+                        <h2>
+                            Job Preferences
+                        </h2>
 
                         <p>
-                            Configure your default job posting
-                            preferences.
+                            Configure your default job posting preferences.
                         </p>
+
                     </div>
 
                 </div>
@@ -628,49 +624,35 @@ function RecruiterSettings() {
 
                 <div className="settings-card preferences-card">
 
-                    <div className="preferences-grid">
+                    <div className="preference-grid">
 
-                        {/* Location */}
-
-                        <div className="settings-field">
+                        <div className="form-group">
 
                             <label>
-                                <FaMapMarkerAlt />
-                                Default Location
+                                📍 Default Location
                             </label>
 
                             <input
                                 type="text"
+                                name="defaultLocation"
                                 value={settings.defaultLocation}
-                                onChange={(e) =>
-                                    handleSettingChange(
-                                        "defaultLocation",
-                                        e.target.value
-                                    )
-                                }
-                                placeholder="e.g. Delhi"
+                                onChange={handleSettingChange}
+                                placeholder="e.g. Mumbai"
                             />
 
                         </div>
 
 
-                        {/* Employment Type */}
-
-                        <div className="settings-field">
+                        <div className="form-group">
 
                             <label>
-                                <FaBuilding />
-                                Employment Type
+                                🏢 Employment Type
                             </label>
 
                             <select
+                                name="employmentType"
                                 value={settings.employmentType}
-                                onChange={(e) =>
-                                    handleSettingChange(
-                                        "employmentType",
-                                        e.target.value
-                                    )
-                                }
+                                onChange={handleSettingChange}
                             >
 
                                 <option value="Full Time">
@@ -689,8 +671,8 @@ function RecruiterSettings() {
                                     Internship
                                 </option>
 
-                                <option value="Temporary">
-                                    Temporary
+                                <option value="Remote">
+                                    Remote
                                 </option>
 
                             </select>
@@ -698,22 +680,16 @@ function RecruiterSettings() {
                         </div>
 
 
-                        {/* Salary Visibility */}
-
-                        <div className="settings-field">
+                        <div className="form-group">
 
                             <label>
                                 Salary Visibility
                             </label>
 
                             <select
+                                name="salaryVisibility"
                                 value={settings.salaryVisibility}
-                                onChange={(e) =>
-                                    handleSettingChange(
-                                        "salaryVisibility",
-                                        e.target.value
-                                    )
-                                }
+                                onChange={handleSettingChange}
                             >
 
                                 <option value="Disclose">
@@ -731,36 +707,30 @@ function RecruiterSettings() {
                     </div>
 
 
-                    <div className="preferences-actions">
+                    {successMessage && (
+                        <div className="success-message">
+                            ✓ {successMessage}
+                        </div>
+                    )}
 
-                        {message && (
 
-                            <span className="settings-success">
-                                <FaCheckCircle />
-                                {message}
-                            </span>
+                    {errorMessage && (
+                        <div className="error-message">
+                            {errorMessage}
+                        </div>
+                    )}
 
-                        )}
 
-                        {error && (
-
-                            <span className="settings-error">
-                                {error}
-                            </span>
-
-                        )}
+                    <div className="preferences-footer">
 
                         <button
-                            type="button"
-                            className="save-preferences-btn"
-                            onClick={handleSavePreferences}
+                            className="primary-btn"
+                            onClick={handleSaveSettings}
                             disabled={saving}
                         >
-
                             {saving
                                 ? "Saving..."
                                 : "Save Preferences"}
-
                         </button>
 
                     </div>
@@ -770,24 +740,28 @@ function RecruiterSettings() {
             </section>
 
 
-            {/* =================================================
+            {/* ================================
                 SECURITY
-            ================================================= */}
+            ================================= */}
 
             <section className="settings-section">
 
-                <div className="settings-section-title">
+                <div className="section-heading security-heading">
 
-                    <div className="settings-section-icon security-icon">
-                        <FaShieldAlt />
+                    <div className="section-icon">
+                        🛡
                     </div>
 
                     <div>
-                        <h2>Security</h2>
+
+                        <h2>
+                            Security
+                        </h2>
 
                         <p>
                             Protect your recruiter account.
                         </p>
+
                     </div>
 
                 </div>
@@ -795,36 +769,31 @@ function RecruiterSettings() {
 
                 <div className="settings-card password-card">
 
-                    <div className="password-header">
+                    <div className="password-title">
 
-                        <div className="settings-row-icon password-icon">
-                            <FaLock />
+                        <div className="row-icon purple-icon">
+                            🔒
                         </div>
 
                         <div>
 
-                            <strong>
+                            <h3>
                                 Change Password
-                            </strong>
+                            </h3>
 
-                            <span>
+                            <p>
                                 Use a strong password that you
                                 don't use elsewhere.
-                            </span>
+                            </p>
 
                         </div>
 
                     </div>
 
 
-                    <div className="settings-divider" />
-
-
                     <form onSubmit={handleChangePassword}>
 
-                        {/* Current Password */}
-
-                        <div className="settings-field password-field">
+                        <div className="password-field">
 
                             <label>
                                 Current Password
@@ -849,23 +818,16 @@ function RecruiterSettings() {
 
                                 <button
                                     type="button"
-                                    className="password-eye-btn"
+                                    className="password-toggle"
                                     onClick={() =>
                                         setShowCurrentPassword(
                                             !showCurrentPassword
                                         )
                                     }
-                                    aria-label={
-                                        showCurrentPassword
-                                            ? "Hide password"
-                                            : "Show password"
-                                    }
                                 >
-
                                     {showCurrentPassword
-                                        ? <FaEyeSlash />
-                                        : <FaEye />}
-
+                                        ? "🙈"
+                                        : "👁"}
                                 </button>
 
                             </div>
@@ -873,9 +835,7 @@ function RecruiterSettings() {
                         </div>
 
 
-                        {/* New Password */}
-
-                        <div className="settings-field password-field">
+                        <div className="password-field">
 
                             <label>
                                 New Password
@@ -900,23 +860,16 @@ function RecruiterSettings() {
 
                                 <button
                                     type="button"
-                                    className="password-eye-btn"
+                                    className="password-toggle"
                                     onClick={() =>
                                         setShowNewPassword(
                                             !showNewPassword
                                         )
                                     }
-                                    aria-label={
-                                        showNewPassword
-                                            ? "Hide password"
-                                            : "Show password"
-                                    }
                                 >
-
                                     {showNewPassword
-                                        ? <FaEyeSlash />
-                                        : <FaEye />}
-
+                                        ? "🙈"
+                                        : "👁"}
                                 </button>
 
                             </div>
@@ -924,9 +877,7 @@ function RecruiterSettings() {
                         </div>
 
 
-                        {/* Confirm Password */}
-
-                        <div className="settings-field password-field">
+                        <div className="password-field">
 
                             <label>
                                 Confirm New Password
@@ -951,23 +902,16 @@ function RecruiterSettings() {
 
                                 <button
                                     type="button"
-                                    className="password-eye-btn"
+                                    className="password-toggle"
                                     onClick={() =>
                                         setShowConfirmPassword(
                                             !showConfirmPassword
                                         )
                                     }
-                                    aria-label={
-                                        showConfirmPassword
-                                            ? "Hide password"
-                                            : "Show password"
-                                    }
                                 >
-
                                     {showConfirmPassword
-                                        ? <FaEyeSlash />
-                                        : <FaEye />}
-
+                                        ? "🙈"
+                                        : "👁"}
                                 </button>
 
                             </div>
@@ -975,26 +919,17 @@ function RecruiterSettings() {
                         </div>
 
 
-                        {/* Password Error */}
-
-                        {passwordError && (
-
-                            <div className="password-error">
-                                {passwordError}
+                        {passwordMessage && (
+                            <div className="success-message">
+                                ✓ {passwordMessage}
                             </div>
-
                         )}
 
 
-                        {/* Password Success */}
-
-                        {passwordMessage && (
-
-                            <div className="password-success">
-                                <FaCheckCircle />
-                                {passwordMessage}
+                        {passwordError && (
+                            <div className="error-message">
+                                {passwordError}
                             </div>
-
                         )}
 
 
@@ -1003,13 +938,10 @@ function RecruiterSettings() {
                             className="change-password-btn"
                             disabled={changingPassword}
                         >
-
-                            <FaLock />
-
+                            🔒{" "}
                             {changingPassword
-                                ? "Changing Password..."
+                                ? "Changing..."
                                 : "Change Password"}
-
                         </button>
 
                     </form>
@@ -1019,121 +951,240 @@ function RecruiterSettings() {
             </section>
 
 
-            {/* =================================================
+            {/* ================================
                 DANGER ZONE
-            ================================================= */}
+            ================================= */}
 
             <section className="settings-section danger-section">
 
-                <div className="settings-section-title">
+                <div className="section-heading danger-heading">
 
-                    <div className="settings-section-icon danger-icon">
-                        <FaExclamationTriangle />
+                    <div className="section-icon">
+                        ⚠
                     </div>
 
                     <div>
-                        <h2>Danger Zone</h2>
+
+                        <h2>
+                            Danger Zone
+                        </h2>
 
                         <p>
                             Actions that can affect your account.
                         </p>
+
                     </div>
 
                 </div>
 
 
-                <div className="settings-card danger-card">
+                <div className="danger-card">
 
-                    {/* Deactivate */}
+                    {/* DEACTIVATE */}
 
                     <div className="danger-row">
 
-                        <div>
+                        <div className="danger-content">
 
-                            <strong>
+                            <h3>
                                 Deactivate Account
-                            </strong>
+                            </h3>
 
-                            <span>
+                            <p>
                                 Temporarily disable your recruiter
-                                account.
-                            </span>
+                                account. You can activate it again
+                                simply by logging in.
+                            </p>
 
                         </div>
 
+
                         <button
-                            type="button"
                             className="deactivate-btn"
                             onClick={() =>
-                                alert(
-                                    "Account deactivation is not connected yet."
-                                )
+                                setShowDeactivateModal(true)
                             }
                         >
-
-                            <FaPowerOff />
-
-                            Deactivate
-
+                            ⏻ Deactivate
                         </button>
 
                     </div>
 
 
-                    <div className="settings-divider" />
+                    <div className="danger-divider"></div>
 
 
-                    {/* Delete */}
+                    {/* DELETE */}
 
                     <div className="danger-row">
 
-                        <div>
+                        <div className="danger-content">
 
-                            <strong>
+                            <h3>
                                 Delete Account
-                            </strong>
+                            </h3>
 
-                            <span>
+                            <p>
                                 Permanently delete your recruiter
                                 account and associated data.
-                            </span>
+                            </p>
 
                         </div>
 
-                        <button
-                            type="button"
-                            className="delete-account-btn"
-                            onClick={() =>
-                                alert(
-                                    "Account deletion is not connected yet because the backend does not currently have a dedicated delete-account endpoint."
-                                )
-                            }
-                        >
 
-                            <FaTrash />
-
-                            Delete Account
-
-                        </button>
+                    <button
+    className="delete-btn"
+    onClick={() => setShowDeleteModal(true)}
+>
+    🗑 Delete Account
+</button>
 
                     </div>
 
 
-                    <div className="danger-note">
+                   <div className="delete-warning">
 
-                        Account deletion is intentionally not
-                        connected yet because the backend does not
-                        currently have a dedicated delete-account
-                        endpoint.
+    Account deletion starts a 30-day grace period.
+    You can recover your account by logging in during
+    this period. After 30 days, the account will be
+    permanently deleted.
 
-                    </div>
+</div>
 
                 </div>
 
             </section>
 
+
+            {/* ================================
+                DEACTIVATION CONFIRMATION MODAL
+            ================================= */}
+
+            {showDeactivateModal && (
+
+                <div className="modal-overlay">
+
+                    <div className="confirmation-modal">
+
+                        <div className="modal-icon">
+                            ⚠
+                        </div>
+
+
+                        <h2>
+                            Deactivate Account?
+                        </h2>
+
+
+                        <p>
+                            Your recruiter account will be
+                            deactivated immediately.
+                        </p>
+
+
+                        <p>
+                            You will be logged out and won't be able
+                            to use your account until you log in again.
+                        </p>
+
+
+                        <div className="modal-actions">
+
+                            <button
+                                className="modal-cancel-btn"
+                                onClick={() =>
+                                    setShowDeactivateModal(false)
+                                }
+                                disabled={deactivating}
+                            >
+                                Cancel
+                            </button>
+
+
+                            <button
+                                className="modal-confirm-btn"
+                                onClick={handleDeactivateAccount}
+                                disabled={deactivating}
+                            >
+                                {deactivating
+                                    ? "Deactivating..."
+                                    : "Yes, Deactivate"}
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            )}
+
+            {/* ================================
+            DELETE ACCOUNT CONFIRMATION MODAL
+            ================================= */}
+
+{showDeleteModal && (
+
+    <div className="modal-overlay">
+
+        <div className="confirmation-modal delete-confirmation-modal">
+
+            <div className="modal-icon delete-modal-icon">
+                ⚠
+            </div>
+
+            <h2>
+                Delete Account?
+            </h2>
+
+            <p>
+                Your account will be scheduled for permanent deletion.
+            </p>
+
+            <p>
+                You will have <strong>30 days</strong> to recover
+                your account by logging in.
+            </p>
+
+            <p className="delete-modal-warning">
+                After the 30-day grace period, your account and
+                associated data will be permanently deleted.
+                This action cannot be undone.
+            </p>
+
+            <div className="modal-actions">
+
+                <button
+                    className="modal-cancel-btn"
+                    onClick={() =>
+                        setShowDeleteModal(false)
+                    }
+                    disabled={deleting}
+                >
+                    Cancel
+                </button>
+
+                <button
+                    className="modal-delete-btn"
+                    onClick={handleDeleteAccount}
+                    disabled={deleting}
+                >
+                    {deleting
+                        ? "Processing..."
+                        : "Yes, Delete Account"}
+                </button>
+
+            </div>
+
         </div>
+
+    </div>
+
+)}
+
+        </div>
+        
     );
-}
+};
 
 export default RecruiterSettings;

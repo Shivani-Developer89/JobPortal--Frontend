@@ -76,3 +76,47 @@ export const changePassword = async (currentPassword, newPassword) => {
 
     return response;
 };
+/*
+ * ================================
+ * DEACTIVATE ACCOUNT
+ * ================================
+ */
+
+/**
+ * Deactivate logged-in user's account
+ *
+ * PUT /user/deactivate
+ */
+export const deactivateAccount = async () => {
+    const response = await axios.put(
+        `${API_URL}/user/deactivate`,
+        {},
+        getAuthConfig()
+    );
+
+    return response;
+};
+
+/*
+ * ================================
+ * DELETE ACCOUNT
+ * ================================
+ */
+
+/**
+ * Request account deletion
+ *
+ * DELETE /user/account
+ *
+ * Account will remain recoverable for 30 days.
+ * Logging in during the grace period cancels
+ * the deletion request.
+ */
+export const requestAccountDeletion = async () => {
+    const response = await axios.delete(
+        `${API_URL}/user/account`,
+        getAuthConfig()
+    );
+
+    return response;
+};
