@@ -1,0 +1,1189 @@
+/* =========================================================
+   CANDIDATE SETTINGS PAGE
+   ========================================================= */
+
+.candidate-settings-page {
+    min-height: 100vh;
+    background: #f5f7fb;
+    padding: 40px 20px 70px;
+}
+
+
+/* =========================================================
+   MAIN CONTAINER
+   ========================================================= */
+
+.candidate-settings-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.candidate-settings-header {
+    margin-bottom: 30px;
+}
+
+.candidate-settings-header h1 {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.candidate-settings-header p {
+    margin: 8px 0 0;
+    color: #6b7280;
+    font-size: 15px;
+}
+
+
+/* =========================================================
+   LOADING
+   ========================================================= */
+
+.candidate-settings-loading {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 17px;
+    font-weight: 500;
+    color: #6b7280;
+}
+
+
+/* =========================================================
+   SUCCESS / ERROR MESSAGES
+   ========================================================= */
+
+.settings-success-message,
+.settings-error-message {
+    width: 100%;
+    padding: 13px 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.settings-success-message {
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    color: #047857;
+}
+
+.settings-error-message {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #dc2626;
+}
+
+
+/* =========================================================
+   SETTINGS SECTION
+   ========================================================= */
+
+.settings-section {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 24px;
+
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+
+/* =========================================================
+   SECTION HEADER
+   ========================================================= */
+
+.settings-section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+
+    margin-bottom: 26px;
+}
+
+.settings-section-icon {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: #eef2ff;
+    color: #4f46e5;
+
+    font-size: 18px;
+}
+
+.settings-section-header h2 {
+    margin: 0;
+
+    font-size: 20px;
+    font-weight: 650;
+
+    color: #1f2937;
+}
+
+.settings-section-header p {
+    margin: 5px 0 0;
+
+    font-size: 14px;
+    line-height: 1.5;
+
+    color: #6b7280;
+}
+
+
+/* =========================================================
+   SETTINGS FORM
+   ========================================================= */
+
+.settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+
+/* =========================================================
+   FORM GROUP
+   ========================================================= */
+
+.settings-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.settings-form-group label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    color: #374151;
+}
+
+.settings-form-group input,
+.settings-form-group select {
+    width: 100%;
+    box-sizing: border-box;
+
+    min-height: 45px;
+
+    padding: 10px 13px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #1f2937;
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.settings-form-group input::placeholder {
+    color: #9ca3af;
+}
+
+.settings-form-group input:focus,
+.settings-form-group select:focus {
+    border-color: #6366f1;
+
+    box-shadow:
+        0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+
+/* =========================================================
+   SELECT
+   ========================================================= */
+
+.settings-form-group select {
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   SAVE BUTTON
+   ========================================================= */
+
+.settings-save-btn {
+    align-self: flex-start;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    min-height: 43px;
+
+    padding: 10px 18px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: #4f46e5;
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.15s ease,
+        box-shadow 0.2s ease;
+}
+
+.settings-save-btn:hover:not(:disabled) {
+    background: #4338ca;
+
+    box-shadow:
+        0 4px 10px rgba(79, 70, 229, 0.20);
+
+    transform: translateY(-1px);
+}
+
+.settings-save-btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.settings-save-btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   JOB PREFERENCE ROW
+   ========================================================= */
+
+.settings-preference-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 25px;
+
+    padding: 18px 0;
+
+    border-bottom: 1px solid #eef0f3;
+}
+
+.settings-preference-row:first-child {
+    padding-top: 0;
+}
+
+.settings-preference-row:last-of-type {
+    margin-bottom: 4px;
+}
+
+
+/* =========================================================
+   PREFERENCE INFORMATION
+   ========================================================= */
+
+.settings-preference-info {
+    flex: 1;
+}
+
+.settings-preference-info h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    margin: 0 0 5px;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    color: #374151;
+}
+
+.settings-preference-info h3 svg {
+    color: #6366f1;
+    font-size: 14px;
+}
+
+.settings-preference-info p {
+    margin: 0;
+
+    max-width: 650px;
+
+    font-size: 13px;
+    line-height: 1.5;
+
+    color: #6b7280;
+}
+
+
+/* =========================================================
+   TOGGLE SWITCH
+   ========================================================= */
+
+.settings-switch {
+    position: relative;
+
+    display: inline-block;
+
+    width: 48px;
+    height: 26px;
+
+    flex-shrink: 0;
+
+    cursor: pointer;
+}
+
+.settings-switch input {
+    position: absolute;
+
+    width: 0;
+    height: 0;
+
+    opacity: 0;
+}
+
+.settings-slider {
+    position: absolute;
+
+    inset: 0;
+
+    background: #d1d5db;
+
+    border-radius: 30px;
+
+    transition: 0.25s ease;
+}
+
+.settings-slider::before {
+    content: "";
+
+    position: absolute;
+
+    width: 20px;
+    height: 20px;
+
+    left: 3px;
+    top: 3px;
+
+    background: #ffffff;
+
+    border-radius: 50%;
+
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+
+    transition: 0.25s ease;
+}
+
+.settings-switch input:checked + .settings-slider {
+    background: #4f46e5;
+}
+
+.settings-switch input:checked + .settings-slider::before {
+    transform: translateX(22px);
+}
+
+.settings-switch input:focus-visible + .settings-slider {
+    box-shadow:
+        0 0 0 3px rgba(99, 102, 241, 0.18);
+}
+
+
+/* =========================================================
+   DANGER ZONE
+   ========================================================= */
+
+.danger-zone {
+    border-color: #fecaca;
+}
+
+.danger-zone .settings-section-header {
+    margin-bottom: 10px;
+}
+
+.danger-icon {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+
+/* =========================================================
+   DANGER ACTION
+   ========================================================= */
+
+.danger-action {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 25px;
+
+    padding: 22px 0;
+
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.danger-action:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.danger-action-info {
+    flex: 1;
+}
+
+.danger-action-info h3 {
+    margin: 0 0 6px;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    color: #374151;
+}
+
+.danger-action-info p {
+    margin: 0;
+
+    max-width: 620px;
+
+    font-size: 13px;
+    line-height: 1.55;
+
+    color: #6b7280;
+}
+
+
+/* =========================================================
+   DEACTIVATE BUTTON
+   ========================================================= */
+
+.deactivate-btn,
+.delete-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    min-height: 40px;
+
+    padding: 9px 15px;
+
+    border-radius: 7px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.deactivate-btn {
+    border: 1px solid #f59e0b;
+
+    background: #fffbeb;
+
+    color: #b45309;
+}
+
+.deactivate-btn:hover {
+    background: #fef3c7;
+}
+
+
+/* =========================================================
+   DELETE BUTTON
+   ========================================================= */
+
+.delete-btn {
+    border: 1px solid #ef4444;
+
+    background: #fef2f2;
+
+    color: #dc2626;
+}
+
+.delete-btn:hover {
+    background: #fee2e2;
+}
+
+
+/* =========================================================
+   MODAL OVERLAY
+   ========================================================= */
+
+.modal-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(15, 23, 42, 0.55);
+
+    backdrop-filter: blur(3px);
+}
+
+
+/* =========================================================
+   CONFIRMATION MODAL
+   ========================================================= */
+
+.confirmation-modal {
+    width: 100%;
+    max-width: 460px;
+
+    padding: 30px;
+
+    background: #ffffff;
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 20px 50px rgba(15, 23, 42, 0.22);
+
+    text-align: center;
+
+    animation: settingsModalAppear 0.2s ease-out;
+}
+
+@keyframes settingsModalAppear {
+
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+
+/* =========================================================
+   MODAL ICON
+   ========================================================= */
+
+.modal-icon {
+    width: 54px;
+    height: 54px;
+
+    margin: 0 auto 17px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    font-size: 21px;
+}
+
+.deactivate-modal-icon {
+    background: #fffbeb;
+    color: #d97706;
+}
+
+.delete-modal-icon {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+
+/* =========================================================
+   MODAL TEXT
+   ========================================================= */
+
+.confirmation-modal h2 {
+    margin: 0 0 12px;
+
+    font-size: 21px;
+    font-weight: 700;
+
+    color: #1f2937;
+}
+
+.confirmation-modal > p {
+    margin: 7px 0;
+
+    font-size: 14px;
+    line-height: 1.55;
+
+    color: #6b7280;
+}
+
+
+/* =========================================================
+   DELETE WARNING
+   ========================================================= */
+
+.delete-modal-warning {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 10px;
+
+    margin: 20px 0;
+
+    padding: 14px;
+
+    border: 1px solid #fed7aa;
+
+    border-radius: 8px;
+
+    background: #fff7ed;
+
+    color: #9a3412;
+
+    text-align: left;
+
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+.delete-modal-warning svg {
+    flex-shrink: 0;
+
+    margin-top: 2px;
+}
+
+
+/* =========================================================
+   MODAL ACTIONS
+   ========================================================= */
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+
+    gap: 12px;
+
+    margin-top: 25px;
+}
+
+.modal-cancel-btn,
+.modal-deactivate-btn,
+.modal-delete-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    min-height: 41px;
+
+    padding: 9px 16px;
+
+    border-radius: 7px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+/* =========================================================
+   CANCEL
+   ========================================================= */
+
+.modal-cancel-btn {
+    border: 1px solid #d1d5db;
+
+    background: #ffffff;
+
+    color: #4b5563;
+}
+
+.modal-cancel-btn:hover {
+    background: #f9fafb;
+}
+
+
+/* =========================================================
+   DEACTIVATE MODAL BUTTON
+   ========================================================= */
+
+.modal-deactivate-btn {
+    border: 1px solid #d97706;
+
+    background: #d97706;
+
+    color: #ffffff;
+}
+
+.modal-deactivate-btn:hover {
+    background: #b45309;
+}
+
+
+/* =========================================================
+   DELETE MODAL BUTTON
+   ========================================================= */
+
+.modal-delete-btn {
+    border: 1px solid #dc2626;
+
+    background: #dc2626;
+
+    color: #ffffff;
+}
+
+.modal-delete-btn:hover {
+    background: #b91c1c;
+}
+
+
+/* =========================================================
+   RESPONSIVE - TABLET
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .candidate-settings-page {
+        padding: 30px 16px 50px;
+    }
+
+    .candidate-settings-header h1 {
+        font-size: 28px;
+    }
+
+    .settings-section {
+        padding: 22px;
+    }
+
+    .settings-preference-row {
+        gap: 15px;
+    }
+
+    .danger-action {
+        align-items: flex-start;
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE - MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .candidate-settings-page {
+        padding: 20px 12px 40px;
+    }
+
+    .candidate-settings-header {
+        margin-bottom: 22px;
+    }
+
+    .candidate-settings-header h1 {
+        font-size: 25px;
+    }
+
+    .candidate-settings-header p {
+        font-size: 13px;
+    }
+
+    .settings-section {
+        padding: 18px;
+        border-radius: 10px;
+        margin-bottom: 18px;
+    }
+
+    .settings-section-header {
+        gap: 11px;
+        margin-bottom: 21px;
+    }
+
+    .settings-section-icon {
+        width: 39px;
+        height: 39px;
+        min-width: 39px;
+        font-size: 16px;
+    }
+
+    .settings-section-header h2 {
+        font-size: 17px;
+    }
+
+    .settings-section-header p {
+        font-size: 12px;
+    }
+
+    .settings-form-group input,
+    .settings-form-group select {
+        min-height: 43px;
+        font-size: 13px;
+    }
+
+    .settings-save-btn {
+        width: 100%;
+    }
+
+
+    /* Preference rows */
+
+    .settings-preference-row {
+        align-items: center;
+        padding: 16px 0;
+    }
+
+    .settings-preference-info h3 {
+        font-size: 14px;
+    }
+
+    .settings-preference-info p {
+        font-size: 12px;
+    }
+
+
+    /* Danger actions */
+
+    .danger-action {
+        flex-direction: column;
+        align-items: stretch;
+
+        gap: 15px;
+
+        padding: 19px 0;
+    }
+
+    .deactivate-btn,
+    .delete-btn {
+        width: 100%;
+    }
+
+
+    /* Modal */
+
+    .modal-overlay {
+        padding: 14px;
+    }
+
+    .confirmation-modal {
+        padding: 24px 19px;
+    }
+
+    .confirmation-modal h2 {
+        font-size: 19px;
+    }
+
+    .modal-actions {
+        flex-direction: column-reverse;
+    }
+
+    .modal-cancel-btn,
+    .modal-deactivate-btn,
+    .modal-delete-btn {
+        width: 100%;
+    }
+}
+
+
+/* =========================================================
+   VERY SMALL SCREENS
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+    .candidate-settings-page {
+        padding-left: 9px;
+        padding-right: 9px;
+    }
+
+    .settings-section {
+        padding: 15px;
+    }
+
+    .settings-preference-row {
+        gap: 10px;
+    }
+
+    .settings-preference-info h3 {
+        font-size: 13px;
+    }
+
+    .settings-preference-info p {
+        font-size: 11px;
+    }
+
+    .settings-switch {
+        width: 44px;
+        height: 24px;
+    }
+
+    .settings-slider::before {
+        width: 18px;
+        height: 18px;
+    }
+
+    .settings-switch input:checked + .settings-slider::before {
+        transform: translateX(20px);
+    }
+}
+/* =========================================================
+   JOB PREFERENCES
+   ========================================================= */
+
+.settings-preference-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+
+    padding: 18px 0;
+
+    border-bottom: 1px solid #eef0f3;
+}
+
+.settings-preference-row:last-of-type {
+    border-bottom: none;
+}
+
+
+/* =========================================================
+   PREFERENCE TEXT
+   ========================================================= */
+
+.settings-preference-info {
+    flex: 1;
+}
+
+.settings-preference-info h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    margin: 0 0 5px;
+
+    font-size: 15px !important;
+    line-height: 1.4;
+
+    font-weight: 600;
+
+    color: #374151;
+}
+
+.settings-preference-info h3 svg {
+    font-size: 14px;
+    color: #6366f1;
+}
+
+.settings-preference-info p {
+    margin: 0;
+
+    font-size: 13px !important;
+    line-height: 1.5;
+
+    color: #6b7280;
+}
+
+
+/* =========================================================
+   TOGGLE SWITCH
+   ========================================================= */
+
+.settings-switch {
+    position: relative;
+
+    display: inline-block;
+
+    width: 48px;
+    height: 26px;
+
+    min-width: 48px;
+
+    cursor: pointer;
+}
+
+.settings-switch input {
+    position: absolute;
+
+    width: 0;
+    height: 0;
+
+    opacity: 0;
+}
+
+.settings-slider {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    background: #d1d5db;
+
+    border-radius: 30px;
+
+    transition: 0.25s ease;
+}
+
+.settings-slider::before {
+    content: "";
+
+    position: absolute;
+
+    width: 20px;
+    height: 20px;
+
+    left: 3px;
+    top: 3px;
+
+    background: #ffffff;
+
+    border-radius: 50%;
+
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+
+    transition: 0.25s ease;
+}
+
+.settings-switch input:checked + .settings-slider {
+    background: #4f46e5;
+}
+
+.settings-switch input:checked + .settings-slider::before {
+    transform: translateX(22px);
+}
+
+
+/* =========================================================
+   PREFERENCE FORM GROUP
+   ========================================================= */
+
+.settings-form-group {
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+.settings-form-group label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    color: #374151;
+}
+
+.settings-form-group label svg {
+    color: #4f46e5;
+}
+
+
+/* =========================================================
+   INPUT / SELECT
+   ========================================================= */
+
+.settings-form-group input,
+.settings-form-group select {
+    width: 100%;
+    box-sizing: border-box;
+
+    min-height: 45px;
+
+    padding: 10px 13px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #1f2937;
+
+    font-size: 14px;
+
+    outline: none;
+}
+
+.settings-form-group input:focus,
+.settings-form-group select:focus {
+    border-color: #6366f1;
+
+    box-shadow:
+        0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .settings-preference-row {
+        gap: 15px;
+    }
+
+    .settings-preference-info h3 {
+        font-size: 14px !important;
+    }
+
+    .settings-preference-info p {
+        font-size: 12px !important;
+    }
+
+    .settings-switch {
+        width: 44px;
+        min-width: 44px;
+        height: 24px;
+    }
+
+    .settings-slider::before {
+        width: 18px;
+        height: 18px;
+    }
+
+    .settings-switch input:checked + .settings-slider::before {
+        transform: translateX(20px);
+    }
+}

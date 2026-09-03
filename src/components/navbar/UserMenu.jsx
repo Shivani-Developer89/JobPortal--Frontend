@@ -14,7 +14,7 @@ import {
 } from "react-icons/fa";
 
 import { useAuth } from "../../context/AuthContext";
-import { getMyProfile } from "../../services/candidateProfileService";
+import { getMyProfile } from "../../services/CandidateProfileService";
 
 
 function UserMenu() {
@@ -329,19 +329,17 @@ function UserMenu() {
                             SETTINGS
                         ============================= */}
 
-                        <Link
-                            to="/settings"
-                            onClick={() =>
-                                setOpen(false)
-                            }
-                        >
-
-                            <FaCog />
-
-                            Settings
-
-                        </Link>
-
+                      <Link
+    to={
+        role === "CANDIDATE"
+            ? "/candidate/settings"
+            : "/recruiter/settings"
+    }
+    onClick={() => setOpen(false)}
+>
+    <FaCog />
+    Settings
+</Link>
 
                         <hr />
 
