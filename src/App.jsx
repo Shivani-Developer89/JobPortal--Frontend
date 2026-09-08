@@ -15,6 +15,8 @@ import CreateJob from "./pages/CreateJob";
 import EditJob from "./pages/EditJob";
 import RecruiterProfile from "./pages/RecruiterProfile";
 import RecruiterSettings from "./pages/RecruiterSettings";
+import CandidateSettings from "./pages/CandidateSettings";
+import SavedJobs from "./pages/SavedJobs";
 
 function App() {
   return (
@@ -28,12 +30,14 @@ function App() {
         <Route path="/resume/upload"element={<UploadResume />}/>
       <Route path="/applications"element={<MyApplications />}/>
       <Route path="/candidateDashboard"element={<CandidateDashboard />}/>
+      <Route path="/saved-jobs" element={<SavedJobs />}/>
       <Route path="/recruiterDashboard"element={<RecruiterDashboard />}/>
       <Route path="/recruiter/jobs" element={<RecruiterJobs />} />
       <Route path="/recruiter/create-job" element={<CreateJob />} />
     <Route path="/recruiter/jobs/edit/:id" element={<EditJob />}/>
       <Route path="/recruiter/jobs/:jobId/applicants"element={<ViewApplicants />}/>
       <Route path="/candidate/profile"element={<CandidateProfile />}/>
+      <Route path="/candidate/settings" element={<CandidateSettings />}/>
       <Route path="/recruiter/profile" element={<RecruiterProfile />}/>
 <Route path="/recruiter/settings" element={<RecruiterSettings />} />
       </Routes>

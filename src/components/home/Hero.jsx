@@ -2,9 +2,11 @@ import "../../styles/hero.css";
 import HeroImage from "../../assets/images/hero.svg";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useState } from "react";
 
 const Hero = () => {
-
+  
+  const [keyword, setKeyword] = useState("");
   const navigate = useNavigate();
 
   const { role } = useAuth();
@@ -17,6 +19,19 @@ const Hero = () => {
     navigate("/post-job");
   };
 
+  const handleSearch = () => {
+
+    const value = keyword.trim();
+
+    if (!value) {
+        navigate("/jobs");
+        return;
+    }
+
+    navigate(
+        `/jobs?keyword=${encodeURIComponent(value)}`
+    );
+};
   return (
     <section className="hero-section">
 
@@ -51,11 +66,12 @@ const Hero = () => {
               <div className="col-md-5">
 
                 <input
-                  type="text"
-                  className="form-control form-control-lg"
-                  placeholder="Job title"
-                />
-
+    type="text"
+    className="form-control form-control-lg"
+    placeholder="Job title"
+    value={keyword}
+    onChange={(e) => setKeyword(e.target.value)}
+/>
               </div>
 
 
@@ -75,6 +91,8 @@ const Hero = () => {
                 <button
                   type="button"
                   className="btn btn-primary btn-lg w-100"
+                  onClick={handleSearch}
+
                 >
                   Search
                 </button>

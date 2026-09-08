@@ -47,3 +47,23 @@ export const closeJob = (jobId) => {
 export const reopenJob = (jobId) => {
     return api.put(`/job/${jobId}/reopen`);
 };
+
+
+export const saveJob = (jobId) => {
+    return api.post(`/job/${jobId}/save`);
+};
+
+export const unsaveJob = (jobId) => {
+    return api.delete(`/job/${jobId}/unsave`);
+};
+
+export const getSavedJobs = () => {
+    return api.get("/job/saved");
+};
+  
+
+export const searchJobs = (keyword) => {
+    return api.get(
+        `/job/search?keyword=${encodeURIComponent(keyword)}`
+    );
+};

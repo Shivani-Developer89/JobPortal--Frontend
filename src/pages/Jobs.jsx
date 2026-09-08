@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import { getAllJobs } from "../services/jobService";
+import {
+    getAllJobs,
+    searchJobs
+} from "../services/jobService";
 
 import JobList from "../components/jobs/JobList";
 import JobDetailsPanel from "../components/jobs/JobDetailsPanel";
@@ -17,30 +20,73 @@ useEffect(() => {
     loadJobs();
 }, [searchParams]);
 
-  const loadJobs = async () => {
-    const response = await getAllJobs();
+const loadJobs = async () => {
+
+    const keyword = searchParams.get("keyword");
+
+    let response;
+
+    if (keyword && keyword.trim()) {
+
+        response = await searchJobs(keyword);
+
+        const searchedJobs = response.data;
+
+        setJobs(searchedJobs);
+
+        const selectedId =
+            Number(searchParams.get("selected"));
+
+        if (selectedId) {
+
+            const selected = searchedJobs.find(
+                job => job.id === selectedId
+            );
+
+            if (selected) {
+                setSelectedJob(selected);
+                return;
+            }
+        }
+
+        if (searchedJobs.length > 0) {
+            setSelectedJob(searchedJobs[0]);
+        } else {
+            setSelectedJob(null);
+        }
+
+        return;
+    }
+
+    // Normal Jobs page
+
+    response = await getAllJobs();
+
     const allJobs = response.data.content;
 
     setJobs(allJobs);
 
-const selectedId = Number(searchParams.get("selected"));
+    const selectedId =
+        Number(searchParams.get("selected"));
 
-if (selectedId) {
+    if (selectedId) {
 
-    const selected = allJobs.find(
-        job => job.id === selectedId
-    );
+        const selected = allJobs.find(
+            job => job.id === selectedId
+        );
 
-    if (selected) {
-        setSelectedJob(selected);
-        return;
+        if (selected) {
+            setSelectedJob(selected);
+            return;
+        }
     }
-}
 
-if (allJobs.length > 0) {
-    setSelectedJob(allJobs[0]);
-}
-  };
+    if (allJobs.length > 0) {
+        setSelectedJob(allJobs[0]);
+    } else {
+        setSelectedJob(null);
+    }
+};
 
   return (
     <>
