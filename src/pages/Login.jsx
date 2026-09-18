@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../services/AuthService";
 import { toast } from "react-toastify";
 import { useAuth } from "../context/AuthContext";
+
 function Login() {
   const[email,setEmail] =useState("");
   const[password,setPassword]= useState("");
@@ -86,6 +87,11 @@ console.log("Saved role:", localStorage.getItem("role"));
                    onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
+              <div className="forgot-password-link">
+    <Link to="/forgot-password">
+        Forgot Password?
+    </Link>
+</div>
 
               <button className="btn btn-primary w-100">
                 Login

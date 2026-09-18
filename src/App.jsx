@@ -17,6 +17,8 @@ import RecruiterProfile from "./pages/RecruiterProfile";
 import RecruiterSettings from "./pages/RecruiterSettings";
 import CandidateSettings from "./pages/CandidateSettings";
 import SavedJobs from "./pages/SavedJobs";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Signup />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />}/>
         <Route path="/jobs" element={<Jobs />} />
         <Route   path="/jobs/:id" element={<JobDetails />}/>
         <Route path="/resume/upload"element={<UploadResume />}/>
@@ -39,7 +43,7 @@ function App() {
       <Route path="/candidate/profile"element={<CandidateProfile />}/>
       <Route path="/candidate/settings" element={<CandidateSettings />}/>
       <Route path="/recruiter/profile" element={<RecruiterProfile />}/>
-<Route path="/recruiter/settings" element={<RecruiterSettings />} />
+      <Route path="/recruiter/settings" element={<RecruiterSettings />} />
       </Routes>
     </BrowserRouter>
   );
