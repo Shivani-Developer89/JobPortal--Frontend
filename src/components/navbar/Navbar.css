@@ -543,17 +543,17 @@
 
     font-size:18px;
 
-    color:#475569;
+    color:#0869f1;
 }
 
 .notification-btn:hover{
 
-    background:#2563eb;
+    background:#10eebe;
 }
 
 .notification-btn:hover svg{
 
-    color:white;
+    color:yellow;
 }
 
 /* =========================

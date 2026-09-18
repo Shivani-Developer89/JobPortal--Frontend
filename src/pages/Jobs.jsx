@@ -1,126 +1,221 @@
 import { useEffect, useState } from "react";
+
 import {
     getAllJobs,
     searchJobs
-} from "../services/jobService";
+} from "../services/JobService";
 
 import JobList from "../components/jobs/JobList";
 import JobDetailsPanel from "../components/jobs/JobDetailsPanel";
 
 import "../styles/Jobs.css";
-import { useSearchParams } from "react-router-dom";
-import { Link } from "react-router-dom";
+
+import {
+    useSearchParams,
+    Link
+} from "react-router-dom";
+
 
 function Jobs() {
-  const [jobs, setJobs] = useState([]);
-  const [selectedJob, setSelectedJob] = useState(null);
-  const [searchParams] = useSearchParams();
 
-useEffect(() => {
-    loadJobs();
-}, [searchParams]);
+    const [jobs, setJobs] = useState([]);
+    const [selectedJob, setSelectedJob] = useState(null);
 
-const loadJobs = async () => {
+    const [searchParams] = useSearchParams();
 
-    const keyword = searchParams.get("keyword");
 
-    let response;
+    /* =========================
+       LOAD JOBS
+    ========================= */
 
-    if (keyword && keyword.trim()) {
+    useEffect(() => {
 
-        response = await searchJobs(keyword);
+        loadJobs();
 
-        const searchedJobs = response.data;
+    }, [searchParams]);
 
-        setJobs(searchedJobs);
 
-        const selectedId =
-            Number(searchParams.get("selected"));
+    const loadJobs = async () => {
 
-        if (selectedId) {
+        try {
 
-            const selected = searchedJobs.find(
-                job => job.id === selectedId
-            );
+            const keyword =
+                searchParams.get("keyword") || "";
 
-            if (selected) {
-                setSelectedJob(selected);
+            const location =
+                searchParams.get("location") || "";
+
+
+            let response;
+
+
+            /* =========================
+               SEARCH
+            ========================= */
+
+            if (keyword || location) {
+
+                response = await searchJobs(
+                    keyword,
+                    location
+                );
+
+                const searchedJobs = response.data;
+
+                setJobs(searchedJobs);
+
+
+                /* =========================
+                   SELECTED JOB
+                ========================= */
+
+                const selectedId =
+                    Number(searchParams.get("selected"));
+
+
+                if (selectedId) {
+
+                    const selected =
+                        searchedJobs.find(
+                            job => job.id === selectedId
+                        );
+
+                    if (selected) {
+
+                        setSelectedJob(selected);
+
+                        return;
+                    }
+                }
+
+
+                if (searchedJobs.length > 0) {
+
+                    setSelectedJob(
+                        searchedJobs[0]
+                    );
+
+                } else {
+
+                    setSelectedJob(null);
+
+                }
+
                 return;
             }
-        }
 
-        if (searchedJobs.length > 0) {
-            setSelectedJob(searchedJobs[0]);
-        } else {
+
+            /* =========================
+               NORMAL JOB LIST
+            ========================= */
+
+            response = await getAllJobs();
+
+            const allJobs =
+                response.data.content;
+
+            setJobs(allJobs);
+
+
+            /* =========================
+               SELECTED JOB
+            ========================= */
+
+            const selectedId =
+                Number(searchParams.get("selected"));
+
+
+            if (selectedId) {
+
+                const selected =
+                    allJobs.find(
+                        job => job.id === selectedId
+                    );
+
+                if (selected) {
+
+                    setSelectedJob(selected);
+
+                    return;
+                }
+            }
+
+
+            if (allJobs.length > 0) {
+
+                setSelectedJob(
+                    allJobs[0]
+                );
+
+            } else {
+
+                setSelectedJob(null);
+
+            }
+
+        } catch (error) {
+
+            console.error(
+                "Failed to load jobs:",
+                error
+            );
+
+            setJobs([]);
             setSelectedJob(null);
         }
 
-        return;
-    }
+    };
 
-    // Normal Jobs page
 
-    response = await getAllJobs();
+    return (
 
-    const allJobs = response.data.content;
+        <>
 
-    setJobs(allJobs);
+            <div className="jobs-header">
 
-    const selectedId =
-        Number(searchParams.get("selected"));
+                <div className="header-left">
 
-    if (selectedId) {
+                    <h1>
+                        Find Your Next Opportunity
+                    </h1>
 
-        const selected = allJobs.find(
-            job => job.id === selectedId
-        );
+                    <p>
+                        Browse available jobs and select one
+                        to view complete details.
+                    </p>
 
-        if (selected) {
-            setSelectedJob(selected);
-            return;
-        }
-    }
+                </div>
 
-    if (allJobs.length > 0) {
-        setSelectedJob(allJobs[0]);
-    } else {
-        setSelectedJob(null);
-    }
-};
 
-  return (
-    <>
-    <div className="jobs-header">
+                <Link
+                    to="/"
+                    className="back-home-btn"
+                >
+                    ← Home
+                </Link>
 
-    <div className="header-left">
-        <h1>Find Your Next Opportunity</h1>
+            </div>
 
-        <p>
-            Browse available jobs and select one to view complete details.
-        </p>
-    </div>
 
-    <Link to="/" className="back-home-btn">
-        ← Home
-    </Link>
+            <div className="jobs-page">
 
-</div>
-    
-<div className="jobs-page">
+                <JobList
+                    jobs={jobs}
+                    selectedJob={selectedJob}
+                    onSelect={setSelectedJob}
+                />
 
-            <JobList
-                jobs={jobs}
-                selectedJob={selectedJob}
-                onSelect={setSelectedJob}
-            />
 
-            <JobDetailsPanel
-                job={selectedJob}
-            />
+                <JobDetailsPanel
+                    job={selectedJob}
+                />
 
-        </div>
-    </>
-);
+            </div>
+
+        </>
+
+    );
 }
+
 
 export default Jobs;

@@ -62,8 +62,15 @@ export const getSavedJobs = () => {
 };
   
 
-export const searchJobs = (keyword) => {
+
+export const getSearchSuggestions = (keyword = "", location = "") => {
     return api.get(
-        `/job/search?keyword=${encodeURIComponent(keyword)}`
+        `/job/suggestions?keyword=${encodeURIComponent(keyword)}&location=${encodeURIComponent(location)}`
+    );
+};
+
+export const searchJobs = (keyword = "", location = "") => {
+    return api.get(
+        `/job/search?keyword=${encodeURIComponent(keyword)}&location=${encodeURIComponent(location)}`
     );
 };
