@@ -9,6 +9,9 @@ import {
     getCandidateProfileImage,
 } from "../services/ApplicationService";
 import "../styles/ViewApplicants.css"
+import {
+    scheduleInterview,
+} from "../services/InterviewService";
 
 function ViewApplicants() {
     const { jobId } = useParams();
@@ -18,6 +21,21 @@ function ViewApplicants() {
     const [loading, setLoading] = useState(true);
     const [updatingId, setUpdatingId] = useState(null);
     const [selectedApplicant, setSelectedApplicant] = useState(null);
+    const [showScheduleModal, setShowScheduleModal] =
+    useState(false);
+
+const [scheduleData, setScheduleData] = useState({
+    scheduledDate: "",
+    scheduledTime: "",
+    durationMinutes: 30,
+    type: "ONLINE",
+    meetingLink: "",
+    location: "",
+    notes: "",
+});
+
+const [scheduling, setScheduling] = useState(false);
+const [scheduleError, setScheduleError] = useState("");
 
     useEffect(() => {
         loadApplicants();
@@ -199,6 +217,120 @@ function ViewApplicants() {
             );
         }
     };
+    // ==========================================
+// SCHEDULE INTERVIEW
+// ==========================================
+
+const handleScheduleInterview = async () => {
+
+    if (!selectedApplicant) {
+        return;
+    }
+
+    if (
+        !scheduleData.scheduledDate ||
+        !scheduleData.scheduledTime
+    ) {
+        setScheduleError(
+            "Please select interview date and time."
+        );
+        return;
+    }
+
+    if (
+        scheduleData.type === "ONLINE" &&
+        !scheduleData.meetingLink.trim()
+    ) {
+        setScheduleError(
+            "Please enter the meeting link."
+        );
+        return;
+    }
+
+    if (
+        scheduleData.type === "IN_PERSON" &&
+        !scheduleData.location.trim()
+    ) {
+        setScheduleError(
+            "Please enter the interview location."
+        );
+        return;
+    }
+
+    try {
+
+        setScheduling(true);
+        setScheduleError("");
+
+        const scheduledAt =
+            `${scheduleData.scheduledDate}T${scheduleData.scheduledTime}`;
+
+        const requestData = {
+            applicationId:
+                selectedApplicant.applicationId,
+
+            scheduledAt,
+
+            durationMinutes:
+                Number(scheduleData.durationMinutes),
+
+            type: scheduleData.type,
+
+            meetingLink:
+                scheduleData.type === "ONLINE"
+                    ? scheduleData.meetingLink.trim()
+                    : null,
+
+            location:
+                scheduleData.type === "IN_PERSON"
+                    ? scheduleData.location.trim()
+                    : null,
+
+            notes:
+                scheduleData.notes.trim() || null,
+        };
+
+        await scheduleInterview(requestData);
+
+        // Close scheduling modal
+        setShowScheduleModal(false);
+
+        // Close applicant details modal
+        setSelectedApplicant(null);
+
+        // Reset form
+        setScheduleData({
+            scheduledDate: "",
+            scheduledTime: "",
+            durationMinutes: 30,
+            type: "ONLINE",
+            meetingLink: "",
+            location: "",
+            notes: "",
+        });
+
+        alert(
+            "Interview scheduled successfully."
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Failed to schedule interview:",
+            error
+        );
+
+        setScheduleError(
+            error.response?.data?.message ||
+            "Failed to schedule interview."
+        );
+
+    } finally {
+
+        setScheduling(false);
+
+    }
+};
 
     // ==========================================
     // STATUS STYLE
@@ -754,31 +886,50 @@ function ViewApplicants() {
 
                             {/* FOOTER */}
 
-                            <div className="modal-footer">
+                        <div className="modal-footer">
 
-                                <button
-                                    className="btn btn-secondary"
-                                    onClick={() =>
-                                        setSelectedApplicant(
-                                            null
-                                        )
-                                    }
-                                >
-                                    Close
-                                </button>
+    <button
+        className="btn btn-secondary"
+        onClick={() =>
+            setSelectedApplicant(null)
+        }
+    >
+        Close
+    </button>
 
-                                <button
-                                    className="btn btn-success"
-                                    onClick={() =>
-                                        handleViewResume(
-                                            selectedApplicant.applicationId
-                                        )
-                                    }
-                                >
-                                    📄 View Resume
-                                </button>
+    <button
+        className="btn btn-success"
+        onClick={() =>
+            handleViewResume(
+                selectedApplicant.applicationId
+            )
+        }
+    >
+        📄 View Resume
+    </button>
 
-                            </div>
+    <button
+        className="btn btn-primary"
+        onClick={() => {
+            setScheduleError("");
+
+            setScheduleData({
+                scheduledDate: "",
+                scheduledTime: "",
+                durationMinutes: 30,
+                type: "ONLINE",
+                meetingLink: "",
+                location: "",
+                notes: "",
+            });
+
+            setShowScheduleModal(true);
+        }}
+    >
+        📅 Schedule Interview
+    </button>
+
+</div>
 
                         </div>
 
@@ -787,9 +938,383 @@ function ViewApplicants() {
                 </div>
 
             )}
+            {/* =====================================================
+    SCHEDULE INTERVIEW MODAL
+===================================================== */}
+
+{showScheduleModal && selectedApplicant && (
+
+    <div
+        className="modal d-block"
+        tabIndex="-1"
+        style={{
+            backgroundColor:
+                "rgba(0, 0, 0, 0.5)",
+        }}
+    >
+
+        <div className="modal-dialog modal-dialog-centered">
+
+            <div className="modal-content">
+
+                {/* HEADER */}
+
+                <div className="modal-header">
+
+                    <div>
+
+                        <h5 className="modal-title fw-bold">
+                            Schedule Interview
+                        </h5>
+
+                        <p className="text-muted mb-0 small">
+                            {selectedApplicant.candidateName}
+                            {" • "}
+                            {selectedApplicant.jobTitle}
+                        </p>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        className="btn-close"
+                        onClick={() =>
+                            setShowScheduleModal(false)
+                        }
+                    />
+
+                </div>
+
+
+                {/* BODY */}
+
+                <div className="modal-body">
+
+                    {scheduleError && (
+
+                        <div className="alert alert-danger">
+                            {scheduleError}
+                        </div>
+
+                    )}
+
+
+                    {/* DATE */}
+
+                    <div className="mb-3">
+
+                        <label className="form-label fw-semibold">
+                            Interview Date
+                        </label>
+
+                        <input
+                            type="date"
+                            className="form-control"
+                            value={
+                                scheduleData.scheduledDate
+                            }
+                            min={
+                                new Date()
+                                    .toISOString()
+                                    .split("T")[0]
+                            }
+                            onChange={(e) =>
+                                setScheduleData(
+                                    (previous) => ({
+                                        ...previous,
+                                        scheduledDate:
+                                            e.target.value,
+                                    })
+                                )
+                            }
+                        />
+
+                    </div>
+
+
+                    {/* TIME */}
+
+                    <div className="mb-3">
+
+                        <label className="form-label fw-semibold">
+                            Interview Time
+                        </label>
+
+                        <input
+                            type="time"
+                            className="form-control"
+                            value={
+                                scheduleData.scheduledTime
+                            }
+                            onChange={(e) =>
+                                setScheduleData(
+                                    (previous) => ({
+                                        ...previous,
+                                        scheduledTime:
+                                            e.target.value,
+                                    })
+                                )
+                            }
+                        />
+
+                    </div>
+
+
+                    {/* DURATION */}
+
+                    <div className="mb-3">
+
+                        <label className="form-label fw-semibold">
+                            Duration
+                        </label>
+
+                        <select
+                            className="form-select"
+                            value={
+                                scheduleData.durationMinutes
+                            }
+                            onChange={(e) =>
+                                setScheduleData(
+                                    (previous) => ({
+                                        ...previous,
+                                        durationMinutes:
+                                            e.target.value,
+                                    })
+                                )
+                            }
+                        >
+
+                            <option value={15}>
+                                15 minutes
+                            </option>
+
+                            <option value={30}>
+                                30 minutes
+                            </option>
+
+                            <option value={45}>
+                                45 minutes
+                            </option>
+
+                            <option value={60}>
+                                1 hour
+                            </option>
+
+                            <option value={90}>
+                                1 hour 30 minutes
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    {/* TYPE */}
+
+                    <div className="mb-3">
+
+                        <label className="form-label fw-semibold">
+                            Interview Type
+                        </label>
+
+                        <select
+                            className="form-select"
+                            value={
+                                scheduleData.type
+                            }
+                            onChange={(e) =>
+                                setScheduleData(
+                                    (previous) => ({
+                                        ...previous,
+                                        type:
+                                            e.target.value,
+                                        meetingLink: "",
+                                        location: "",
+                                    })
+                                )
+                            }
+                        >
+
+                            <option value="ONLINE">
+                                Online
+                            </option>
+
+                            <option value="PHONE">
+                                Phone
+                            </option>
+
+                            <option value="IN_PERSON">
+                                In-person
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    {/* ONLINE */}
+
+                    {scheduleData.type === "ONLINE" && (
+
+                        <div className="mb-3">
+
+                            <label className="form-label fw-semibold">
+                                Meeting Link
+                            </label>
+
+                            <input
+                                type="url"
+                                className="form-control"
+                                placeholder="https://meet.google.com/..."
+                                value={
+                                    scheduleData.meetingLink
+                                }
+                                onChange={(e) =>
+                                    setScheduleData(
+                                        (previous) => ({
+                                            ...previous,
+                                            meetingLink:
+                                                e.target.value,
+                                        })
+                                    )
+                                }
+                            />
+
+                        </div>
+
+                    )}
+
+
+                    {/* PHONE */}
+
+                    {scheduleData.type === "PHONE" && (
+
+                        <div className="alert alert-info py-2">
+                            The candidate will be contacted by
+                            phone using their registered contact
+                            information.
+                        </div>
+
+                    )}
+
+
+                    {/* IN PERSON */}
+
+                    {scheduleData.type === "IN_PERSON" && (
+
+                        <div className="mb-3">
+
+                            <label className="form-label fw-semibold">
+                                Interview Location
+                            </label>
+
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Office address / location"
+                                value={
+                                    scheduleData.location
+                                }
+                                onChange={(e) =>
+                                    setScheduleData(
+                                        (previous) => ({
+                                            ...previous,
+                                            location:
+                                                e.target.value,
+                                        })
+                                    )
+                                }
+                            />
+
+                        </div>
+
+                    )}
+
+
+                    {/* NOTES */}
+
+                    <div className="mb-2">
+
+                        <label className="form-label fw-semibold">
+                            Notes
+                        </label>
+
+                        <textarea
+                            className="form-control"
+                            rows="3"
+                            placeholder="Add interview instructions or notes..."
+                            value={
+                                scheduleData.notes
+                            }
+                            onChange={(e) =>
+                                setScheduleData(
+                                    (previous) => ({
+                                        ...previous,
+                                        notes:
+                                            e.target.value,
+                                    })
+                                )
+                            }
+                        />
+
+                    </div>
+
+                </div>
+
+
+                {/* FOOTER */}
+
+                <div className="modal-footer">
+
+                    <button
+                        type="button"
+                        className="btn btn-secondary"
+                        disabled={scheduling}
+                        onClick={() =>
+                            setShowScheduleModal(false)
+                        }
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="button"
+                        className="btn btn-primary"
+                        disabled={scheduling}
+                        onClick={
+                            handleScheduleInterview
+                        }
+                    >
+
+                        {scheduling ? (
+                            <>
+                                <span
+                                    className="spinner-border spinner-border-sm me-2"
+                                    role="status"
+                                />
+                                Scheduling...
+                            </>
+                        ) : (
+                            <>
+                                📅 Schedule Interview
+                            </>
+                        )}
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+)}
 
         </div>
     );
+    
 }
 
 export default ViewApplicants;

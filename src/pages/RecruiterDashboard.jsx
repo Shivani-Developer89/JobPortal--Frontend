@@ -20,7 +20,10 @@ import {
 } from "react-icons/fa";
 
 import "../styles/RecruiterDashboard.css";
-import RecruiterNav from "../components/navbar/RecruiterNav";
+import {
+    scheduleInterview
+} from "../services/InterviewService";
+
 
 function RecruiterDashboard() {
 
@@ -30,6 +33,20 @@ function RecruiterDashboard() {
     const [recentApplications, setRecentApplications] = useState([]);
     const [selectedApplication, setSelectedApplication] = useState(null);
     const [updatingStatus, setUpdatingStatus] = useState(false);
+    const [showScheduleModal, setShowScheduleModal] = useState(false);
+const [schedulingInterview, setSchedulingInterview] = useState(false);
+const [scheduleError, setScheduleError] = useState("");
+
+const [scheduleData, setScheduleData] = useState({
+    scheduledDate: "",
+    scheduledTime: "",
+    durationMinutes: 30,
+    type: "ONLINE",
+    meetingLink: "",
+    location: "",
+    notes: ""
+});
+
 
     useEffect(() => {
         loadDashboard();
@@ -163,6 +180,113 @@ const handleStatusUpdate = async (status) => {
         setUpdatingStatus(false);
     }
 };
+const handleScheduleInterview = async () => {
+
+    if (!selectedApplication) {
+        return;
+    }
+
+    setScheduleError("");
+
+    if (
+        !scheduleData.scheduledDate ||
+        !scheduleData.scheduledTime
+    ) {
+        setScheduleError(
+            "Please select an interview date and time."
+        );
+        return;
+    }
+
+    if (
+        scheduleData.type === "ONLINE" &&
+        !scheduleData.meetingLink.trim()
+    ) {
+        setScheduleError(
+            "Please enter the meeting link."
+        );
+        return;
+    }
+
+    if (
+        scheduleData.type === "IN_PERSON" &&
+        !scheduleData.location.trim()
+    ) {
+        setScheduleError(
+            "Please enter the interview location."
+        );
+        return;
+    }
+
+    try {
+
+        setSchedulingInterview(true);
+
+        const scheduledAt =
+            `${scheduleData.scheduledDate}T${scheduleData.scheduledTime}`;
+
+        const requestData = {
+            applicationId:
+                selectedApplication.applicationId,
+
+            scheduledAt,
+
+            durationMinutes:
+                Number(scheduleData.durationMinutes),
+
+            type:
+                scheduleData.type,
+
+            meetingLink:
+                scheduleData.type === "ONLINE"
+                    ? scheduleData.meetingLink.trim()
+                    : null,
+
+            location:
+                scheduleData.type === "IN_PERSON"
+                    ? scheduleData.location.trim()
+                    : null,
+
+            notes:
+                scheduleData.notes.trim() || null
+        };
+
+        await scheduleInterview(requestData);
+
+        setShowScheduleModal(false);
+        setSelectedApplication(null);
+
+        setScheduleData({
+            scheduledDate: "",
+            scheduledTime: "",
+            durationMinutes: 30,
+            type: "ONLINE",
+            meetingLink: "",
+            location: "",
+            notes: ""
+        });
+
+        alert("Interview scheduled successfully.");
+
+    } catch (error) {
+
+        console.error(
+            "Failed to schedule interview:",
+            error
+        );
+
+        setScheduleError(
+            error?.response?.data?.message ||
+            "Failed to schedule interview."
+        );
+
+    } finally {
+
+        setSchedulingInterview(false);
+
+    }
+};
+
 
     return (
         <main className="recruiter-dashboard">
@@ -502,19 +626,42 @@ const handleStatusUpdate = async (status) => {
     )}
 </div>
 
-            <button
-                className="modal-resume-btn"
-                onClick={() =>
-                    handleViewResume(
-                        selectedApplication.applicationId
-                    )
-                }
-            >
-                <FaFileAlt />
-                View Resume
-            </button>
+     <button
+    className="modal-resume-btn"
+    onClick={() =>
+        handleViewResume(
+            selectedApplication.applicationId
+        )
+    }
+>
+    <FaFileAlt />
+    View Resume
+</button>
 
-            <div className="modal-divider" />
+<button
+    type="button"
+    className="schedule-interview-btn"
+    onClick={() => {
+
+        setScheduleError("");
+
+        setScheduleData({
+            scheduledDate: "",
+            scheduledTime: "",
+            durationMinutes: 30,
+            type: "ONLINE",
+            meetingLink: "",
+            location: "",
+            notes: ""
+        });
+
+        setShowScheduleModal(true);
+    }}
+>
+    📅 Schedule Interview
+</button>
+
+<div className="modal-divider" />
 
             <div className="modal-actions">
 
@@ -562,6 +709,350 @@ const handleStatusUpdate = async (status) => {
 </button>
 
                 </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+)}
+{showScheduleModal && selectedApplication && (
+
+    <div
+        className="schedule-modal-overlay"
+        onMouseDown={() => setShowScheduleModal(false)}
+    >
+
+        <div
+            className="schedule-modal"
+            onMouseDown={(e) => e.stopPropagation()}
+        >
+
+            {/* HEADER */}
+
+            <div className="schedule-modal-header">
+
+                <div>
+                    <span className="modal-label">
+                        INTERVIEW
+                    </span>
+
+                    <h2>Schedule Interview</h2>
+
+                    <p>
+                        {selectedApplication.candidateName}
+                        {" • "}
+                        {selectedApplication.jobTitle}
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    className="modal-close-btn"
+                    onClick={() =>
+                        setShowScheduleModal(false)
+                    }
+                >
+                    ×
+                </button>
+
+            </div>
+
+            {/* BODY */}
+
+            <div className="schedule-modal-body">
+
+                {scheduleError && (
+                    <div className="schedule-error">
+                        {scheduleError}
+                    </div>
+                )}
+
+                {/* DATE + TIME */}
+
+                <div className="schedule-row">
+
+                    <div className="schedule-field">
+
+                        <label>
+                            Interview Date
+                        </label>
+
+                        <input
+                            type="date"
+                            value={
+                                scheduleData.scheduledDate
+                            }
+                            min={
+                                new Date()
+                                    .toISOString()
+                                    .split("T")[0]
+                            }
+                            onChange={(e) =>
+                                setScheduleData(
+                                    previous => ({
+                                        ...previous,
+                                        scheduledDate:
+                                            e.target.value
+                                    })
+                                )
+                            }
+                        />
+
+                    </div>
+
+                    <div className="schedule-field">
+
+                        <label>
+                            Interview Time
+                        </label>
+
+                        <input
+                            type="time"
+                            value={
+                                scheduleData.scheduledTime
+                            }
+                            onChange={(e) =>
+                                setScheduleData(
+                                    previous => ({
+                                        ...previous,
+                                        scheduledTime:
+                                            e.target.value
+                                    })
+                                )
+                            }
+                        />
+
+                    </div>
+
+                </div>
+
+                {/* DURATION */}
+
+                <div className="schedule-field">
+
+                    <label>
+                        Duration
+                    </label>
+
+                    <select
+                        value={
+                            scheduleData.durationMinutes
+                        }
+                        onChange={(e) =>
+                            setScheduleData(
+                                previous => ({
+                                    ...previous,
+                                    durationMinutes:
+                                        e.target.value
+                                })
+                            )
+                        }
+                    >
+
+                        <option value="15">
+                            15 minutes
+                        </option>
+
+                        <option value="30">
+                            30 minutes
+                        </option>
+
+                        <option value="45">
+                            45 minutes
+                        </option>
+
+                        <option value="60">
+                            1 hour
+                        </option>
+
+                        <option value="90">
+                            1 hour 30 minutes
+                        </option>
+
+                    </select>
+
+                </div>
+
+                {/* TYPE */}
+
+                <div className="schedule-field">
+
+                    <label>
+                        Interview Type
+                    </label>
+
+                    <select
+                        value={scheduleData.type}
+                        onChange={(e) =>
+                            setScheduleData(
+                                previous => ({
+                                    ...previous,
+                                    type: e.target.value,
+                                    meetingLink: "",
+                                    location: ""
+                                })
+                            )
+                        }
+                    >
+
+                        <option value="ONLINE">
+                            Online
+                        </option>
+
+                        <option value="PHONE">
+                            Phone
+                        </option>
+
+                        <option value="IN_PERSON">
+                            In-person
+                        </option>
+
+                    </select>
+
+                </div>
+
+                {/* ONLINE */}
+
+                {scheduleData.type === "ONLINE" && (
+
+                    <div className="schedule-field">
+
+                        <label>
+                            Meeting Link
+                        </label>
+
+                        <input
+                            type="url"
+                            placeholder="https://meet.google.com/..."
+                            value={
+                                scheduleData.meetingLink
+                            }
+                            onChange={(e) =>
+                                setScheduleData(
+                                    previous => ({
+                                        ...previous,
+                                        meetingLink:
+                                            e.target.value
+                                    })
+                                )
+                            }
+                        />
+
+                    </div>
+
+                )}
+
+                {/* PHONE */}
+
+                {scheduleData.type === "PHONE" && (
+
+                    <div className="schedule-info">
+                        Candidate will be contacted by phone
+                        using their registered contact information.
+                    </div>
+
+                )}
+
+                {/* IN PERSON */}
+
+                {scheduleData.type === "IN_PERSON" && (
+
+                    <div className="schedule-field">
+
+                        <label>
+                            Interview Location
+                        </label>
+
+                        <input
+                            type="text"
+                            placeholder="Office address / location"
+                            value={
+                                scheduleData.location
+                            }
+                            onChange={(e) =>
+                                setScheduleData(
+                                    previous => ({
+                                        ...previous,
+                                        location:
+                                            e.target.value
+                                    })
+                                )
+                            }
+                        />
+
+                    </div>
+
+                )}
+
+                {/* NOTES */}
+
+                <div className="schedule-field">
+
+                    <label>
+                        Notes
+                    </label>
+
+                    <textarea
+                        rows="3"
+                        placeholder="Add interview instructions or notes..."
+                        value={
+                            scheduleData.notes
+                        }
+                        onChange={(e) =>
+                            setScheduleData(
+                                previous => ({
+                                    ...previous,
+                                    notes:
+                                        e.target.value
+                                })
+                            )
+                        }
+                    />
+
+                </div>
+
+            </div>
+
+            {/* FOOTER */}
+
+            <div className="schedule-modal-footer">
+
+                <button
+                    type="button"
+                    className="schedule-cancel-btn"
+                    disabled={schedulingInterview}
+                    onClick={() =>
+                        setShowScheduleModal(false)
+                    }
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="button"
+                    className="schedule-confirm-btn"
+                    disabled={schedulingInterview}
+                    onClick={handleScheduleInterview}
+                >
+
+                    {schedulingInterview ? (
+                        <>
+                            <span
+                                className="spinner-border spinner-border-sm me-2"
+                                role="status"
+                            />
+
+                            Scheduling...
+                        </>
+                    ) : (
+                        <>
+                            📅 Schedule Interview
+                        </>
+                    )}
+
+                </button>
 
             </div>
 

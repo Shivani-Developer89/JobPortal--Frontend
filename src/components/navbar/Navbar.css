@@ -555,6 +555,283 @@
 
     color:yellow;
 }
+/* =========================================================
+   CANDIDATE NOTIFICATIONS
+========================================================= */
+
+.candidate-notification-wrapper {
+    position: relative;
+}
+
+.candidate-notification-badge {
+    position: absolute;
+
+    top: -3px;
+    right: -3px;
+
+    min-width: 18px;
+    height: 18px;
+
+    padding: 0 5px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 20px;
+
+    background: #ef4444;
+    color: #ffffff;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    border: 2px solid #ffffff;
+}
+
+.candidate-notification-dropdown {
+    position: absolute;
+
+    top: 54px;
+    right: 0;
+
+    width: 380px;
+
+    background: #ffffff;
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 15px 40px rgba(15, 23, 42, 0.15),
+        0 3px 10px rgba(15, 23, 42, 0.08);
+
+    overflow: hidden;
+
+    z-index: 3000;
+
+    animation: candidateNotificationFade 0.15s ease;
+}
+
+@keyframes candidateNotificationFade {
+
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.candidate-notification-header {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 17px 18px;
+
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.candidate-notification-header > div {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 4px;
+}
+
+.candidate-notification-header strong {
+    font-size: 16px;
+
+    color: #1e293b;
+}
+
+.candidate-notification-header span {
+    font-size: 12px;
+
+    color: #64748b;
+}
+
+.candidate-mark-all-btn {
+    border: none;
+
+    background: transparent;
+
+    color: #2563eb;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.candidate-mark-all-btn:hover {
+    text-decoration: underline;
+}
+
+.candidate-notification-list {
+    max-height: 420px;
+
+    overflow-y: auto;
+}
+
+.candidate-notification-item {
+    position: relative;
+
+    width: 100%;
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 12px;
+
+    padding: 15px 18px;
+
+    border: none;
+
+    border-bottom: 1px solid #edf0f5;
+
+    background: #ffffff;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition: background 0.15s ease;
+
+    box-sizing: border-box;
+}
+
+.candidate-notification-item:hover {
+    background: #f8fafc;
+}
+
+.candidate-notification-item.unread {
+    background: #f5f9ff;
+}
+
+.candidate-notification-icon {
+    width: 34px;
+    height: 34px;
+
+    min-width: 34px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #eff6ff;
+
+    color: #2563eb;
+
+    font-size: 13px;
+}
+
+.candidate-notification-content {
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 4px;
+}
+
+.candidate-notification-content strong {
+    color: #1e293b;
+
+    font-size: 13px;
+
+    font-weight: 700;
+}
+
+.candidate-notification-content p {
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+}
+
+.candidate-notification-content span {
+    color: #94a3b8;
+
+    font-size: 11px;
+}
+
+.candidate-unread-dot {
+    width: 8px;
+    height: 8px;
+
+    min-width: 8px;
+
+    margin-top: 6px;
+
+    border-radius: 50%;
+
+    background: #2563eb;
+}
+
+.candidate-no-notifications {
+    padding: 45px 20px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    color: #94a3b8;
+}
+
+.candidate-no-notifications svg {
+    font-size: 25px;
+}
+
+.candidate-no-notifications p {
+    margin: 0;
+
+    font-size: 13px;
+}
+
+.candidate-notification-footer {
+    padding: 12px;
+
+    border-top: 1px solid #e5e7eb;
+
+    text-align: center;
+}
+
+.candidate-notification-footer button {
+    border: none;
+
+    background: transparent;
+
+    color: #2563eb;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.candidate-notification-footer button:hover {
+    text-decoration: underline;
+}
 
 /* =========================
    PROFILE

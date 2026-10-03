@@ -19,6 +19,9 @@ import CandidateSettings from "./pages/CandidateSettings";
 import SavedJobs from "./pages/SavedJobs";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import CandidateNotifications from "./pages/CandidateNotifications";
+import RecruiterNotifications from "./pages/RecruiterNotifications";
+import CandidateInterviews from "./pages/CandidateInterviews";
 
 function App() {
   return (
@@ -42,8 +45,11 @@ function App() {
       <Route path="/recruiter/jobs/:jobId/applicants"element={<ViewApplicants />}/>
       <Route path="/candidate/profile"element={<CandidateProfile />}/>
       <Route path="/candidate/settings" element={<CandidateSettings />}/>
+      <Route path="/candidate/notifications" element={<CandidateNotifications />}/>
+      <Route path="/candidate/interviews"element={<CandidateInterviews />}/>
       <Route path="/recruiter/profile" element={<RecruiterProfile />}/>
       <Route path="/recruiter/settings" element={<RecruiterSettings />} />
+      <Route path="/recruiter/notifications"element={<RecruiterNotifications />}/>
       </Routes>
     </BrowserRouter>
   );
