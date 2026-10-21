@@ -22,6 +22,7 @@ import ResetPassword from "./pages/ResetPassword";
 import CandidateNotifications from "./pages/CandidateNotifications";
 import RecruiterNotifications from "./pages/RecruiterNotifications";
 import CandidateInterviews from "./pages/CandidateInterviews";
+import RecruiterInterviews from "./pages/RecruiterInterviews";
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
       <Route path="/recruiter/profile" element={<RecruiterProfile />}/>
       <Route path="/recruiter/settings" element={<RecruiterSettings />} />
       <Route path="/recruiter/notifications"element={<RecruiterNotifications />}/>
+      <Route path="/recruiter/interviews" element={<RecruiterInterviews />}/>
       </Routes>
     </BrowserRouter>
   );

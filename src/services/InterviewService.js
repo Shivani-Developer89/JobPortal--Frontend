@@ -58,3 +58,10 @@ export const respondToInterview = (
         }
     );
 };
+// ==========================================
+// COMPLETE INTERVIEW
+// ==========================================
+
+export const completeInterview = (interviewId) => {
+    return api.put(`/interviews/${interviewId}/complete`);
+};

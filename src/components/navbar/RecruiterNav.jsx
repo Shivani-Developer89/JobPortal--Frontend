@@ -165,36 +165,41 @@ function RecruiterNavbar() {
     // OPEN NOTIFICATIONS
     // =========================================================
 
-    const handleNotificationClick = async () => {
+ 
 
-        setNotificationOpen(
-            !notificationOpen
-        );
+const handleNotificationItemClick = async (notification) => {
+    console.log("Clicked recruiter notification:", notification);
 
-        // Close profile dropdown
-        setProfileOpen(false);
+    const type = String(notification.type || "").toUpperCase();
+    const title = String(notification.title || "").toLowerCase();
+    const message = String(notification.message || "").toLowerCase();
 
-        // Load notifications when opening
-        if (!notificationOpen) {
+    setNotificationOpen(false);
 
-            try {
+    if (
+        type.includes("INTERVIEW") ||
+        title.includes("interview") ||
+        message.includes("interview")
+    ) {
+        navigate("/recruiter/interviews");
+    } else if (
+        type === "NEW_APPLICATION" ||
+        type === "APPLICATION_WITHDRAWN" ||
+        title.includes("application")
+    ) {
+        navigate("/applicants");
+    } else {
+        navigate("/recruiter/notifications");
+    }
 
-                const response =
-                    await getNotifications();
+    try {
+        await handleMarkAsRead(notification);
+    } catch (error) {
+        console.error("Failed to mark notification as read:", error);
+    }
+};
 
-                setNotifications(
-                    response.data || []
-                );
 
-            } catch (error) {
-
-                console.error(
-                    "Failed to load notifications:",
-                    error
-                );
-            }
-        }
-    };
 
 
     // =========================================================
@@ -262,6 +267,23 @@ function RecruiterNavbar() {
             );
         }
     };
+    
+const handleNotificationClick = async () => {
+    const willOpen = !notificationOpen;
+
+    setNotificationOpen(willOpen);
+    setProfileOpen(false);
+
+    if (!willOpen) return;
+
+    try {
+        const response = await getNotifications();
+        setNotifications(response.data || []);
+    } catch (error) {
+        console.error("Failed to load notifications:", error);
+    }
+};
+
 
 
     // =========================================================
@@ -537,11 +559,9 @@ function RecruiterNavbar() {
                                                         ? "read"
                                                         : "unread"
                                                 }`}
-                                                onClick={() =>
-                                                    handleMarkAsRead(
-                                                        notification
-                                                    )
-                                                }
+                                            onClick={() =>
+    handleNotificationItemClick(notification)
+}
                                             >
 
                                                 <div className="notification-icon">
