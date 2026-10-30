@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { registerUser } from "../services/authService";
+import { registerUser } from "../services/AuthService";
 
 function Signup() {
 

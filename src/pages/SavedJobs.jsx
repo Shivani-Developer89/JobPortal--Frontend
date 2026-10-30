@@ -14,7 +14,7 @@ import {
 import {
     getSavedJobs,
     unsaveJob
-} from "../services/jobService";
+} from "../services/JobService";
 
 import "../styles/SavedJobs.css";
 

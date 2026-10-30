@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
-import { getCandidateDashboard, getMyApplications } from "../services/applicationService";
+import {
+    getCandidateDashboard,
+    getMyApplications,
+    withdrawApplication
+} from "../services/ApplicationService";
 import { useNavigate } from "react-router-dom";
-import { withdrawApplication } from "../services/applicationService";
+
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 

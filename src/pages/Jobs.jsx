@@ -6,6 +6,7 @@ import {
 } from "../services/JobService";
 
 import JobList from "../components/jobs/JobList";
+
 import JobDetailsPanel from "../components/jobs/JobDetailsPanel";
 
 import "../styles/Jobs.css";

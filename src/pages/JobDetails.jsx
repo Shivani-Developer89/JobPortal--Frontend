@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { getJobById } from "../services/jobService";
+import { getJobById } from "../services/JobService";
 import { applyJob } from "../services/ApplicationService";
 
 import {
