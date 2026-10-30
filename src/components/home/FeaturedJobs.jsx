@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getFeaturedJobs } from "../../services/jobService";
+import { getFeaturedJobs } from "../../services/JobService";
 import JobCard from "./JobCard";
 
 function FeaturedJobs() {
