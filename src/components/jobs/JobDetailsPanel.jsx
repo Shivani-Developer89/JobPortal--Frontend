@@ -21,7 +21,7 @@ import {
     saveJob,
     unsaveJob,
     getSavedJobs
-} from "../../services/jobService";
+} from "../../services/JobService";
 
 
 function JobDetailsPanel({ job }) {
